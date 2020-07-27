@@ -1,0 +1,608 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex:	<http://example.com/ns#> .
+@prefix sbml: <http://www.sbml.org/sbml/level3/version2/core> .
+
+# SBase (abstract)
+# id:string (0,1) 
+# name:string (0,1)  
+# metaid:string (0,n)
+# sboTerm:string (0,n)
+ex:SBaseShape a sh:NodeShape ;
+    sh:property [
+        sh:path ex:id ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+        sh:path ex:name ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:metaid ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:sboTerm ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:closed true ;
+	sh:ignoredProperties ( rdf:type rdfs:subClassOf ) .
+
+# SBML
+# xmlns:IRI (1,n)
+# level=3:int (1,n)
+# version=2:int (1,n)
+# model:Model (0,1)
+ex:SBMLShape a sh:NodeShape ;
+    rdfs:subClassOf ex:SBaseShape ;
+    sh:property [
+        sh:path ex:id ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+        sh:path ex:name ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:metaid ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:sboTerm ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:targetClass ex:SBML ;
+    sh:property [
+        sh:path ex:xmlns ;
+        sh:minCount 1 ;
+        sh:nodeKind sh:IRI ;
+    ] ;
+    sh:property [
+        sh:path ex:level ;
+        sh:minCount 1 ;
+        sh:hasValue 3 ;
+        sh:datatype xsd:integer ;
+    ] ;
+    sh:property [
+        sh:path ex:version ;
+        sh:minCount 1 ;
+        sh:hasValue 2 ;
+        sh:datatype xsd:integer ;
+    ] ;
+    sh:property [
+        sh:path ex:model ;
+        sh:maxCount 1 ;
+        sh:class ex:Model ;
+        sh:nodeKind sh:IRI ;
+    ] .
+
+# Model
+# substanceUnits:string (0,n)
+# timeUnits:string (0,n)
+# volumeUnits:string (0,n)
+# areaUnits:string (0,n)
+# lengthUnits:string (0,n)
+# extentUnits:string (0,n)
+# conversionFactor:Parameter (0,n)
+# listOfUnitDefinitions:ListOfUnitDefinitions (0,1)
+# listOfCompartments:ListOfCompartments (0,1)
+# listOfSpecies:ListOfSpecies (0,1)
+# listOfParameters:ListOfParameters (0,1)
+ex:ModelShape a sh:NodeShape ;
+sh:property [
+        sh:path ex:id ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+        sh:path ex:name ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:metaid ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:sboTerm ;
+        sh:datatype xsd:string ; 
+    ] ;
+    rdfs:subClassOf ex:SBaseShape ;
+    sh:targetClass ex:Model ;
+    sh:property [
+        sh:path ex:substanceUnits ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:property [
+        sh:path ex:timeUnits ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:property [
+        sh:path ex:volumeUnits ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:property [
+        sh:path ex:areaUnits ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:property [
+        sh:path ex:lengthUnits ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:property [
+        sh:path ex:extentUnits ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:property [
+        sh:path ex:conversionFactor ;
+        sh:class ex:Parameter ;
+        sh:nodeKind sh:IRI ;
+    ] ;
+    sh:property [
+        sh:path ex:listOfUnitDefinitions ;
+        sh:class ex:ListOfUnitDefinitions ;
+        sh:nodeKind sh:IRI ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path ex:listOfCompartments ;
+        sh:class ex:ListOfCompartments ;
+        sh:nodeKind sh:IRI ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path ex:listOfSpecies ;
+        sh:class ex:ListOfSpecies ;
+        sh:nodeKind sh:IRI ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path ex:listOfParameters ;
+        sh:class ex:ListOfParameters ;
+        sh:nodeKind sh:IRI ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:closed true ;
+	sh:ignoredProperties ( rdf:type rdfs:subClassOf ) .
+
+# ListOfUnitDefinitions
+# unitDefinition:UnitDefinition (0,n)
+ex:ListOfUnitDefinitionsShape a sh:NodeShape ;
+    rdfs:subClassOf ex:SBaseShape ;
+    sh:property [
+        sh:path ex:id ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+        sh:path ex:name ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:metaid ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:sboTerm ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:targetClass ex:ListOfUnitDefinitions ;
+    sh:property [
+        sh:path ex:unitDefinition ;
+        sh:class ex:UnitDefinition ;
+        sh:nodeKind sh:IRI ;
+    ] ;
+    sh:closed true ;
+	sh:ignoredProperties ( rdf:type rdfs:subClassOf ) .
+
+# UnitDefinitions
+# name:string (1,1)
+# listOfUnits:ListOfUnits (0,1)
+ex:UnitDefinitionShape a sh:NodeShape ;
+    rdfs:subClassOf ex:SBaseShape ;
+    sh:property [
+        sh:path ex:id ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+        sh:path ex:name ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:metaid ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:sboTerm ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:targetClass ex:UnitDefinition ;
+    sh:property [
+        sh:path ex:listOfUnits ;
+        sh:class ex:ListOfUnits ;
+        sh:nodeKind sh:IRI ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:closed true ;
+    sh:ignoredProperties (rdf:type ) .
+
+# ListOfUnitsShape
+# unit:Unit (0,n)
+ex:ListOfUnitsShape a sh:NodeShape ;
+    rdfs:subClassOf ex:SBaseShape ;
+    sh:property [
+        sh:path ex:id ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+        sh:path ex:name ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:metaid ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:sboTerm ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:targetClass ex:ListOfUnits ;
+    sh:property [
+        sh:path ex:unit ;
+        sh:class ex:Unit ;
+        sh:nodeKind sh:IRI ;
+    ] ;
+    sh:closed true ;
+	sh:ignoredProperties ( rdf:type rdfs:subClassOf ) .
+
+# Unit 
+# kind:enumerate( ampere, avogadro, becquerel, candela, coulomb, dimensionless,
+#                 farad, gram, gray, henry, hertz, item, joule, kelvin, kilogram,
+#                 litre, lumen, lux, metre, mole, newton, ohm, pascal, radian, 
+#                 second, siemens, sievert, steradian, tesla, volt, watt, weber )
+# multiplier:decimal
+# scale:integer
+# exponent:integer
+ex:UnitShape a sh:NodeShape ;
+    rdfs:subClassOf ex:SBaseShape ;
+    sh:property [
+        sh:path ex:id ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+        sh:path ex:name ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:metaid ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:sboTerm ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:targetClass ex:Unit ;
+    sh:property [
+        sh:path ex:kind ;
+        sh:in (
+            "ampere"
+            "avogadro"
+            "becquerel"
+            "candela"
+            "coulomb"
+            "dimensionless"
+            "farad"
+            "gram"
+            "gray"
+            "henry"
+            "hertz"
+            "item"
+            "joule"
+            "kelvin"
+            "kilogram"
+            "litre"
+            "lumen"
+            "lux"
+            "metre"
+            "mole"
+            "newton"
+            "ohm"
+            "pascal"
+            "radian"
+            "second"
+            "siemens"
+            "sievert"
+            "steradian"
+            "tesla"
+            "volt"
+            "watt"
+            "weber"
+        ) ;
+    ] ;
+    sh:property [
+        sh:path ex:multiplier ;
+        sh:datatype xsd:decimal ;
+    ] ; 
+    sh:property [
+        sh:path ex:scale ;
+        sh:datatype xsd:integer ;
+    ] ;
+    sh:property [
+        sh:path ex:exponent ;
+        sh:datatype xsd:integer ;
+    ] ;
+    sh:closed true ;
+	sh:ignoredProperties ( rdf:type rdfs:subClassOf ) .
+
+# ListOfCompartments
+# compartment:Compartment (0,n)
+ex:ListOfCompartmentsShape a sh:NodeShape ;
+    rdfs:subClassOf ex:SBaseShape ;
+    sh:property [
+        sh:path ex:id ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+        sh:path ex:name ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:metaid ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:sboTerm ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:targetClass ex:ListOfCompartments ;
+    sh:property [
+        sh:path ex:compartment ;
+        sh:class ex:Compartment ;
+        sh:nodeKind sh:IRI ;
+    ] ;
+    sh:closed true ;
+	sh:ignoredProperties ( rdf:type rdfs:subClassOf ) .
+
+# Compartment
+# id:string (1,1)
+# spatialDimensions:decimal (0,n)
+# size:decimal (0,n)
+# units:string (0,n)
+# constant:boolean (1,1)
+ex:CompartmentShape a sh:NodeShape ;
+    rdfs:subClassOf ex:SBaseShape ;
+    sh:property [
+        sh:path ex:id ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+        sh:path ex:name ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:metaid ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:sboTerm ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:targetClass ex:Compartment ;
+    sh:property [
+        sh:path ex:spatialDimensions ;
+        sh:datatype xsd:decimal ;
+    ] ; 
+    sh:property [
+        sh:path ex:size ;
+        sh:datatype xsd:decimal ;
+    ] ; 
+    sh:property [
+        sh:path ex:units ;
+        sh:datatype xsd:string ;
+    ] ; 
+    sh:property [
+        sh:path ex:constant ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:boolean ;
+    ] ; 
+    sh:closed true ;
+	sh:ignoredProperties ( rdf:type rdfs:subClassOf ) .
+
+# ListOfSpecies
+# species:Species (0,n)
+ex:ListOfSpeciesShape a sh:NodeShape ;
+    rdfs:subClassOf ex:SBaseShape ;
+    sh:property [
+        sh:path ex:id ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+        sh:path ex:name ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:metaid ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:sboTerm ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:targetClass ex:ListOfSpecies ;
+    sh:property [
+        sh:path ex:species ;
+        sh:class ex:Species ;
+        sh:nodeKind sh:IRI ;
+    ] ;
+    sh:closed true ;
+	sh:ignoredProperties ( rdf:type rdfs:subClassOf ) .
+
+# Species
+# id:string (1,1)
+# compartment:Compartment (0,n)
+# initialAmount:double (0,1)
+# initialConcentration (0,1)
+# substanceUnits:string (0,n)
+# hasOnlySubstanceUnits:boolean (0,1)
+# boundaryCondition:boolean (0,1)
+# constant:boolean (0,1)
+# conversionFactor:Parameter (0,n)
+ex:Species a sh:NodeShape ;
+    rdfs:subClassOf ex:SBaseShape ;
+    sh:property [
+        sh:path ex:id ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+        sh:path ex:name ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:metaid ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:sboTerm ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:targetClass ex:Species ;
+    sh:property [
+        sh:path ex:compartment ;
+        sh:class ex:Compartment ;
+        sh:nodeKind sh:IRI ;
+    ] ;
+    sh:property [
+        sh:path ex:initialAmount ;
+        sh:datatype xsd:double ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path ex:initialConcentration;
+        sh:datatype xsd:double ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path ex:substanceUnits ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+        sh:path ex:hasOnlySubstanceUnits ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:boolean ;
+    ] ;
+    sh:property [
+        sh:path ex:boundaryCondition ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:boolean ;
+    ] ;
+    sh:property [
+        sh:path ex:constant ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:boolean ;
+    ] ;
+    sh:property [
+        sh:path ex:conversionFactor ;
+        sh:class ex:Parameter ;
+        sh:nodeKind sh:IRI ;
+    ] ;
+    sh:closed true ;
+	sh:ignoredProperties ( rdf:type rdfs:subClassOf ) .
+
+# ListOfParameters
+# parameter:Parameter (0,n)
+ex:ListOfParameters a sh:NodeShape ;
+    rdfs:subClassOf ex:SBaseShape ;
+    sh:property [
+        sh:path ex:id ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+        sh:path ex:name ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:metaid ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:sboTerm ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:targetClass ex:ListOfParameters ;
+    sh:property [
+        sh:path ex:parameter ;
+        sh:class ex:Parameter ;
+        sh:nodeKind sh:IRI ;
+    ] ;
+    sh:closed true ;
+	sh:ignoredProperties ( rdf:type rdfs:subClassOf ) .
+
+# Parameter
+# id:string (1,1)
+# value:double (0,n)
+# units:string (0,n)
+# constant:boolean (0,1)
+ex:ParameterShape a sh:NodeShape ;
+    rdfs:subClassOf ex:SBaseShape ;
+    sh:property [
+        sh:path ex:id ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+        sh:path ex:name ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:metaid ;
+        sh:datatype xsd:string ; 
+    ] ; 
+    sh:property [
+        sh:path ex:sboTerm ;
+        sh:datatype xsd:string ; 
+    ] ;
+    sh:targetClass ex:Parameter ;
+    sh:property [
+        sh:path ex:value ; 
+        sh:datatype xsd:double ;
+    ] ; 
+    sh:property [
+        sh:path ex:units ; 
+        sh:datatype xsd:string ;
+    ] ; 
+    sh:property [
+        sh:path ex:constant ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:boolean ;
+    ] ; 
+    sh:closed true ;
+	sh:ignoredProperties ( rdf:type rdfs:subClassOf ) .

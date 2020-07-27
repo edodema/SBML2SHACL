@@ -1,0 +1,132 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex:	<http://example.com/ns#> .
+@prefix sbml: <http://www.sbml.org/sbml/level3/version2/core> .
+
+ex:sbml a ex:SBML .
+ex:sbml ex:xmlns <http://www.sbml.org/sbml/level3/version2/core> .
+ex:sbml ex:level "3"^^xsd:integer .
+ex:sbml ex:version "2"^^xsd:integer .
+ex:sbml ex:model ex:model_0 .
+
+ex:model_0 a ex:Model .
+ex:model_0 rdfs:subClassOf ex:SBase .
+ex:model_0 ex:id "My_Model"^^xsd:string .
+ex:model_0 ex:extentUnits "mole"^^xsd:string .
+ex:model_0 ex:timeUnits "second"^^xsd:string .
+ex:model_0 ex:listOfUnitDefinitions ex:model_0__list_of_unit_definitions .
+ex:model_0 ex:listOfCompartments ex:model_0__list_of_compartments .
+ex:model_0 ex:listOfSpecies ex:model_0__list_of_species .
+ex:model_0 ex:listOfParameters ex:model_0__list_of_parameters .
+
+ex:model_0__list_of_unit_definitions a ex:ListOfUnitDefinitions .
+ex:model_0__list_of_unit_definitions ex:unitDefinition ex:per_second .
+ex:model_0__list_of_unit_definitions ex:unitDefinition ex:litre_per_mole_per_second .
+
+ex:per_second a ex:UnitDefinition .
+ex:per_second ex:name "per_second"^^xsd:string .
+ex:per_second ex:listOfUnits ex:per_second__list_of_units .
+
+ex:per_second__list_of_units a ex:ListOfUnits .
+ex:per_second__list_of_units ex:unit ex:per_second__list_of_units__unit_1 .
+
+ex:per_second__list_of_units__unit_1 a ex:Unit . 
+ex:per_second__list_of_units__unit_1 ex:kind "second" . 
+ex:per_second__list_of_units__unit_1 ex:multiplier "1"^^xsd:decimal . 
+ex:per_second__list_of_units__unit_1 ex:scale "0"^^xsd:integer . 
+ex:per_second__list_of_units__unit_1 ex:exponent "-1"^^xsd:integer . 
+
+ex:litre_per_mole_per_second a ex:UnitDefinition .
+ex:litre_per_mole_per_second ex:name "litre_per_mole_per_second"^^xsd:string .
+ex:litre_per_mole_per_second ex:listOfUnits ex:litre_per_mole_per_second__list_of_units .
+
+ex:litre_per_mole_per_second__list_of_units a ex:ListOfUnits .
+ex:litre_per_mole_per_second__list_of_units ex:unit ex:litre_per_mole_per_second__list_of_units__unit_1 . 
+ex:litre_per_mole_per_second__list_of_units ex:unit ex:litre_per_mole_per_second__list_of_units__unit_2 . 
+ex:litre_per_mole_per_second__list_of_units ex:unit ex:litre_per_mole_per_second__list_of_units__unit_3 . 
+
+ex:litre_per_mole_per_second__list_of_units__unit_1 a ex:Unit .
+ex:litre_per_mole_per_second__list_of_units__unit_1 ex:kind "mole" .
+ex:per_second__list_of_units__unit_1 ex:multiplier "1"^^xsd:decimal . 
+ex:per_second__list_of_units__unit_1 ex:scale "0"^^xsd:integer . 
+ex:per_second__list_of_units__unit_1 ex:exponent "-1"^^xsd:integer . 
+
+ex:litre_per_mole_per_second__list_of_units__unit_2 a ex:Unit .
+ex:litre_per_mole_per_second__list_of_units__unit_2 ex:kind "litre" .
+ex:per_second__list_of_units__unit_2 ex:multiplier "1"^^xsd:decimal . 
+ex:per_second__list_of_units__unit_2 ex:scale "0"^^xsd:integer . 
+ex:per_second__list_of_units__unit_2 ex:exponent "1"^^xsd:integer . 
+
+ex:litre_per_mole_per_second__list_of_units__unit_3 a ex:Unit .
+ex:litre_per_mole_per_second__list_of_units__unit_3 ex:kind "second" .
+ex:per_second__list_of_units__unit_3 ex:multiplier "1"^^xsd:decimal . 
+ex:per_second__list_of_units__unit_3 ex:scale "0"^^xsd:integer . 
+ex:per_second__list_of_units__unit_3 ex:exponent "-1"^^xsd:integer . 
+
+ex:model_0__list_of_compartments a ex:ListOfCompartments .
+ex:model_0__list_of_compartments ex:compartment ex:comp . 
+
+ex:comp a ex:Compartment .
+ex:comp ex:id "comp"^^xsd:string .
+ex:comp ex:size "1e-14"^^xsd:decimal .
+ex:comp ex:spatialDimensions "3"^^xsd:decimal .
+ex:comp ex:units "litre"^^xsd:string .
+ex:comp ex:constant "true"^^xsd:boolean .
+
+ex:model_0__list_of_species a ex:ListOfSpecies .
+ex:model_0__list_of_species ex:species ex:E .
+ex:model_0__list_of_species ex:species ex:S .
+ex:model_0__list_of_species ex:species ex:P .
+ex:model_0__list_of_species ex:species ex:ES .
+
+ex:E a ex:Species .
+ex:E ex:id "E"^^xsd:string .
+ex:E ex:compartment ex:comp .
+ex:E ex:initialAmount "5e-21"^^xsd:double .
+ex:E ex:boundaryCondition "false"^^xsd:boolean .
+ex:E ex:hasOnlySubstanceUnits "false"^^xsd:boolean .
+ex:E ex:substanceUnits "mole"^^xsd:string .
+ex:E ex:constant "false"^^xsd:boolean .
+
+ex:S a ex:Species .
+ex:S ex:id "S"^^xsd:string .
+ex:S ex:compartment ex:comp .
+ex:S ex:initialAmount "1e-20"^^xsd:double .
+ex:S ex:boundaryCondition "false"^^xsd:boolean .
+ex:S ex:hasOnlySubstanceUnits "false"^^xsd:boolean .
+ex:S ex:substanceUnits "mole"^^xsd:string .
+ex:S ex:constant "false"^^xsd:boolean .
+
+ex:P a ex:Species .
+ex:P ex:id "P"^^xsd:string .
+ex:P ex:compartment ex:comp .
+ex:P ex:initialAmount "0"^^xsd:double .
+ex:P ex:boundaryCondition "false"^^xsd:boolean .
+ex:P ex:hasOnlySubstanceUnits "false"^^xsd:boolean .
+ex:P ex:substanceUnits "mole"^^xsd:string .
+ex:P ex:constant "false"^^xsd:boolean .
+
+ex:ES a ex:Species .
+ex:ES ex:id "ES"^^xsd:string .
+ex:ES ex:compartment ex:comp .
+ex:ES ex:initialAmount "0"^^xsd:double .
+ex:ES ex:boundaryCondition "false"^^xsd:boolean .
+ex:ES ex:hasOnlySubstanceUnits "false"^^xsd:boolean .
+ex:ES ex:substanceUnits "mole"^^xsd:string .
+ex:ES ex:constant "false"^^xsd:boolean .
+
+ex:model_0__list_of_parameters a ex:ListOfParameters .
+ex:model_0__list_of_parameters ex:parameter ex:kon .
+ex:model_0__list_of_parameters ex:parameter ex:koff .
+
+ex:kon a ex:Parameter .
+ex:kon ex:id "kon"^^xsd:string .
+ex:kon ex:value "1000000"^^xsd:double .
+ex:kon ex:units "litre_per_mole_per_second"^^xsd:string .
+
+ex:koff a ex:Parameter .
+ex:koff ex:id "koff"^^xsd:string .
+ex:koff ex:value "0.2"^^xsd:double .
+ex:koff ex:units "per_second"^^xsd:string .
