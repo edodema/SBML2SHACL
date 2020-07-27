@@ -9,7 +9,19 @@ ex:sbml a ex:SBML .
 ex:sbml ex:xmlns <http://www.sbml.org/sbml/level3/version2/core> .
 ex:sbml ex:level "3"^^xsd:integer .
 ex:sbml ex:version "2"^^xsd:integer .
+ex:sbml ex:listOfExternalModelDefinitions ex:list_of_external_model_definitions .
+ex:sbml ex:listOfModelDefinitions ex:list_of_model_definitions .
 ex:sbml ex:model ex:model_0 .
+
+ex:list_of_external_model_definitions a ex:ListOfExternalModelDefinitions .
+ex:list_of_external_model_definitions ex:externalModelDefinition ex:list_of_external_model_definitions__external_model_definition_1 .
+
+ex:list_of_external_model_definitions__external_model_definition_1 a ex:ExternalModelDefinition .
+ex:list_of_external_model_definitions__external_model_definition_1 ex:id "culo"^^xsd:string .
+ex:list_of_external_model_definitions__external_model_definition_1 ex:source <firefly.xml> .
+
+ex:list_of_model_definitions a ex:ListOfModelDefinitions .
+ex:list_of_model_definitions ex:modelDefinition ex:model_0 .
 
 ex:model_0 a ex:Model .
 ex:model_0 rdfs:subClassOf ex:SBase .
@@ -20,6 +32,11 @@ ex:model_0 ex:listOfUnitDefinitions ex:model_0__list_of_unit_definitions .
 ex:model_0 ex:listOfCompartments ex:model_0__list_of_compartments .
 ex:model_0 ex:listOfSpecies ex:model_0__list_of_species .
 ex:model_0 ex:listOfParameters ex:model_0__list_of_parameters .
+
+
+ex:s_base_ref a ex:SBaseRef .
+#ex:s_base_ref ex:id "001"^^xsd:string .
+ex:s_base_ref ex:sBaseRef ex:s_base_ref .
 
 ex:model_0__list_of_unit_definitions a ex:ListOfUnitDefinitions .
 ex:model_0__list_of_unit_definitions ex:unitDefinition ex:per_second .
