@@ -73,7 +73,7 @@ schema:PortSId
     .
 
 # PortSIdRef
-schema:UnitSIdRef 
+schema:PortSIdRef 
     a sh:NodeShape, owl:Class ;
     rdfs:subClassOf schema:PortSId ;
     .
