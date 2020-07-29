@@ -1,0 +1,10 @@
+#*.xml
+.DS_Store
+#.gitignore
+#data.ttl
+#input
+#output*
+#parser
+resources
+#shacl_verifier
+#tex

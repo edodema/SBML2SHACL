@@ -3,7 +3,7 @@ from pyshacl import validate
 from os import path
 
 shapes_file = "./code/shapes.ttl"
-data_file = "./code/data.ttl"
+data_file = "./code/output.ttl"
 
 conforms, v_graph, v_text = validate(data_file, shacl_graph=shapes_file,
    inference='rdfs', debug=True, serialize_report_graph=True)

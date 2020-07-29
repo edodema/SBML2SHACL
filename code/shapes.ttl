@@ -102,10 +102,10 @@ schema:SBOTerm
     .
 
 # SBase (abstract)
-# id:string (0,1) 
+# id:SId (0,1) 
 # name:string (0,1)  
-# metaid:string (0,n)
-# sboTerm:string (0,n)
+# metaid:ID (0,n)
+# sboTerm:SBOTerm (0,n)
 # listOfReplacedElements:ListOfReplacedElements (0,1)  
 # replacedBy:ReplacedBy (0,1)  
 schema:SBase
@@ -198,7 +198,7 @@ schema:Sbml
     sh:property [
         sh:path schema:xmlns ;
         sh:minCount 1 ;
-        sh:datatype sh:anyURI ;
+        sh:datatype xsd:anyURI ;
     ] ;
     sh:property [
         sh:path schema:level ;
