@@ -6,6 +6,101 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl:   <http://www.w3.org/2002/07/owl#>  .
 
+###
+## TYPES
+# ID
+# value:string (1,1)
+schema:ID 
+    a sh:NodeShape, owl:Class ;
+    sh:property [
+        sh:path schema:value ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:closed true ;
+    sh:ignoredProperties (
+        rdf:type
+        rdfs:subClassOf
+    ) ;
+    .
+
+# IDREf
+schema:IDREF
+    a sh:NodeShape, owl:Class ;
+    rdfs:subClassOf schema:ID ;
+    .
+
+# SId
+# value:string (1,1)
+schema:SId 
+    a sh:NodeShape, owl:Class ;
+    sh:property [
+        sh:path schema:value ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:closed true ;
+    sh:ignoredProperties (
+        rdf:type
+        rdfs:subClassOf
+    ) ;
+    .
+
+# SIdRef
+schema:SIdRef 
+    a sh:NodeShape, owl:Class ;
+    rdfs:subClassOf schema:SId ;
+    .
+
+# UnitSId
+schema:UnitSId 
+    a sh:NodeShape, owl:Class ;
+    rdfs:subClassOf schema:SId ;
+    .
+
+# UnitSIdRef
+schema:UnitSIdRef 
+    a sh:NodeShape, owl:Class ;
+    rdfs:subClassOf schema:UnitSId ;
+    .
+
+# PortSId
+schema:PortSId 
+    a sh:NodeShape, owl:Class ;
+    rdfs:subClassOf schema:SId ;
+    .
+
+# PortSIdRef
+schema:UnitSIdRef 
+    a sh:NodeShape, owl:Class ;
+    rdfs:subClassOf schema:PortSId ;
+    .
+
+# LocalSId
+schema:LocalSId 
+    a sh:NodeShape, owl:Class ;
+    rdfs:subClassOf schema:SId ;
+    .
+
+# SBOTerm
+# value:string (1,1)
+schema:SBOTerm 
+    a sh:NodeShape, owl:Class ;
+    sh:property [
+        sh:path schema:value ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:closed true ;
+    sh:ignoredProperties (
+        rdf:type
+        rdfs:subClassOf
+    ) ;
+    .
+
 # SBase (abstract)
 # id:string (0,1) 
 # name:string (0,1)  
@@ -18,7 +113,8 @@ schema:SBase
     sh:property [
         sh:path schema:id ;
         sh:maxCount 1 ;
-        sh:datatype xsd:string ;
+        sh:class schema:SId ;
+        sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:name ;
@@ -27,11 +123,13 @@ schema:SBase
     ] ; 
     sh:property [
         sh:path schema:metaid ;
-        sh:datatype xsd:string ; 
+        sh:class schema:ID ;
+        sh:nodeKind sh:IRI ;
     ] ; 
     sh:property [
         sh:path schema:sboTerm ;
-        sh:datatype xsd:string ; 
+        sh:class schema:SBOTerm ;
+        sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:listOfReplacedElements ;
@@ -44,11 +142,13 @@ schema:SBase
         sh:datatype xsd:ReplacedBy ; 
     ] ;
     .
+###    
+## COMPONENTS
 # SBaseRef 
-# portRef:Port (0,1)  
-# idRef:IRI (0,1)
-# unitRef:Unit (0,1)
-# metaIdRef:string (0,1)
+# portRef:PortSIdRef (0,1)  
+# idRef:SIdRef (0,1)
+# unitRef:UnitSIdRef (0,1)
+# metaIdRef:IDREF (0,1)
 # sBaseRef:SBaseRef (0,1)
 schema:SBaseRef
     a sh:NodeShape, owl:Class ;
@@ -56,24 +156,26 @@ schema:SBaseRef
     sh:property [
         sh:path schema:portRef ;
         sh:maxCount 1 ;
-        sh:class schema:Port ;
+        sh:class schema:PortSIdRef ;
         sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:idRef ;
         sh:maxCount 1 ;
+        sh:class schema:SIdRef ;
         sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:unitRef ;
         sh:maxCount 1 ;
-        sh:class schema:Unit ;
+        sh:class schema:UnitSIdRef ;
         sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:metaIdRef ;
         sh:maxCount 1 ;
-        sh:datatype xsd:string ;
+        sh:class schema:IDREF ;
+        sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:sBaseRef ;
@@ -84,9 +186,9 @@ schema:SBaseRef
     . 
 
 # SBML
-# xmlns:IRI (1,n)
-# level=3:int (1,n)
-# version=2:int (1,n)
+# xmlns:URI (1,n)
+# level:int (1,n)
+# version:int (1,n)
 # listOfExternalModelDefinitions:ListOfExternalModelDefinitions (0,1)
 # listOfModelDefinitions:ListOfModelDefinitions (0,1)
 # model:Model (0,1)
@@ -96,18 +198,16 @@ schema:Sbml
     sh:property [
         sh:path schema:xmlns ;
         sh:minCount 1 ;
-        sh:nodeKind sh:IRI ;
+        sh:datatype sh:anyURI ;
     ] ;
     sh:property [
         sh:path schema:level ;
         sh:minCount 1 ;
-        sh:hasValue 3 ;
         sh:datatype xsd:integer ;
     ] ;
     sh:property [
         sh:path schema:version ;
         sh:minCount 1 ;
-        sh:hasValue 2 ;
         sh:datatype xsd:integer ;
     ] ;
     sh:property [
@@ -144,9 +244,9 @@ schema:ListOfExternalModelDefinitions
     .
 
 # ExternalModelDefinition
-# id:string (1,1) 
+# id:SId (1,1) 
 # source:URI (1,1)
-# modelRef:string (0,1) 
+# modelRef:SIdRef (0,1) 
 # md5:string (0,1) 
 schema:ExternalModelDefinition 
     a sh:NodeShape, owl:Class ;
@@ -154,18 +254,20 @@ schema:ExternalModelDefinition
     sh:property [
         sh:path schema:id ;
         sh:minCount 1 ;
-        sh:datatype xsd:string ;
+        sh:class schema:SId ;
+        sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:source ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
-        sh:nodeKind sh:IRI ;
+        sh:datatype xsd:anyURI ;
     ] ;
     sh:property [
         sh:path schema:modelRef ;
         sh:maxCount 1 ;
-        sh:datatype xsd:string ;
+        sh:class schema:SIdRef;
+        sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:md5 ;
@@ -188,13 +290,13 @@ schema:listOfModelDefinitions
     .
 
 # Model
-# substanceUnits:string (0,n)
-# timeUnits:string (0,n)
-# volumeUnits:string (0,n)
-# areaUnits:string (0,n)
-# lengthUnits:string (0,n)
-# extentUnits:string (0,n)
-# conversionFactor:Parameter (0,n)
+# substanceUnits:UnitSIdRef (0,n)
+# timeUnits:UnitSIdRef (0,n)
+# volumeUnits:UnitSIdRef (0,n)
+# areaUnits:UnitSIdRef (0,n)
+# lengthUnits:UnitSIdRef (0,n)
+# extentUnits:UnitSIdRef (0,n)
+# conversionFactor:SIdRef (0,n)
 # listOfUnitDefinitions:ListOfUnitDefinitions (0,1)
 # listOfCompartments:ListOfCompartments (0,1)
 # listOfSpecies:ListOfSpecies (0,1)
@@ -206,31 +308,37 @@ schema:Model
     rdfs:subClassOf schema:SBase ;
     sh:property [
         sh:path schema:substanceUnits ;
-        sh:datatype xsd:string ; 
+        sh:class schema:UnitSIdRef ;
+        sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:timeUnits ;
-        sh:datatype xsd:string ; 
+        sh:class schema:UnitSIdRef ;
+        sh:nodeKind sh:IRI ; 
     ] ;
     sh:property [
         sh:path schema:volumeUnits ;
-        sh:datatype xsd:string ; 
+        sh:class schema:UnitSIdRef ;
+        sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:areaUnits ;
-        sh:datatype xsd:string ; 
+        sh:class schema:UnitSIdRef ;
+        sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:lengthUnits ;
-        sh:datatype xsd:string ; 
+        sh:class schema:UnitSIdRef ;
+        sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:extentUnits ;
-        sh:datatype xsd:string ; 
+        sh:class schema:UnitSIdRef ;
+        sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:conversionFactor ;
-        sh:class schema:Parameter ;
+        sh:class schema:SIdRef ;
         sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
@@ -284,10 +392,17 @@ schema:ListOfUnitDefinitions
     .
 
 # UnitDefinitions
+# id:UnitSId (1,1)
 # listOfUnits:ListOfUnits (0,1)
 schema:UnitDefinitions
     a sh:NodeShape, owl:Class ;
     rdfs:subClassOf schema:SBase ;
+    sh:property [
+        sh:path schema:id ;
+        sh:minCount 1 ;
+        sh:class schema:UnitSId ;
+        sh:nodeKind sh:IRI ;
+    ] ; 
     sh:property [
         sh:path schema:listOfUnits ;
         sh:class schema:ListOfUnits ;
@@ -309,10 +424,10 @@ schema:ListOfUnits
     .
 
 # Unit 
-# kind:enumerate( ampere, avogadro, becquerel, candela, coulomb, dimensionless,
+# kind:UnitSId in { ampere, avogadro, becquerel, candela, coulomb, dimensionless,
 #                 farad, gram, gray, henry, hertz, item, joule, kelvin, kilogram,
 #                 litre, lumen, lux, metre, mole, newton, ohm, pascal, radian, 
-#                 second, siemens, sievert, steradian, tesla, volt, watt, weber )
+#                 second, siemens, sievert, steradian, tesla, volt, watt, weber }
 # multiplier:decimal
 # scale:integer
 # exponent:integer
@@ -321,40 +436,8 @@ schema:Unit
     rdfs:subClassOf schema:SBase ;
     sh:property [
         sh:path schema:kind ;
-        sh:in (
-            "ampere"
-            "avogadro"
-            "becquerel"
-            "candela"
-            "coulomb"
-            "dimensionless"
-            "farad"
-            "gram"
-            "gray"
-            "henry"
-            "hertz"
-            "item"
-            "joule"
-            "kelvin"
-            "kilogram"
-            "litre"
-            "lumen"
-            "lux"
-            "metre"
-            "mole"
-            "newton"
-            "ohm"
-            "pascal"
-            "radian"
-            "second"
-            "siemens"
-            "sievert"
-            "steradian"
-            "tesla"
-            "volt"
-            "watt"
-            "weber"
-        ) ;
+        sh:class schema:UnitSId ;
+        sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:multiplier ;
@@ -383,10 +466,10 @@ schema:ListOfCompartments
     .
 
 # Compartment
-# id:string (1,1) 
+# id:SId (1,1) 
 # spatialDimensions:decimal (0,n)
 # size:decimal (0,n)
-# units:string (0,n)
+# units:UnitSIdRef (0,n)
 # constant:boolean (1,1)
 schema:Compartment
     a sh:NodeShape, owl:Class ;
@@ -394,7 +477,8 @@ schema:Compartment
     sh:property [
         sh:path schema:id ;
         sh:minCount 1 ;
-        sh:datatype xsd:string ;
+        sh:class schema:SId ;
+        sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:spatialDimensions ;
@@ -406,7 +490,8 @@ schema:Compartment
     ] ; 
     sh:property [
         sh:path schema:units ;
-        sh:datatype xsd:string ;
+        sh:class schema:UnitSIdRef ;
+        sh:nodeKind sh:IRI ;
     ] ; 
     sh:property [
         sh:path schema:constant ;
@@ -429,26 +514,27 @@ schema:ListOfSpecies
     .
 
 # Species
-# id:string (1,1) 
-# compartment:Compartment (0,n)
+# id:SId (1,1) 
+# compartment:SIdRef (0,n)
 # initialAmount:double (0,1)
 # initialConcentration (0,1)
-# substanceUnits:string (0,n)
+# substanceUnits:UnitSIdRef (0,n)
 # hasOnlySubstanceUnits:boolean (0,1)
 # boundaryCondition:boolean (0,1)
 # constant:boolean (0,1)
-# conversionFactor:Parameter (0,n)
+# conversionFactor:SIdRef (0,n)
 schema:Species 
     a sh:NodeShape, owl:Class ;
     rdfs:subClassOf schema:SBase ;
     sh:property [
         sh:path schema:id ;
         sh:minCount 1 ;
-        sh:datatype xsd:string ;
+        sh:class schema:SId ;
+        sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:compartment ;
-        sh:class schema:Compartment ;
+        sh:class schema:SIdRef ;
         sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
@@ -463,6 +549,7 @@ schema:Species
     ] ;
     sh:property [
         sh:path schema:substanceUnits ;
+        sh:class schema:UnitSIdRef ;
         sh:datatype xsd:string ;
     ] ;
     sh:property [
@@ -482,7 +569,7 @@ schema:Species
     ] ;
     sh:property [
         sh:path schema:conversionFactor ;
-        sh:class schema:Parameter ;
+        sh:class schema:SIdRef ;
         sh:nodeKind sh:IRI ;
     ] ;
     .
@@ -500,9 +587,9 @@ schema:ListOfParameters
     .
 
 # Parameter
-# id:string (1,1) 
+# id:SId (1,1) 
 # value:double (0,n)
-# units:string (0,n)
+# units:UnitSIdRef (0,n)
 # constant:boolean (0,1)
 schema:Parameter 
     a sh:NodeShape, owl:Class ;
@@ -510,15 +597,17 @@ schema:Parameter
     sh:property [
         sh:path schema:id ;
         sh:minCount 1 ;
-        sh:datatype xsd:string ;
+        sh:class schema:SId ;
+        sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:value ; 
         sh:datatype xsd:double ;
     ] ; 
     sh:property [
-        sh:path schema:units ; 
-        sh:datatype xsd:string ;
+        sh:path schema:units ;
+        sh:class schema:UnitSIdRef ;
+        sh:nodeKind sh:IRI ; 
     ] ; 
     sh:property [
         sh:path schema:constant ;
@@ -541,10 +630,10 @@ schema:ListOfSubmodels
     . 
 
 # Submodel
-# id:string (1,1) 
-# modelRef:Model (1,1) 
-# timeConversionFactor:Parameter (0,1)
-# extentConversionFactor:Parameter (0,1)
+# id:SId (1,1) 
+# modelRef:SIdRef (1,1) 
+# timeConversionFactor:SIdRef (0,1)
+# extentConversionFactor:SIdRef (0,1)
 # listOfDeletions:ListOfDeletions (0,1)
 schema:Submodel
     a sh:NodeShape, owl:Class ;
@@ -552,25 +641,26 @@ schema:Submodel
     sh:property [
         sh:path schema:id ;
         sh:minCount 1 ;
-        sh:datatype xsd:string ;
+        sh:class schema:SId ;
+        sh:nodeKind sh:IRI ;
     ] ;
     sh:property[
         sh:path schema:modelRef ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
-        sh:class schema:Model ;
-        sh:nodeKind  sh:IRI ;
+        sh:class schema:SIdRef ;
+        sh:nodeKind sh:IRI ;
     ] ; 
     sh:property[
         sh:path schema:timeConversionFactor ;
         sh:maxCount 1 ;
-        sh:class schema:Parameter ;
+        sh:class schema:SIdRef ;
         sh:nodeKind  sh:IRI ;
     ] ;
     sh:property[
         sh:path schema:extentConversionFactor ;
         sh:maxCount 1 ;
-        sh:class schema:Parameter ;
+        sh:class schema:SIdRef ;
         sh:nodeKind  sh:IRI ;
     ] ;
     sh:property[
@@ -595,14 +685,15 @@ schema:ListOfPorts
     . 
 
 # Port
-# id:string (1,1) 
+# id:PortSId (1,1) 
 schema:Port
     a sh:NodeShape, owl:Class ;
     rdfs:subClassOf schema:SBaseRef ;
     sh:property [
         sh:path schema:id ;
         sh:minCount 1 ;
-        sh:datatype xsd:string ;
+        sh:class schema:PortSId ;
+        sh:nodeKind sh:IRI ;
     ] ;
     . 
 
@@ -639,41 +730,41 @@ schema:ListOfReplacedElements
     .
 
 # ReplacedElement
-# submodelRef:Submodel (0,1) 
-# deletion:Deletion (0,1)
-# conversionFactor:Parameter (0,1)
+# submodelRef:SIdRef (0,1) 
+# deletion:SIdRef (0,1)
+# conversionFactor:SIdRef (0,1)
 schema:ReplacedElement
     a sh:NodeShape, owl:Class ;
     rdfs:subClassOf schema:SBaseRef ;
     sh:property [
         sh:path schema:submodelRef ;
         sh:maxCount 1 ;
-        sh:class schema:Submodel ;
+        sh:class schema:SIdRef ;
         sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:deletion ;
         sh:maxCount 1 ;
-        sh:class schema:Deletion ;
+        sh:class schema:SIdRef ;
         sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:conversionFactor ;
         sh:maxCount 1 ;
-        sh:class schema:Parameter ;
+        sh:class schema:SIdRef ;
         sh:nodeKind sh:IRI ;
     ] ;
     . 
 
 # ReplacedBy 
-# submodelRef:Submodel (0,1)
+# submodelRef:SIdRef (0,1)
 schema:ReplacedBy 
     a sh:NodeShape, owl:Class ;
     rdfs:subClassOf schema:SBaseRef ;
     sh:property [
         sh:path schema:submodelRef ;
         sh:maxCount 1 ;
-        sh:class schema:Submodel ;
+        sh:class schema:SIdRef ;
         sh:nodeKind sh:IRI ;
     ] ; 
     .
