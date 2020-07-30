@@ -1,6 +1,24 @@
 import xml.etree.ElementTree as ET
 import re 
 
+# Function that istantiates an identifier in the output file
+def add_identifier(idt, value, idt_list):
+    identifiers = {
+        'id': 'ID', 'idref': 'IDREF',
+        'sid': 'SId', 'sidref': 'SIdRef',
+        'usid': 'UnitSId', 'usidref': 'UnitSIdRef',
+        'sboterm': 'SBOTerm'
+    }
+
+    if not idt in identifiers: 
+        print("ERROR! This identifier is not modeled.")
+        exit(-1)
+
+    text = '\n' + idt + ':' + value + ' a schema:' + identifiers[idt]  + ' .'
+    text += '\n' + idt + ':' + value + ' schema:value "' + value + '"^^xsd:string .'
+    idt_list.append(value)
+    return text
+
 preamble = "./code/preamble.txt"
 
 #model = "./input/biomodels/BIOMD0000000562.xml"
@@ -99,11 +117,11 @@ sboterm_list = []
 # XML tree exploration
 for child in root.iter():
     tag = re.search('.*\}(.*)', child.tag)
-    if tag is not None: tag = tag.group(1)
+    tag = tag.group(1) if tag is not None else child.tag
 
     #if re.match('BaseRef', tag) is not None: print(child.tag, child.attrib)
 
-    if re.match('sbml', tag) is not None: 
+    if re.match('^sbml$', tag) is not None: 
         # Subject parametrization, is simply useful 
         subject = '\nex:sbml_' + str(sbml_count) 
         sbml_text += subject + ' a schema:Sbml .'
@@ -116,53 +134,41 @@ for child in root.iter():
             # Some tags could have a namespace before, remove it 
             key = re.search('.*\}(.*)', child_key)
             key = key.group(1) if key is not None else child_key
-
             ## <Sbml> <key> <value> 
 
             # <Sbml> <id> <value>
-            if re.match('id', key) is not None: 
+            if re.match('^id$', key) is not None: 
                 sbml_text += subject + ' schema:id sid:' + value + ' .'
                 # id is a SId: sid:value schema:value value
-                if not value in sid_list:
-                    sid_text += '\nsid:' + value + ' a schema:SId .'
-                    sid_text += '\nsid:' + value + ' schema:value "' + value + '"^^xsd:string .'
-                    sid_list.append(value)
+                if not value in sid_list: sid_text += add_identifier('sid', value, sid_list)
             # Ssbml> <name> <value>
-            elif re.match('name', key) is not None: 
+            elif re.match('^name$', key) is not None: 
                 sbml_text += subject + ' schema:name "' + value + '"^^xsd:string .'  
             # <Sbml> <metaid> <value>
-            elif re.match('metaid', key) is not None:
+            elif re.match('^metaid$', key) is not None:
                 sbml_text += subject + ' schema:metaid id:' + value + ' .'
                 # metid is a ID: id:value schema:value value  
-                if not value in id_list:
-                    id_text += '\nid:' + value + ' a schema:ID .'
-                    id_text += '\nid:' + value + ' schema:value "' + value + '"^^xsd:string .'
-                    id_list.append(value)
+                if not value in id_list: id_text += add_identifier('id', value, id_list)
             # <Sbml> <sboTerm> <value>
-            elif re.match('sboTerm', key) is not None: 
+            elif re.match('^sboTerm$', key) is not None: 
                 sbml_text += subject + ' schema:sboTerm sboterm:' + value + ' .'
                 # sboTerm is a SBOTerm: sboterm:value schema:value value
-                if not value in sboterm_list:
-                    sboterm_text += '\nsboterm:' + value + ' a schema:SBOTerm .'
-                    sboterm_text += '\nsboterm:' + value + ' schema:value "' + value + '"^^xsd:string .'
-                    sboterm_list.append(value)
+                if not value in sboterm_list: sboterm_text += add_identifier('sboterm', value, sboterm_list)
             # <Sbml> <level> <value>
-            elif re.match('level', key) is not None: 
+            elif re.match('^level$', key) is not None: 
                 sbml_text += subject + ' schema:level "' + value + '"^^xsd:integer .'
             # <Sbml> <version> <value>
-            elif re.match('version', key) is not None: 
+            elif re.match('^version$', key) is not None: 
                 sbml_text += subject + ' schema:version "' + value + '"^^xsd:integer .'
         # Increment Sbml identifier
         sbml_count += 1
 
-    '''
-    elif re.match('listOfExternalModelDefinition', tag) is not None: print(child.tag, child.attrib)
-    elif re.match('externalModelDefinition', tag) is not None: print(child.tag, child.attrib)
-    elif re.match('listOfModelDefinitions', tag) is not None: print(child.tag, child.attrib)
-    '''
+    # elif re.match('listOfExternalModelDefinition', tag) is not None: print(child.tag, child.attrib)
+    # elif re.match('externalModelDefinition', tag) is not None: print(child.tag, child.attrib)
+    # elif re.match('listOfModelDefinitions', tag) is not None: print(child.tag, child.attrib)
 
-    if re.match('model', tag) is not None:
-        # a Model has associated a Sbml whose attribute is now added
+    elif re.match('^model$', tag) is not None:
+        # a Model is associated to a Sbml whose attribute is now added
         # hence model is used as an object despite the subject variable
         # <Sbml> <model> <Model>
         subject = 'ex:model_' + str(model_count)  
@@ -170,44 +176,33 @@ for child in root.iter():
         subject = '\n' + subject
         # from here we will use model only as a subject
         model_text += subject + ' a schema:Model .'
-
         # Attributes
         for child_key, value in child.attrib.items():
             # Some tags could have a namespace before, remove it 
             key = re.search('.*\}(.*)', child_key)
             key = key.group(1) if key is not None else child_key
-
             ## <Model> <key> <value> 
 
             # <Model> <id> <value>
-            if re.match('id', key) is not None: 
+            if re.match('^id$', key) is not None: 
                 model_text += subject + ' schema:id sid:' + value + ' .'
                 # id is a SId: sid:value schema:value value
-                if not value in sid_list:
-                    sid_text += '\nsid:' + value + ' a schema:SId .'
-                    sid_text += '\nsid:' + value + ' schema:value "' + value + '"^^xsd:string .'
-                    sid_list.append(value)
+                if not value in sid_list: sid_text += add_identifier('sid', value, sid_list)
             # <Model> <name> <value>
-            elif re.match('name', key) is not None: 
+            elif re.match('^name$', key) is not None: 
                 model_text += subject + ' schema:name "' + value + '"^^xsd:string .' 
             # <Model> <metaid> <value>
-            elif re.match('metaid', key) is not None:
+            elif re.match('^metaid$', key) is not None:
                 model_text += subject + ' schema:metaid id:' + value + ' .'
                 # metaid is a ID: id:value schema:value value
-                if not value in id_list:
-                    id_text += '\nid:' + value + ' a schema:ID .'
-                    id_text += '\nid:' + value + ' schema:value "' + value + '"^^xsd:string .'
-                    id_list.append(value)
+                if not value in id_list: id_text += add_identifier('id', value, id_list)
             # <Model> <sboTerm> <value>
-            elif re.match('sboTerm', key) is not None: 
+            elif re.match('^sboTerm$', key) is not None: 
                 model_text += subject + ' schema:sboTerm sboterm:' + value + ' .'
                 # sboTerm is a SBOTerm: sboterm:value schema:value value
-                if not value in sboterm_list:
-                    sboterm_text += '\nsboterm:' + value + ' a schema:SBOTerm .'
-                    sboterm_text += '\nsboterm:' + value + ' schema:value "' + value + '"^^xsd:string .'
-                    sboterm_list.append(value)
+                if not value in sboterm_list: sboterm_text += add_identifier('sboterm', value, sboterm_list)
             # <Model> <substanceUnits> <value>
-            elif re.match('substanceUnits', key) is not None:
+            elif re.match('^substanceUnits$', key) is not None:
                 model_text += subject + ' schema:substanceUnits usidref:' + value + ' .'
                 # is a UnitSIdRef: usidref:value schema:value value
                 if not value in usidref_list:
@@ -215,7 +210,7 @@ for child in root.iter():
                     usidref_text += '\nusidref:' + value + ' schema:value "' + value + '"^^xsd:string .'
                     usidref_list.append(value)
             # <Model> <timeUnits> <value>
-            elif re.match('timeUnits', key) is not None:
+            elif re.match('^timeUnits$', key) is not None:
                 model_text += subject + ' schema:timeUnits usidref:' + value + ' .'
                 # is a UnitSIdRef: usidref:value schema:value value
                 if not value in usidref_list:
@@ -223,7 +218,7 @@ for child in root.iter():
                     usidref_text += '\nusidref:' + value + ' schema:value "' + value + '"^^xsd:string .'
                     usidref_list.append(value)
             # <Model> <volumeUnits> <value>
-            elif re.match('volumeUnits', key) is not None:
+            elif re.match('^volumeUnits$', key) is not None:
                 model_text += subject + ' schema:volumeUnits usidref:' + value + ' .'
                 # is a UnitSIdRef: usidref:value schema:value value
                 if not value in usidref_list:
@@ -231,7 +226,7 @@ for child in root.iter():
                     usidref_text += '\nusidref:' + value + ' schema:value "' + value + '"^^xsd:string .'
                     usidref_list.append(value)
             # <Model> <areaUnits> <value>
-            elif re.match('areaUnits', key) is not None:
+            elif re.match('^areaUnits$', key) is not None:
                 model_text += subject + ' schema:areaUnits usidref:' + value + ' .'
                 # is a UnitSIdRef: usidref:value schema:value value
                 if not value in usidref_list:
@@ -239,7 +234,7 @@ for child in root.iter():
                     usidref_text += '\nusidref:' + value + ' schema:value "' + value + '"^^xsd:string .'
                     usidref_list.append(value)
             # <Model> <lengthUnits> <value>
-            elif re.match('lengthUnits', key) is not None:
+            elif re.match('^lengthUnits$', key) is not None:
                 model_text += subject + ' schema:lengthUnits usidref:' + value + ' .'
                 # is a UnitSIdRef: usidref:value schema:value value
                 if not value in usidref_list:
@@ -247,7 +242,7 @@ for child in root.iter():
                     usidref_text += '\nusidref:' + value + ' schema:value "' + value + '"^^xsd:string .'
                     usidref_list.append(value)
             # <Model> <extentUnits> <value>
-            elif re.match('extentUnits', key) is not None:
+            elif re.match('^extentUnits$', key) is not None:
                 model_text += subject + ' schema:extentUnits usidref:' + value + ' .'
                 # is a UnitSIdRef: usidref:value schema:value value
                 if not value in usidref_list:
@@ -255,21 +250,174 @@ for child in root.iter():
                     usidref_text += '\nusidref:' + value + ' schema:value "' + value + '"^^xsd:string .'
                     usidref_list.append(value)
             # <Model> <conversionFactor> <value>
-            elif re.match('conversionFactor', key) is not None:
+            elif re.match('^conversionFactor$', key) is not None:
                 model_text += subject + ' schema:conversionFactor usidref:' + value + ' .'
                 # is a SIdRef: sidref:value schema:value value
                 if not value in sidref_list:
                     sidref_text += '\nsidref:' + value + ' a schema:SIdRef .'
                     sidref_text += '\nsidref:' + value + ' schema:value "' + value + '"^^xsd:string .'
                     sidref_list.append(value)
-            # Increment Model identifier
-            model_count += 1
+        # Increment Model identifier
+        model_count += 1
 
+    elif re.match('^listOfUnitDefinitions$', tag) is not None: 
+        # a ListOfUnitDefinitions is associated to a Model whose attribute is now added
+        # hence listOfUnitDefinitions is used as an object despite the subject variable
+        # <Model> <listOfUnitDefinitions> <ListOfUnitDefinitions>
+        subject = 'ex:listOfUnitDefinitions'  
+        model_text += '\nex:model_' + str(model_count-1) + ' schema:listOfUnitDefinitions ' + subject + ' .'
+        subject = '\n' + subject 
+        listOfUnitDefinitions_text += subject + ' a schema:ListOfUnitDefinitions .'
+        # Attributes
+        for child_key, value in child.attrib.items():
+            # Some tags could have a namespace before, remove it 
+            key = re.search('.*\}(.*)', child_key)
+            key = key.group(1) if key is not None else child_key
+            ## <ListOfUnitDefinitions> <key> <value> 
+
+            # <ListOfUnitDefinitions> <id> <value>
+            if re.match('^id$', key) is not None: 
+                listOfUnitDefinitions_text += subject + ' schema:id sid:' + value + ' .'
+                # id is a SId: sid:value schema:value value
+                if not value in sid_list: sid_text += add_identifier('sid', value, sid_list)
+            # <ListOfUnitDefinitions> <name> <value>
+            elif re.match('^name$', key) is not None: 
+                listOfUnitDefinitions_text += subject + ' schema:name "' + value + '"^^xsd:string .' 
+            # <ListOfUnitDefinitions> <metaid> <value>
+            elif re.match('^metaid$', key) is not None:
+                listOfUnitDefinitions_text += subject + ' schema:metaid id:' + value + ' .'
+                # metaid is a ID: id:value schema:value value
+                if not value in id_list: id_text += add_identifier('id', value, id_list)
+            # <ListOfUnitDefinitions> <sboTerm> <value>
+            elif re.match('^sboTerm$', key) is not None: 
+                listOfUnitDefinitions_text += subject + ' schema:sboTerm sboterm:' + value + ' .'
+                # sboTerm is a SBOTerm: sboterm:value schema:value value
+                if not value in sboterm_list: sboterm_text += add_identifier('sboterm', value, sboterm_list)
+
+    elif re.match('^unitDefinition$', tag) is not None:
+        # a UnitDefinition is associated to a ListOfUnitDefinitions whose attribute is now added
+        # hence unitDefinition is used as an object despite the subject variable
+        # <ListOfUnitDefinitions> <unitDefinition> <UnitDefinition>
+        subject = 'ex:unitDefinition_' + str(unitDefinition_count)  
+        listOfUnitDefinitions_text += '\nex:listOfUnitDefinitions schema:unitDefinition ' + subject + ' .'
+        subject = '\n' + subject         
+        unitDefinition_text += subject + ' a schema:UnitDefinition .'
+        # Attributes
+        for child_key, value in child.attrib.items():
+            # Some tags could have a namespace before, remove it 
+            key = re.search('.*\}(.*)', child_key)
+            key = key.group(1) if key is not None else child_key
+             
+            ## <UnitDefinition> <key> <value> 
+            # <UnitDefinition> <name> <value>
+            if re.match('^name$', key) is not None: 
+                unitDefinition_text += subject + ' schema:name "' + value + '"^^xsd:string .'  
+            # <UnitDefinition> <metaid> <value>
+            elif re.match('^metaid$', key) is not None:
+                unitDefinition_text += subject + ' schema:metaid id:' + value + ' .'
+                # metid is a ID: id:value schema:value value  
+                if not value in id_list: id_text += add_identifier('id', value, id_list)
+            # <UnitDefinition> <sboTerm> <value>
+            elif re.match('^sboTerm$', key) is not None: 
+                unitDefinition_text += subject + ' schema:sboTerm sboterm:' + value + ' .'
+                # sboTerm is a SBOTerm: sboterm:value schema:value value
+                if not value in sboterm_list: sboterm_text += add_identifier('sboterm', value, sboterm_list)
+            # <UnitDefinition> <id> <value>
+            if re.match('^id$', key) is not None: 
+                unitDefinition_text += subject + ' schema:id usid:' + value + ' .'
+                # id is a UnitSId: usid:value schema:value value
+                if not value in sid_list: usid_text += add_identifier('usid', value, usid_list)
+        # Increment UnitDefinition identifier
+        unitDefinition_count += 1
+
+    elif re.match('^listOfUnits$', tag) is not None:
+        # a ListOfUnits is associated to a UnitDefinition whose attribute is now added
+        # hence listOfUnits is used as an object despite the subject variable
+        # <UnitDefinition> <listOfUnits> <ListOfUnits>
+        subject = 'ex:listOfUnits_' + str(listOfUnits_count)
+        unitDefinition_text += '\nex:unitDefinition_' + str(unitDefinition_count-1) + ' schema:listOfUnits ' + subject + ' .'
+        subject = '\n' + subject 
+        listOfUnits_text += subject + ' a schema:ListOfUnits .'
+        # Attributes
+        for child_key, value in child.attrib.items():
+            # Some tags could have a namespace before, remove it 
+            key = re.search('.*\}(.*)', child_key)
+            key = key.group(1) if key is not None else child_key
+            ## <ListOfUnits> <key> <value> 
+
+            # <ListOfUnitDefinitions> <id> <value>
+            if re.match('^id$', key) is not None: 
+                listOfUnits_text += subject + ' schema:id sid:' + value + ' .'
+                # id is a SId: sid:value schema:value value
+                if not value in sid_list: sid_text += add_identifier('sid', value, sid_list)
+            # <ListOfUnits> <name> <value>
+            elif re.match('^name$', key) is not None: 
+                listOfUnits_text += subject + ' schema:name "' + value + '"^^xsd:string .' 
+            # <ListOfUnits> <metaid> <value>
+            elif re.match('^metaid$', key) is not None:
+                listOfUnits_text += subject + ' schema:metaid id:' + value + ' .'
+                # metaid is a ID: id:value schema:value value
+                if not value in id_list: id_text += add_identifier('id', value, id_list)
+            # <ListOfUnits> <sboTerm> <value>
+            elif re.match('^sboTerm$', key) is not None: 
+                listOfUnits_text += subject + ' schema:sboTerm sboterm:' + value + ' .'
+                # sboTerm is a SBOTerm: sboterm:value schema:value value
+                if not value in sboterm_list: sboterm_text += add_identifier('sboterm', value, sboterm_list)
+        # Increment ListOfUnits identifier
+        listOfUnits_count += 1
+
+    elif re.match('^unit$', tag) is not None:
+        # a Unit is associated to a ListOfUnits whose attribute is now added
+        # hence unit is used as an object despite the subject variable
+        # <ListOfUnits> <unit> <Unit>
+        subject = 'ex:unit_' + str(unit_count)  
+        listOfUnits_text += '\nex:listOfUnits schema:unit ' + subject + ' .'
+        subject = '\n' + subject         
+        unit_text += subject + ' a schema:Unit .'
+        # Attributes
+        for child_key, value in child.attrib.items():
+            # Some tags could have a namespace before, remove it 
+            key = re.search('.*\}(.*)', child_key)
+            key = key.group(1) if key is not None else child_key
+            ## <Unit> <key> <value> 
+
+            # <Unit> <id> <value> 
+            if re.match('^id$', key) is not None: 
+                unit_text += subject + ' schema:id sid:' + value + ' .'
+                # id is a SId: sid:value schema:value value
+                if not value in sid_list: sid_text += add_identifier('sid', value, sid_list)
+            # <Unit> <name> <value>
+            elif re.match('^name$', key) is not None: 
+                unit_text += subject + ' schema:name "' + value + '"^^xsd:string .'  
+            # <Unit> <metaid> <value>
+            elif re.match('^metaid$', key) is not None:
+                unit_text += subject + ' schema:metaid id:' + value + ' .'
+                # metid is a ID: id:value schema:value value  
+                if not value in id_list: id_text += add_identifier('id', value, id_list)
+            # <Unit> <sboTerm> <value>
+            elif re.match('^sboTerm$', key) is not None: 
+                unit_text += subject + ' schema:sboTerm sboterm:' + value + ' .'
+                # sboTerm is a SBOTerm: sboterm:value schema:value value
+                if not value in sboterm_list: sboterm_text += add_identifier('sboterm', value, sboterm_list)
+            # <Unit> <kind> <value>
+            if re.match('^kind$', key) is not None: 
+                unit_text += subject + ' schema:kind usid:' + value + ' .'
+                # kind is a UnitSId: usid:value schema:value value
+                if not value in usid_list: usid_text += add_identifier('usid', value, usid_list)
+            # <Unit> <multiplier> <value>
+            elif re.match('^multiplier$', key) is not None: 
+                sbml_text += subject + ' schema:multiplier "' + value + '"^^xsd:decimal .'
+            # <Unit> <scale> <value>
+            elif re.match('^scale$', key) is not None: 
+                sbml_text += subject + ' schema:scale "' + value + '"^^xsd:integer .'
+            # <Unit> <exponent> <value>
+            elif re.match('^exponent$', key) is not None: 
+                sbml_text += subject + ' schema:exponent "' + value + '"^^xsd:decimal .'
+        # Increment Unit identifier
+        unit_count += 1
+
+    
     '''
-    elif re.match('listOfUnitDefinition', tag) is not None: print(tag, child.attrib)
-    elif re.match('unitDefinitions', tag) is not None: print(tag, child.attrib)
-    elif re.match('listOfUnits', tag) is not None: print(tag, child.attrib)
-    elif re.match('unit', tag) is not None: print(tag, child.attrib)
     elif re.match('listOfCompartments', tag) is not None: print(tag, child.attrib)
     elif re.match('compartment', tag) is not None: print(tag, child.attrib)
     elif re.match('listOfSpecies', tag) is not None: print(tag, child.attrib)

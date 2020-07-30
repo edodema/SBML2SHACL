@@ -25,7 +25,7 @@ schema:ID
     ) ;
     .
 
-# IDREf
+# IDREF
 schema:IDREF
     a sh:NodeShape, owl:Class ;
     rdfs:subClassOf schema:ID ;
@@ -391,10 +391,10 @@ schema:ListOfUnitDefinitions
     ] ;
     .
 
-# UnitDefinitions
+# UnitDefinition
 # id:UnitSId (1,1)
 # listOfUnits:ListOfUnits (0,1)
-schema:UnitDefinitions
+schema:UnitDefinition
     a sh:NodeShape, owl:Class ;
     rdfs:subClassOf schema:SBase ;
     sh:property [
@@ -427,10 +427,10 @@ schema:ListOfUnits
 # kind:UnitSId in { ampere, avogadro, becquerel, candela, coulomb, dimensionless,
 #                 farad, gram, gray, henry, hertz, item, joule, kelvin, kilogram,
 #                 litre, lumen, lux, metre, mole, newton, ohm, pascal, radian, 
-#                 second, siemens, sievert, steradian, tesla, volt, watt, weber }
-# multiplier:decimal
-# scale:integer
-# exponent:integer
+#                 second, siemens, sievert, steradian, tesla, volt, watt, weber } (0,n)
+# multiplier:decimal (0,n)
+# scale:integer (0,n)
+# exponent:decimal (0,n)
 schema:Unit
     a sh:NodeShape, owl:Class ;
     rdfs:subClassOf schema:SBase ;
@@ -449,7 +449,7 @@ schema:Unit
     ] ;
     sh:property [
         sh:path schema:exponent ;
-        sh:datatype xsd:integer ;
+        sh:datatype xsd:decimal ;
     ] ;
     .
 
@@ -517,7 +517,7 @@ schema:ListOfSpecies
 # id:SId (1,1) 
 # compartment:SIdRef (0,n)
 # initialAmount:double (0,1)
-# initialConcentration (0,1)
+# initialConcentration:double (0,1)
 # substanceUnits:UnitSIdRef (0,n)
 # hasOnlySubstanceUnits:boolean (0,1)
 # boundaryCondition:boolean (0,1)

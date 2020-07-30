@@ -4,6 +4,7 @@
 @prefix schema: <http://schema.org/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix id: <http://example.org/ns/id#> .
+@prefix idref: <http://example.org/ns/idref#> .
 @prefix sid: <http://example.org/ns/sid#> .
 @prefix sidref: <http://example.org/ns/sid/sidref#> .
 @prefix usid: <http://example.org/ns/sid/usid#> .

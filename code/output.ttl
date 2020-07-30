@@ -186,6 +186,14 @@ sid:tiny_example_12 a schema:SId .
 sid:tiny_example_12 schema:value "tiny_example_12"^^xsd:string .
 
 
+usid:m2 a schema:UnitSId .
+usid:m2 schema:value "m2"^^xsd:string .
+usid:mmole a schema:UnitSId .
+usid:mmole schema:value "mmole"^^xsd:string .
+usid:mM a schema:UnitSId .
+usid:mM schema:value "mM"^^xsd:string .
+usid:mmole_per_s a schema:UnitSId .
+usid:mmole_per_s schema:value "mmole_per_s"^^xsd:string .
 
 usidref:m2 a schema:UnitSIdRef .
 usidref:m2 schema:value "m2"^^xsd:string .
@@ -203,6 +211,24 @@ ex:sbml_1 schema:metaid id:meta_11b6620dad1b4403bab84b845495eff3 .
 ex:sbml_1 schema:sboTerm sboterm:SBO:0000293 .
 ex:sbml_1 schema:version "2"^^xsd:integer .
 ex:sbml_1 schema:model ex:model_1 .
+ex:unit_1 schema:exponent "2"^^xsd:decimal .
+ex:unit_1 schema:multiplier "1"^^xsd:decimal .
+ex:unit_1 schema:scale "0"^^xsd:integer .
+ex:unit_2 schema:exponent "1"^^xsd:decimal .
+ex:unit_2 schema:multiplier "1"^^xsd:decimal .
+ex:unit_2 schema:scale "-3"^^xsd:integer .
+ex:unit_3 schema:exponent "1"^^xsd:decimal .
+ex:unit_3 schema:multiplier "1"^^xsd:decimal .
+ex:unit_3 schema:scale "-3"^^xsd:integer .
+ex:unit_4 schema:exponent "-1"^^xsd:decimal .
+ex:unit_4 schema:multiplier "1"^^xsd:decimal .
+ex:unit_4 schema:scale "0"^^xsd:integer .
+ex:unit_5 schema:exponent "1"^^xsd:decimal .
+ex:unit_5 schema:multiplier "1"^^xsd:decimal .
+ex:unit_5 schema:scale "-3"^^xsd:integer .
+ex:unit_6 schema:exponent "-1"^^xsd:decimal .
+ex:unit_6 schema:multiplier "1"^^xsd:decimal .
+ex:unit_6 schema:scale "0"^^xsd:integer .
 
 
 
@@ -217,10 +243,50 @@ ex:model_1 schema:name "Keating2019 -  Minimal model demonstrating SBML Level 3 
 ex:model_1 schema:substanceUnits usidref:mmole .
 ex:model_1 schema:timeUnits usidref:second .
 ex:model_1 schema:volumeUnits usidref:litre .
+ex:model_1 schema:listOfUnitDefinitions ex:listOfUnitDefinitions .
 
+ex:listOfUnitDefinitions a schema:ListOfUnitDefinitions .
+ex:listOfUnitDefinitions schema:unitDefinition ex:unitDefinition_1 .
+ex:listOfUnitDefinitions schema:unitDefinition ex:unitDefinition_2 .
+ex:listOfUnitDefinitions schema:unitDefinition ex:unitDefinition_3 .
+ex:listOfUnitDefinitions schema:unitDefinition ex:unitDefinition_4 .
 
+ex:unitDefinition_1 a schema:UnitDefinition .
+ex:unitDefinition_1 schema:id usid:m2 .
+ex:unitDefinition_1 schema:listOfUnits ex:listOfUnits_1 .
+ex:unitDefinition_2 a schema:UnitDefinition .
+ex:unitDefinition_2 schema:id usid:mmole .
+ex:unitDefinition_2 schema:listOfUnits ex:listOfUnits_2 .
+ex:unitDefinition_3 a schema:UnitDefinition .
+ex:unitDefinition_3 schema:id usid:mM .
+ex:unitDefinition_3 schema:listOfUnits ex:listOfUnits_3 .
+ex:unitDefinition_4 a schema:UnitDefinition .
+ex:unitDefinition_4 schema:id usid:mmole_per_s .
+ex:unitDefinition_4 schema:listOfUnits ex:listOfUnits_4 .
 
+ex:listOfUnits_1 a schema:ListOfUnits .
+ex:listOfUnits schema:unit ex:unit_1 .
+ex:listOfUnits_2 a schema:ListOfUnits .
+ex:listOfUnits schema:unit ex:unit_2 .
+ex:listOfUnits_3 a schema:ListOfUnits .
+ex:listOfUnits schema:unit ex:unit_3 .
+ex:listOfUnits schema:unit ex:unit_4 .
+ex:listOfUnits_4 a schema:ListOfUnits .
+ex:listOfUnits schema:unit ex:unit_5 .
+ex:listOfUnits schema:unit ex:unit_6 .
 
+ex:unit_1 a schema:Unit .
+ex:unit_1 schema:kind usid:metre .
+ex:unit_2 a schema:Unit .
+ex:unit_2 schema:kind usid:mole .
+ex:unit_3 a schema:Unit .
+ex:unit_3 schema:kind usid:mole .
+ex:unit_4 a schema:Unit .
+ex:unit_4 schema:kind usid:litre .
+ex:unit_5 a schema:Unit .
+ex:unit_5 schema:kind usid:mole .
+ex:unit_6 a schema:Unit .
+ex:unit_6 schema:kind usid:second .
 
 
 
