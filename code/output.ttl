@@ -183,12 +183,42 @@ id:meta_tiny_example_12 a schema:ID .
 id:meta_tiny_example_12 schema:value "meta_tiny_example_12"^^xsd:string .
 id:meta_c a schema:ID .
 id:meta_c schema:value "meta_c"^^xsd:string .
+id:meta_glc a schema:ID .
+id:meta_glc schema:value "meta_glc"^^xsd:string .
+id:meta_g6p a schema:ID .
+id:meta_g6p schema:value "meta_g6p"^^xsd:string .
+id:meta_atp a schema:ID .
+id:meta_atp schema:value "meta_atp"^^xsd:string .
+id:meta_adp a schema:ID .
+id:meta_adp schema:value "meta_adp"^^xsd:string .
+id:meta_phos a schema:ID .
+id:meta_phos schema:value "meta_phos"^^xsd:string .
+id:meta_hydron a schema:ID .
+id:meta_hydron schema:value "meta_hydron"^^xsd:string .
+id:meta_h2o a schema:ID .
+id:meta_h2o schema:value "meta_h2o"^^xsd:string .
 
 sid:tiny_example_12 a schema:SId .
 sid:tiny_example_12 schema:value "tiny_example_12"^^xsd:string .
 sid:c a schema:SId .
 sid:c schema:value "c"^^xsd:string .
+sid:glc a schema:SId .
+sid:glc schema:value "glc"^^xsd:string .
+sid:g6p a schema:SId .
+sid:g6p schema:value "g6p"^^xsd:string .
+sid:atp a schema:SId .
+sid:atp schema:value "atp"^^xsd:string .
+sid:adp a schema:SId .
+sid:adp schema:value "adp"^^xsd:string .
+sid:phos a schema:SId .
+sid:phos schema:value "phos"^^xsd:string .
+sid:hydron a schema:SId .
+sid:hydron schema:value "hydron"^^xsd:string .
+sid:h2o a schema:SId .
+sid:h2o schema:value "h2o"^^xsd:string .
 
+sidref:c a schema:SIdRef .
+sidref:c schema:value "c"^^xsd:string .
 
 usid:m2 a schema:UnitSId .
 usid:m2 schema:value "m2"^^xsd:string .
@@ -208,6 +238,8 @@ sboterm:SBO:0000293 a schema:SBOTerm .
 sboterm:SBO:0000293 schema:value "SBO:0000293"^^xsd:string .
 sboterm:SBO:0000290 a schema:SBOTerm .
 sboterm:SBO:0000290 schema:value "SBO:0000290"^^xsd:string .
+sboterm:SBO:0000247 a schema:SBOTerm .
+sboterm:SBO:0000247 schema:value "SBO:0000247"^^xsd:string .
 
 
 ex:sbml_1 a schema:Sbml .
@@ -233,6 +265,7 @@ ex:model_1 schema:timeUnits usidref:second .
 ex:model_1 schema:volumeUnits usidref:litre .
 ex:model_1 schema:listOfUnitDefinitions ex:listOfUnitDefinitions .
 ex:model_1 schema:listOfCompartments ex:listOfCompartments .
+ex:model_1 schema:listOfSpecies ex:listOfSpecies .
 
 ex:listOfUnitDefinitions a schema:ListOfUnitDefinitions .
 ex:listOfUnitDefinitions schema:unitDefinition ex:unitDefinition_1 .
@@ -308,7 +341,85 @@ ex:compartment_1 schema:size "1E-5"^^xsd:decimal .
 ex:compartment_1 schema:spatialDimensions "3"^^xsd:decimal .
 ex:compartment_1 schema:units usidref:litre .
 
+ex:listOfSpecies a schema:ListOfSpecies .
+ex:listOfSpecies schema:species ex:species_1 .
+ex:listOfSpecies schema:species ex:species_2 .
+ex:listOfSpecies schema:species ex:species_3 .
+ex:listOfSpecies schema:species ex:species_4 .
+ex:listOfSpecies schema:species ex:species_5 .
+ex:listOfSpecies schema:species ex:species_6 .
+ex:listOfSpecies schema:species ex:species_7 .
 
+ex:species_1 a schema:Species .
+ex:species_1 schema:boundaryCondition "false"^^xsd:boolean .
+ex:species_1 schema:compartment sidref:c .
+ex:species_1 schema:constant "false"^^xsd:boolean .
+ex:species_1 schema:hasOnlySubstanceUnits "false"^^xsd:boolean .
+ex:species_1 schema:id sid:glc .
+ex:species_1 schema:metaid id:meta_glc .
+ex:species_1 schema:name "glucose"^^xsd:string .
+ex:species_1 schema:sboTerm sboterm:SBO:0000247 .
+ex:species_1 schema:substanceUnits usidref:mmole .
+ex:species_2 a schema:Species .
+ex:species_2 schema:boundaryCondition "false"^^xsd:boolean .
+ex:species_2 schema:compartment sidref:c .
+ex:species_2 schema:constant "false"^^xsd:boolean .
+ex:species_2 schema:hasOnlySubstanceUnits "false"^^xsd:boolean .
+ex:species_2 schema:id sid:g6p .
+ex:species_2 schema:metaid id:meta_g6p .
+ex:species_2 schema:name "glucose-6-phosphate"^^xsd:string .
+ex:species_2 schema:sboTerm sboterm:SBO:0000247 .
+ex:species_2 schema:substanceUnits usidref:mmole .
+ex:species_3 a schema:Species .
+ex:species_3 schema:boundaryCondition "false"^^xsd:boolean .
+ex:species_3 schema:compartment sidref:c .
+ex:species_3 schema:constant "false"^^xsd:boolean .
+ex:species_3 schema:hasOnlySubstanceUnits "false"^^xsd:boolean .
+ex:species_3 schema:id sid:atp .
+ex:species_3 schema:metaid id:meta_atp .
+ex:species_3 schema:name "ATP"^^xsd:string .
+ex:species_3 schema:sboTerm sboterm:SBO:0000247 .
+ex:species_3 schema:substanceUnits usidref:mmole .
+ex:species_4 a schema:Species .
+ex:species_4 schema:boundaryCondition "false"^^xsd:boolean .
+ex:species_4 schema:compartment sidref:c .
+ex:species_4 schema:constant "false"^^xsd:boolean .
+ex:species_4 schema:hasOnlySubstanceUnits "false"^^xsd:boolean .
+ex:species_4 schema:id sid:adp .
+ex:species_4 schema:metaid id:meta_adp .
+ex:species_4 schema:name "ADP"^^xsd:string .
+ex:species_4 schema:sboTerm sboterm:SBO:0000247 .
+ex:species_4 schema:substanceUnits usidref:mmole .
+ex:species_5 a schema:Species .
+ex:species_5 schema:boundaryCondition "true"^^xsd:boolean .
+ex:species_5 schema:compartment sidref:c .
+ex:species_5 schema:constant "true"^^xsd:boolean .
+ex:species_5 schema:hasOnlySubstanceUnits "false"^^xsd:boolean .
+ex:species_5 schema:id sid:phos .
+ex:species_5 schema:metaid id:meta_phos .
+ex:species_5 schema:name "P"^^xsd:string .
+ex:species_5 schema:sboTerm sboterm:SBO:0000247 .
+ex:species_5 schema:substanceUnits usidref:mmole .
+ex:species_6 a schema:Species .
+ex:species_6 schema:boundaryCondition "true"^^xsd:boolean .
+ex:species_6 schema:compartment sidref:c .
+ex:species_6 schema:constant "true"^^xsd:boolean .
+ex:species_6 schema:hasOnlySubstanceUnits "false"^^xsd:boolean .
+ex:species_6 schema:id sid:hydron .
+ex:species_6 schema:metaid id:meta_hydron .
+ex:species_6 schema:name "H+"^^xsd:string .
+ex:species_6 schema:sboTerm sboterm:SBO:0000247 .
+ex:species_6 schema:substanceUnits usidref:mmole .
+ex:species_7 a schema:Species .
+ex:species_7 schema:boundaryCondition "true"^^xsd:boolean .
+ex:species_7 schema:compartment sidref:c .
+ex:species_7 schema:constant "true"^^xsd:boolean .
+ex:species_7 schema:hasOnlySubstanceUnits "false"^^xsd:boolean .
+ex:species_7 schema:id sid:h2o .
+ex:species_7 schema:metaid id:meta_h2o .
+ex:species_7 schema:name "H2O"^^xsd:string .
+ex:species_7 schema:sboTerm sboterm:SBO:0000247 .
+ex:species_7 schema:substanceUnits usidref:mmole .
 
 
 

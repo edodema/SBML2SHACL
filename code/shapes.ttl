@@ -549,7 +549,7 @@ schema:Species
     sh:property [
         sh:path schema:substanceUnits ;
         sh:class schema:UnitSIdRef ;
-        sh:datatype xsd:string ;
+        sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:hasOnlySubstanceUnits ;
