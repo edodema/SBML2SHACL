@@ -587,7 +587,7 @@ schema:ListOfParameters
 
 # Parameter
 # id:SId (1,1) 
-# value:double (0,n)
+# value:decimal (0,n)
 # units:UnitSIdRef (0,n)
 # constant:boolean (0,1)
 schema:Parameter 
@@ -601,7 +601,7 @@ schema:Parameter
     ] ;
     sh:property [
         sh:path schema:value ; 
-        sh:datatype xsd:double ;
+        sh:datatype xsd:decimal ;
     ] ; 
     sh:property [
         sh:path schema:units ;

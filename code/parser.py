@@ -21,10 +21,10 @@ def add_identifier(idt, value, idt_list):
 
 preamble = "./code/preamble.txt"
 
-#model = "./input/biomodels/BIOMD0000000562.xml"
+model = "./input/biomodels/BIOMD0000000562.xml"
 #model = "./input/biomodels/BIOMD0000000476.xml"
 #model = "./input/biomodels/MODEL1112260002.xml"
-model = "./input/biomodels/MODEL1904090001.xml"
+#model = "./input/biomodels/MODEL1904090001.xml"
 output = "./code/output.ttl"
 
 # Writing preamble 
@@ -600,10 +600,87 @@ for child in root.iter():
         # Increment Unit identifier
         species_count += 1
 
-    #elif re.match('^listOfParameters$', tag) is not None: pass
-    
-    #elif re.match('^parameter$', tag) is not None: pass
-    
+    elif re.match('^listOfParameters$', tag) is not None:
+         # a ListOfParameters is associated to a Model whose attribute is now added
+        # hence listOfParameters is used as an object despite the subject variable
+        # <Model> <listOfParameters> <ListOfParameters>
+        subject = 'ex:listOfParameters'  
+        model_text += '\nex:model_' + str(model_count-1) + ' schema:listOfParameters ' + subject + ' .'
+        subject = '\n' + subject 
+        listOfParameters_text += subject + ' a schema:ListOfParameters .'
+        # Attributes
+        for child_key, value in child.attrib.items():
+            # Some tags could have a namespace before, remove it 
+            key = re.search('.*\}(.*)', child_key)
+            key = key.group(1) if key is not None else child_key
+            ## <ListOfParameters> <key> <value> 
+
+            # <ListOfParameters> <id> <value>
+            if re.match('^id$', key) is not None: 
+                listOfParameters_text += subject + ' schema:id sid:' + value + ' .'
+                # id is a SId: sid:value schema:value value
+                if not value in sid_list: sid_text += add_identifier('sid', value, sid_list)
+            # <ListOfParameters> <name> <value>
+            elif re.match('^name$', key) is not None: 
+                listOfParameters_text += subject + ' schema:name "' + value + '"^^xsd:string .' 
+            # <ListOfUnitDefinitions> <metaid> <value>
+            elif re.match('^metaid$', key) is not None:
+                listOfParameters_text += subject + ' schema:metaid id:' + value + ' .'
+                # metaid is a ID: id:value schema:value value
+                if not value in id_list: id_text += add_identifier('id', value, id_list)
+            # <ListOfUnitDefinitions> <sboTerm> <value>
+            elif re.match('^sboTerm$', key) is not None: 
+                listOfParameters_text += subject + ' schema:sboTerm sboterm:' + value + ' .'
+                # sboTerm is a SBOTerm: sboterm:value schema:value value
+                if not value in sboterm_list: sboterm_text += add_identifier('sboterm', value, sboterm_list)
+
+    elif re.match('^parameter$', tag) is not None: 
+        # a Parameter is associated to a ListOfParameters whose attribute is now added
+        # hence parameter is used as an object despite the subject variable
+        # <ListOfParameters> <parameter> <Parameter>
+        subject = 'ex:parameter_' + str(parameter_count) 
+        listOfParameters_text += '\nex:listOfParameter schema:parameter ' + subject + ' .'
+        subject = '\n' + subject         
+        parameter_text += subject + ' a schema:Parameter .'
+        # Attributes
+        for child_key, value in child.attrib.items():
+            # Some tags could have a namespace before, remove it 
+            key = re.search('.*\}(.*)', child_key)
+            key = key.group(1) if key is not None else child_key
+            ## <Parameter> <key> <value> 
+
+            # <Parameter> <id> <value> 
+            if re.match('^id$', key) is not None: 
+                parameter_text += subject + ' schema:id sid:' + value + ' .'
+                # id is a SId: sid:value schema:value value
+                if not value in sid_list: sid_text += add_identifier('sid', value, sid_list)
+            # <Parameter> <name> <value>
+            elif re.match('^name$', key) is not None: 
+                parameter_text += subject + ' schema:name "' + value + '"^^xsd:string .'  
+            # <Parameter> <metaid> <value>
+            elif re.match('^metaid$', key) is not None:
+                parameter_text += subject + ' schema:metaid id:' + value + ' .'
+                # metid is a ID: id:value schema:value value  
+                if not value in id_list: id_text += add_identifier('id', value, id_list)
+            # <Parameter> <sboTerm> <value>
+            elif re.match('^sboTerm$', key) is not None: 
+                parameter_text += subject + ' schema:sboTerm sboterm:' + value + ' .'
+                # sboTerm is a SBOTerm: sboterm:value schema:value value
+                if not value in sboterm_list: sboterm_text += add_identifier('sboterm', value, sboterm_list)
+            # <Parameter> <value> <value>
+            elif re.match('^value$', key):
+                parameter_text += subject + ' schema:value "' + value + '"^^xsd:decimal .'  
+            # <Parameter> <units> <value> 
+            elif re.match('^units$', key) is not None: 
+                parameter_text += subject + ' schema:units usidref:' + value + ' .'
+                # units is a UnitSIdRef: usidref:value schema:value value
+                if not value in usidref_list: usidref_text += add_identifier('usidref', value, usidref_list)
+            # <Parameter> <constant> <value>
+            elif re.match('^constant$', key):
+                parameter_text += subject + ' schema:constant "' + value + '"^^xsd:boolean .'  
+        # Increment Unit identifier
+        parameter_count += 1
+
     #elif re.match('listOfSubmodels', tag) is not None: pass
     
     #elif re.match('submodel', tag) is not None: pass

@@ -197,6 +197,16 @@ id:meta_hydron a schema:ID .
 id:meta_hydron schema:value "meta_hydron"^^xsd:string .
 id:meta_h2o a schema:ID .
 id:meta_h2o schema:value "meta_h2o"^^xsd:string .
+id:meta_Vmax_GK a schema:ID .
+id:meta_Vmax_GK schema:value "meta_Vmax_GK"^^xsd:string .
+id:meta_Km_glc a schema:ID .
+id:meta_Km_glc schema:value "meta_Km_glc"^^xsd:string .
+id:meta_Km_atp a schema:ID .
+id:meta_Km_atp schema:value "meta_Km_atp"^^xsd:string .
+id:meta_Km_adp a schema:ID .
+id:meta_Km_adp schema:value "meta_Km_adp"^^xsd:string .
+id:meta_Vmax_ATPASE a schema:ID .
+id:meta_Vmax_ATPASE schema:value "meta_Vmax_ATPASE"^^xsd:string .
 
 sid:tiny_example_12 a schema:SId .
 sid:tiny_example_12 schema:value "tiny_example_12"^^xsd:string .
@@ -216,6 +226,26 @@ sid:hydron a schema:SId .
 sid:hydron schema:value "hydron"^^xsd:string .
 sid:h2o a schema:SId .
 sid:h2o schema:value "h2o"^^xsd:string .
+sid:Vmax_GK a schema:SId .
+sid:Vmax_GK schema:value "Vmax_GK"^^xsd:string .
+sid:Km_glc a schema:SId .
+sid:Km_glc schema:value "Km_glc"^^xsd:string .
+sid:Km_atp a schema:SId .
+sid:Km_atp schema:value "Km_atp"^^xsd:string .
+sid:Km_adp a schema:SId .
+sid:Km_adp schema:value "Km_adp"^^xsd:string .
+sid:Vmax_ATPASE a schema:SId .
+sid:Vmax_ATPASE schema:value "Vmax_ATPASE"^^xsd:string .
+sid:zero a schema:SId .
+sid:zero schema:value "zero"^^xsd:string .
+sid:inf a schema:SId .
+sid:inf schema:value "inf"^^xsd:string .
+sid:minus_1000 a schema:SId .
+sid:minus_1000 schema:value "minus_1000"^^xsd:string .
+sid:plus_1000 a schema:SId .
+sid:plus_1000 schema:value "plus_1000"^^xsd:string .
+sid:a_sum a schema:SId .
+sid:a_sum schema:value "a_sum"^^xsd:string .
 
 sidref:c a schema:SIdRef .
 sidref:c schema:value "c"^^xsd:string .
@@ -233,6 +263,10 @@ usidref:m2 a schema:UnitSIdRef .
 usidref:m2 schema:value "m2"^^xsd:string .
 usidref:mmole a schema:UnitSIdRef .
 usidref:mmole schema:value "mmole"^^xsd:string .
+usidref:mmole_per_s a schema:UnitSIdRef .
+usidref:mmole_per_s schema:value "mmole_per_s"^^xsd:string .
+usidref:mM a schema:UnitSIdRef .
+usidref:mM schema:value "mM"^^xsd:string .
 
 sboterm:SBO:0000293 a schema:SBOTerm .
 sboterm:SBO:0000293 schema:value "SBO:0000293"^^xsd:string .
@@ -240,6 +274,12 @@ sboterm:SBO:0000290 a schema:SBOTerm .
 sboterm:SBO:0000290 schema:value "SBO:0000290"^^xsd:string .
 sboterm:SBO:0000247 a schema:SBOTerm .
 sboterm:SBO:0000247 schema:value "SBO:0000247"^^xsd:string .
+sboterm:SBO:0000186 a schema:SBOTerm .
+sboterm:SBO:0000186 schema:value "SBO:0000186"^^xsd:string .
+sboterm:SBO:0000027 a schema:SBOTerm .
+sboterm:SBO:0000027 schema:value "SBO:0000027"^^xsd:string .
+sboterm:SBO:0000612 a schema:SBOTerm .
+sboterm:SBO:0000612 schema:value "SBO:0000612"^^xsd:string .
 
 
 ex:sbml_1 a schema:Sbml .
@@ -266,6 +306,7 @@ ex:model_1 schema:volumeUnits usidref:litre .
 ex:model_1 schema:listOfUnitDefinitions ex:listOfUnitDefinitions .
 ex:model_1 schema:listOfCompartments ex:listOfCompartments .
 ex:model_1 schema:listOfSpecies ex:listOfSpecies .
+ex:model_1 schema:listOfParameters ex:listOfParameters .
 
 ex:listOfUnitDefinitions a schema:ListOfUnitDefinitions .
 ex:listOfUnitDefinitions schema:unitDefinition ex:unitDefinition_1 .
@@ -421,7 +462,89 @@ ex:species_7 schema:name "H2O"^^xsd:string .
 ex:species_7 schema:sboTerm sboterm:SBO:0000247 .
 ex:species_7 schema:substanceUnits usidref:mmole .
 
+ex:listOfParameters a schema:ListOfParameters .
+ex:listOfParameter schema:parameter ex:parameter_1 .
+ex:listOfParameter schema:parameter ex:parameter_2 .
+ex:listOfParameter schema:parameter ex:parameter_3 .
+ex:listOfParameter schema:parameter ex:parameter_4 .
+ex:listOfParameter schema:parameter ex:parameter_5 .
+ex:listOfParameter schema:parameter ex:parameter_6 .
+ex:listOfParameter schema:parameter ex:parameter_7 .
+ex:listOfParameter schema:parameter ex:parameter_8 .
+ex:listOfParameter schema:parameter ex:parameter_9 .
+ex:listOfParameter schema:parameter ex:parameter_10 .
 
+ex:parameter_1 a schema:Parameter .
+ex:parameter_1 schema:constant "true"^^xsd:boolean .
+ex:parameter_1 schema:id sid:Vmax_GK .
+ex:parameter_1 schema:metaid id:meta_Vmax_GK .
+ex:parameter_1 schema:name "Vmax Glucokinase"^^xsd:string .
+ex:parameter_1 schema:sboTerm sboterm:SBO:0000186 .
+ex:parameter_1 schema:units usidref:mmole_per_s .
+ex:parameter_1 schema:value "1E-6"^^xsd:decimal .
+ex:parameter_2 a schema:Parameter .
+ex:parameter_2 schema:constant "true"^^xsd:boolean .
+ex:parameter_2 schema:id sid:Km_glc .
+ex:parameter_2 schema:metaid id:meta_Km_glc .
+ex:parameter_2 schema:name "Km glucose"^^xsd:string .
+ex:parameter_2 schema:sboTerm sboterm:SBO:0000027 .
+ex:parameter_2 schema:units usidref:mM .
+ex:parameter_2 schema:value "0.5"^^xsd:decimal .
+ex:parameter_3 a schema:Parameter .
+ex:parameter_3 schema:constant "true"^^xsd:boolean .
+ex:parameter_3 schema:id sid:Km_atp .
+ex:parameter_3 schema:metaid id:meta_Km_atp .
+ex:parameter_3 schema:name "Km ATP"^^xsd:string .
+ex:parameter_3 schema:sboTerm sboterm:SBO:0000027 .
+ex:parameter_3 schema:units usidref:mM .
+ex:parameter_3 schema:value "0.1"^^xsd:decimal .
+ex:parameter_4 a schema:Parameter .
+ex:parameter_4 schema:constant "true"^^xsd:boolean .
+ex:parameter_4 schema:id sid:Km_adp .
+ex:parameter_4 schema:metaid id:meta_Km_adp .
+ex:parameter_4 schema:name "Km ADP"^^xsd:string .
+ex:parameter_4 schema:sboTerm sboterm:SBO:0000027 .
+ex:parameter_4 schema:units usidref:mM .
+ex:parameter_4 schema:value "0.1"^^xsd:decimal .
+ex:parameter_5 a schema:Parameter .
+ex:parameter_5 schema:constant "true"^^xsd:boolean .
+ex:parameter_5 schema:id sid:Vmax_ATPASE .
+ex:parameter_5 schema:metaid id:meta_Vmax_ATPASE .
+ex:parameter_5 schema:name "Vmax ATPase"^^xsd:string .
+ex:parameter_5 schema:sboTerm sboterm:SBO:0000186 .
+ex:parameter_5 schema:units usidref:mmole_per_s .
+ex:parameter_5 schema:value "1E-6"^^xsd:decimal .
+ex:parameter_6 a schema:Parameter .
+ex:parameter_6 schema:constant "true"^^xsd:boolean .
+ex:parameter_6 schema:id sid:zero .
+ex:parameter_6 schema:name "zero bound"^^xsd:string .
+ex:parameter_6 schema:sboTerm sboterm:SBO:0000612 .
+ex:parameter_6 schema:units usidref:mmole_per_s .
+ex:parameter_6 schema:value "0"^^xsd:decimal .
+ex:parameter_7 a schema:Parameter .
+ex:parameter_7 schema:constant "true"^^xsd:boolean .
+ex:parameter_7 schema:id sid:inf .
+ex:parameter_7 schema:name "upper bound"^^xsd:string .
+ex:parameter_7 schema:sboTerm sboterm:SBO:0000612 .
+ex:parameter_7 schema:units usidref:mmole_per_s .
+ex:parameter_7 schema:value "INF"^^xsd:decimal .
+ex:parameter_8 a schema:Parameter .
+ex:parameter_8 schema:constant "true"^^xsd:boolean .
+ex:parameter_8 schema:id sid:minus_1000 .
+ex:parameter_8 schema:sboTerm sboterm:SBO:0000612 .
+ex:parameter_8 schema:units usidref:mmole_per_s .
+ex:parameter_8 schema:value "-1000"^^xsd:decimal .
+ex:parameter_9 a schema:Parameter .
+ex:parameter_9 schema:constant "true"^^xsd:boolean .
+ex:parameter_9 schema:id sid:plus_1000 .
+ex:parameter_9 schema:sboTerm sboterm:SBO:0000612 .
+ex:parameter_9 schema:units usidref:mmole_per_s .
+ex:parameter_9 schema:value "1000"^^xsd:decimal .
+ex:parameter_10 a schema:Parameter .
+ex:parameter_10 schema:constant "false"^^xsd:boolean .
+ex:parameter_10 schema:id sid:a_sum .
+ex:parameter_10 schema:name "ATP + ADP balance"^^xsd:string .
+ex:parameter_10 schema:units usidref:mM .
 
 
 
