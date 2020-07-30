@@ -406,34 +406,125 @@ for child in root.iter():
                 if not value in usid_list: usid_text += add_identifier('usid', value, usid_list)
             # <Unit> <multiplier> <value>
             elif re.match('^multiplier$', key) is not None: 
-                sbml_text += subject + ' schema:multiplier "' + value + '"^^xsd:decimal .'
+                unit_text += subject + ' schema:multiplier "' + value + '"^^xsd:decimal .'
             # <Unit> <scale> <value>
             elif re.match('^scale$', key) is not None: 
-                sbml_text += subject + ' schema:scale "' + value + '"^^xsd:integer .'
+                unit_text += subject + ' schema:scale "' + value + '"^^xsd:integer .'
             # <Unit> <exponent> <value>
             elif re.match('^exponent$', key) is not None: 
-                sbml_text += subject + ' schema:exponent "' + value + '"^^xsd:decimal .'
+                unit_text += subject + ' schema:exponent "' + value + '"^^xsd:decimal .'
         # Increment Unit identifier
         unit_count += 1
 
+    elif re.match('listOfCompartments', tag) is not None:
+        # a ListOfCompartments is associated to a Model whose attribute is now added
+        # hence listOfCompartments is used as an object despite the subject variable
+        # <Model> <listOfCompartments> <ListOfCompartments>
+        subject = 'ex:listOfCompartments'  
+        model_text += '\nex:model_' + str(model_count-1) + ' schema:listOfCompartments ' + subject + ' .'
+        subject = '\n' + subject 
+        listOfCompartments_text += subject + ' a schema:ListOfCompartments .'
+        # Attributes
+        for child_key, value in child.attrib.items():
+            # Some tags could have a namespace before, remove it 
+            key = re.search('.*\}(.*)', child_key)
+            key = key.group(1) if key is not None else child_key
+            ## <ListOfCompartments> <key> <value> 
+
+            # <ListOfCompartments> <id> <value>
+            if re.match('^id$', key) is not None: 
+                listOfCompartments_text += subject + ' schema:id sid:' + value + ' .'
+                # id is a SId: sid:value schema:value value
+                if not value in sid_list: sid_text += add_identifier('sid', value, sid_list)
+            # <ListOfCompartments> <name> <value>
+            elif re.match('^name$', key) is not None: 
+                listOfCompartments_text += subject + ' schema:name "' + value + '"^^xsd:string .' 
+            # <ListOfUnitDefinitions> <metaid> <value>
+            elif re.match('^metaid$', key) is not None:
+                listOfCompartments_text += subject + ' schema:metaid id:' + value + ' .'
+                # metaid is a ID: id:value schema:value value
+                if not value in id_list: id_text += add_identifier('id', value, id_list)
+            # <ListOfUnitDefinitions> <sboTerm> <value>
+            elif re.match('^sboTerm$', key) is not None: 
+                listOfCompartments_text += subject + ' schema:sboTerm sboterm:' + value + ' .'
+                # sboTerm is a SBOTerm: sboterm:value schema:value value
+                if not value in sboterm_list: sboterm_text += add_identifier('sboterm', value, sboterm_list)
+
+    elif re.match('compartment', tag) is not None:
+        # a Compartment is associated to a ListOfCompartments whose attribute is now added
+        # hence compartment is used as an object despite the subject variable
+        # <ListOfCompartments> <compartment> <Compartment>
+        subject = 'ex:compartment_' + str(compartment_count) 
+        listOfCompartments_text += '\nex:listOfCompartments schema:compartment ' + subject + ' .'
+        subject = '\n' + subject         
+        compartment_text += subject + ' a schema:Compartment .'
+        # Attributes
+        for child_key, value in child.attrib.items():
+            # Some tags could have a namespace before, remove it 
+            key = re.search('.*\}(.*)', child_key)
+            key = key.group(1) if key is not None else child_key
+            ## <Compartment> <key> <value> 
+
+            # <Compartment> <id> <value> 
+            if re.match('^id$', key) is not None: 
+                compartment_text += subject + ' schema:id sid:' + value + ' .'
+                # id is a SId: sid:value schema:value value
+                if not value in sid_list: sid_text += add_identifier('sid', value, sid_list)
+            # <Compartment> <name> <value>
+            elif re.match('^name$', key) is not None: 
+                compartment_text += subject + ' schema:name "' + value + '"^^xsd:string .'  
+            # <Compartment> <metaid> <value>
+            elif re.match('^metaid$', key) is not None:
+                compartment_text += subject + ' schema:metaid id:' + value + ' .'
+                # metid is a ID: id:value schema:value value  
+                if not value in id_list: id_text += add_identifier('id', value, id_list)
+            # <Compartment> <sboTerm> <value>
+            elif re.match('^sboTerm$', key) is not None: 
+                compartment_text += subject + ' schema:sboTerm sboterm:' + value + ' .'
+                # sboTerm is a SBOTerm: sboterm:value schema:value value
+                if not value in sboterm_list: sboterm_text += add_identifier('sboterm', value, sboterm_list)
+            # <Compartment> <spatialDimensions> <value>
+            elif re.match('^spatialDimensions$', key):
+                compartment_text += subject + ' schema:spatialDimensions "' + value + '"^^xsd:decimal .'  
+            # <Compartment> <size> <value>
+            elif re.match('^size$', key):
+                compartment_text += subject + ' schema:size "' + value + '"^^xsd:decimal .'  
+            # <Compartment> <constant> <value>
+            elif re.match('^constant$', key):
+                compartment_text += subject + ' schema:constant "' + value + '"^^xsd:boolean .'  
+            # <Compartment> <units> <value> 
+            elif re.match('^units$', key) is not None: 
+                compartment_text += subject + ' schema:units usidref:' + value + ' .'
+                # units is a UnitSIdRef: usidref:value schema:value value
+                if not value in usidref_list: usidref_text += add_identifier('usidref', value, usidref_list)
+        # Increment Unit identifier
+        compartment_count += 1
+
+    #elif re.match('listOfSpecies', tag) is not None: print(tag, child.attrib)
     
-    '''
-    elif re.match('listOfCompartments', tag) is not None: print(tag, child.attrib)
-    elif re.match('compartment', tag) is not None: print(tag, child.attrib)
-    elif re.match('listOfSpecies', tag) is not None: print(tag, child.attrib)
-    elif re.match('species', tag) is not None: print(tag, child.attrib)
-    elif re.match('listOfParameters', tag) is not None: print(tag, child.attrib)
-    elif re.match('parameter', tag) is not None: print(tag, child.attrib)
-    elif re.match('listOfSubmodels', tag) is not None: print(tag, child.attrib)
-    elif re.match('submodel', tag) is not None: print(tag, child.attrib)
-    elif re.match('listOfPorts', tag) is not None: print(tag, child.attrib)
-    elif re.match('port', tag) is not None: print(tag, child.attrib)
-    elif re.match('listOfDeletions', tag) is not None: print(tag, child.attrib)
-    elif re.match('deletion', tag) is not None: print(tag, child.attrib)
-    elif re.match('listOfReplacedElements', tag) is not None: print(tag, child.attrib)
-    elif re.match('replacedElement', tag) is not None: print(tag, child.attrib)
-    elif re.match('replacedBy', tag) is not None: print(tag, child.attrib)
-    '''
+    #elif re.match('species', tag) is not None: print(tag, child.attrib)
+    
+    #elif re.match('listOfParameters', tag) is not None: print(tag, child.attrib)
+    
+    #elif re.match('parameter', tag) is not None: print(tag, child.attrib)
+    
+    #elif re.match('listOfSubmodels', tag) is not None: print(tag, child.attrib)
+    
+    #elif re.match('submodel', tag) is not None: print(tag, child.attrib)
+    
+    #elif re.match('listOfPorts', tag) is not None: print(tag, child.attrib)
+    
+    #elif re.match('port', tag) is not None: print(tag, child.attrib)
+    
+    #elif re.match('listOfDeletions', tag) is not None: print(tag, child.attrib)
+    
+    #elif re.match('deletion', tag) is not None: print(tag, child.attrib)
+    
+    #elif re.match('listOfReplacedElements', tag) is not None: print(tag, child.attrib)
+
+    #elif re.match('replacedElement', tag) is not None: print(tag, child.attrib)
+
+    #elif re.match('replacedBy', tag) is not None: print(tag, child.attrib)
 
 # Writing on file
 

@@ -470,7 +470,7 @@ schema:ListOfCompartments
 # spatialDimensions:decimal (0,n)
 # size:decimal (0,n)
 # units:UnitSIdRef (0,n)
-# constant:boolean (1,1)
+# constant:boolean (0,1)
 schema:Compartment
     a sh:NodeShape, owl:Class ;
     rdfs:subClassOf schema:SBase ;
@@ -495,7 +495,6 @@ schema:Compartment
     ] ; 
     sh:property [
         sh:path schema:constant ;
-        sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:datatype xsd:boolean ;
     ] ; 
