@@ -1,6 +1,7 @@
 #*.xml
 *.bak*
 .DS_Store
+.vscode
 #.gitignore
 #data.ttl
 #input
