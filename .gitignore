@@ -1,4 +1,5 @@
 #*.xml
+*.bak*
 .DS_Store
 #.gitignore
 #data.ttl
