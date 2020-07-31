@@ -23,22 +23,202 @@ def add_identifier(idt, value, idt_list):
 
 # Command line arguments
 parser = argparse.ArgumentParser()
-   
-parser.add_argument('-o', '--output', dest='output_file', metavar='output')
-parser.add_argument('-f', '--file',action='append', required=True, dest='files', metavar='file', help='one or more SBML files')
+
+parser.add_argument('-o', '--output', required=True, dest='output_file', metavar='output')
+parser.add_argument('-f', '--file', action='append', required=True, dest='files', metavar='file', help='one or more SBML files')
 
 args = parser.parse_args()
 
 # File definitions
-preamble = "./preamble.txt"
-
-
-output = args.output_file if args.output_file else './code/output.ttl'
+output = args.output_file
 input_files = args.files
 
 # Writing preamble 
+
+preamble = """
+@prefix ex: <http://example.org/ns#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix id: <http://example.org/ns/id#> .
+@prefix sid: <http://example.org/ns/sid#> .
+@prefix sidref: <http://example.org/ns/sid/sidref#> .
+@prefix usid: <http://example.org/ns/sid/usid#> .
+@prefix usidref: <http://example.org/ns/sid/usid/usidref#> .
+@prefix lsid: <http://example.org/ns/sid/lsid#> .
+@prefix sboterm: <http://example.org/ns/sboterm#> .
+
+schema:IDREF rdfs:subClassOf schema:ID . 
+schema:SIdRef rdfs:subClassOf schema:SId . 
+schema:UnitSId rdfs:subClassOf schema:SId . 
+schema:UnitSIdRef rdfs:subClassOf schema:UnitSId . 
+schema:PortSId rdfs:subClassOf schema:SId . 
+schema:PortSIdRef rdfs:subClassOf schema:PortSId .
+schema:LocalSId rdfs:subClassOf schema:SId . 
+schema:SBaseRef rdfs:subClassOf schema:SBase .
+schema:Sbml rdfs:subClassOf schema:SBase .
+schema:ListOfExternalModelDefinitions rdfs:subClassOf schema:SBase .
+schema:ExternalModelDefinition rdfs:subClassOf schema:SBase .
+schema:Model rdfs:subClassOf schema:SBase .
+schema:ListOfUnitDefinitions rdfs:subClassOf schema:SBase .
+schema:UnitDefinitions rdfs:subClassOf schema:SBase .
+schema:ListOfUnits rdfs:subClassOf schema:SBase .
+schema:Unit rdfs:subClassOf schema:SBase .
+schema:ListOfCompartments rdfs:subClassOf schema:SBase .
+schema:Compartment rdfs:subClassOf schema:SBase .
+schema:ListOfSpecies rdfs:subClassOf schema:SBase .
+schema:Species rdfs:subClassOf schema:SBase .
+schema:ListOfParameters rdfs:subClassOf schema:SBase .
+schema:Parameters rdfs:subClassOf schema:SBase .
+schema:ListOfSubmodels rdfs:subClassOf schema:SBase .
+schema:Submodel rdfs:subClassOf schema:SBase .
+schema:ListOfPorts rdfs:subClassOf schema:SBase .
+schema:Port rdfs:subClassOf schema:SBaseRef .
+schema:ListOfDeletions rdfs:subClassOf schema:SBase .
+schema:Deletion rdfs:subClassOf schema:SBaseRef .
+schema:ListOfReplacedElements rdfs:subClassOf schema:SBase .
+schema:ReplacedElement rdfs:subClassOf schema:SBaseRef .
+schema:ReplacedBy rdfs:subClassOf schema:SBaseRef .
+
+usid:ampere a schema:UnitSId .
+usid:ampere schema:value "ampere" .
+usid:avogadro a schema:UnitSId .
+usid:avogadro schema:value "avogadro" . 
+usid:becquerel a schema:UnitSId .
+usid:becquerel schema:value "becquerel" . 
+usid:candela a schema:UnitSId .
+usid:candela schema:value "candela" . 
+usid:coulomb a schema:UnitSId .
+usid:coulomb schema:value "coulomb" .
+usid:dimensionless a schema:UnitSId .
+usid:dimensionless schema:value "dimensionless" .
+usid:farad a schema:UnitSId .
+usid:farad schema:value "farad" . 
+usid:gram a schema:UnitSId .
+usid:gram schema:value "gram" . 
+usid:gray a schema:UnitSId .
+usid:gray schema:value "gray" . 
+usid:henry a schema:UnitSId .
+usid:henry schema:value "henry" . 
+usid:farad a schema:UnitSId .
+usid:farad schema:value "farad" . 
+usid:hertz a schema:UnitSId .
+usid:hertz schema:value "hertz" . 
+usid:item a schema:UnitSId .
+usid:item schema:value "item" . 
+usid:joule a schema:UnitSId .
+usid:joule schema:value "joule" . 
+usid:kelvin a schema:UnitSId .
+usid:kelvin schema:value "kelvin" . 
+usid:kilogram a schema:UnitSId .
+usid:kilogram schema:value "kilogram" . 
+usid:litre a schema:UnitSId .
+usid:litre schema:value "litre" . 
+usid:lumen a schema:UnitSId .
+usid:lumen schema:value "lumen" . 
+usid:lux a schema:UnitSId .
+usid:lux schema:value "lux" . 
+usid:metre a schema:UnitSId .
+usid:metre schema:value "metre" . 
+usid:mole a schema:UnitSId .
+usid:mole schema:value "mole" . 
+usid:newton a schema:UnitSId .
+usid:newton schema:value "newton" . 
+usid:ohm a schema:UnitSId .
+usid:ohm schema:value "ohm" .
+usid:pascal a schema:UnitSId .
+usid:pascal schema:value "pascal" .
+usid:radian a schema:UnitSId .
+usid:radian schema:value "radian" .
+usid:second a schema:UnitSId .
+usid:second schema:value "second" .
+usid:siemens a schema:UnitSId .
+usid:siemens schema:value "siemens" .
+usid:sievert a schema:UnitSId .
+usid:sievert schema:value "sievert" .
+usid:steradian a schema:UnitSId .
+usid:steradian schema:value "steradian" .
+usid:tesla a schema:UnitSId .
+usid:tesla schema:value "tesla" .
+usid:volt a schema:UnitSId .
+usid:volt schema:value "volt" .
+usid:watt a schema:UnitSId .
+usid:watt schema:value "watt" .
+usid:weber a schema:UnitSId .
+usid:weber schema:value "weber" .
+
+usidref:ampere a schema:UnitSIdRef .
+usidref:ampere schema:value "ampere" .
+usidref:avogadro a schema:UnitSIdRef .
+usidref:avogadro schema:value "avogadro" . 
+usidref:becquerel a schema:UnitSIdRef .
+usidref:becquerel schema:value "becquerel" . 
+usidref:candela a schema:UnitSIdRef .
+usidref:candela schema:value "candela" . 
+usidref:coulomb a schema:UnitSIdRef .
+usidref:coulomb schema:value "coulomb" .
+usidref:dimensionless a schema:UnitSIdRef .
+usidref:dimensionless schema:value "dimensionless" .
+usidref:farad a schema:UnitSIdRef .
+usidref:farad schema:value "farad" . 
+usidref:gram a schema:UnitSIdRef .
+usidref:gram schema:value "gram" . 
+usidref:gray a schema:UnitSIdRef .
+usidref:gray schema:value "gray" . 
+usidref:henry a schema:UnitSIdRef .
+usidref:henry schema:value "henry" . 
+usidref:farad a schema:UnitSIdRef .
+usidref:farad schema:value "farad" . 
+usidref:hertz a schema:UnitSIdRef .
+usidref:hertz schema:value "hertz" . 
+usidref:item a schema:UnitSIdRef .
+usidref:item schema:value "item" . 
+usidref:joule a schema:UnitSIdRef .
+usidref:joule schema:value "joule" . 
+usidref:kelvin a schema:UnitSIdRef .
+usidref:kelvin schema:value "kelvin" . 
+usidref:kilogram a schema:UnitSIdRef .
+usidref:kilogram schema:value "kilogram" . 
+usidref:litre a schema:UnitSIdRef .
+usidref:litre schema:value "litre" . 
+usidref:lumen a schema:UnitSIdRef .
+usidref:lumen schema:value "lumen" . 
+usidref:lux a schema:UnitSIdRef .
+usidref:lux schema:value "lux" . 
+usidref:metre a schema:UnitSIdRef .
+usidref:metre schema:value "metre" . 
+usidref:mole a schema:UnitSIdRef .
+usidref:mole schema:value "mole" . 
+usidref:newton a schema:UnitSIdRef .
+usidref:newton schema:value "newton" . 
+usidref:ohm a schema:UnitSIdRef .
+usidref:ohm schema:value "ohm" .
+usidref:pascal a schema:UnitSIdRef .
+usidref:pascal schema:value "pascal" .
+usidref:radian a schema:UnitSIdRef .
+usidref:radian schema:value "radian" .
+usidref:second a schema:UnitSIdRef .
+usidref:second schema:value "second" .
+usidref:siemens a schema:UnitSIdRef .
+usidref:siemens schema:value "siemens" .
+usidref:sievert a schema:UnitSIdRef .
+usidref:sievert schema:value "sievert" .
+usidref:steradian a schema:UnitSIdRef .
+usidref:steradian schema:value "steradian" .
+usidref:tesla a schema:UnitSIdRef .
+usidref:tesla schema:value "tesla" .
+usidref:volt a schema:UnitSIdRef .
+usidref:volt schema:value "volt" .
+usidref:watt a schema:UnitSIdRef .
+usidref:watt schema:value "watt" .
+usidref:weber a schema:UnitSIdRef .
+usidref:weber schema:value "weber" .
+"""
+
 output_file = open(output, 'w')
-output_file.write(open(preamble, 'r').read())
+
+output_file.write(preamble)
 
 # Counters
 sBaseRef_count = 1
