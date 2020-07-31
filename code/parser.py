@@ -1,6 +1,7 @@
 import argparse
 import xml.etree.ElementTree as ET
 import re 
+from os import path
 
 # Function that istantiates an identifier in the output file
 def add_identifier(idt, value, idt_list):
@@ -29,31 +30,11 @@ parser.add_argument('-f', '--file',action='append', required=True, dest='files',
 args = parser.parse_args()
 
 # File definitions
-preamble = "./code/preamble.txt"
+preamble = "./preamble.txt"
 
 
 output = args.output_file if args.output_file else './code/output.ttl'
 input_files = args.files
-
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/BIOMD0000000087.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/BIOMD0000000105.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/BIOMD0000000399.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/BIOMD0000000474.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/BIOMD0000000476.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/BIOMD0000000559.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/BIOMD0000000562.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/BIOMD0000000619.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/BIOMD0000000624.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/BIOMD0000000705.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/BIOMD0000000706.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/MODEL1012110001.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/MODEL1012220002.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/MODEL1012220003.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/MODEL1012220004.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/MODEL1112260002.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/MODEL1812100001.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/MODEL1904090001.xml"
-#model = "/Users/edodema/Desktop/Projects/SBML2SHACL/input/biomodels/MODEL3632127506.xml"
 
 # Writing preamble 
 output_file = open(output, 'w')
