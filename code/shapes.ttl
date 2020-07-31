@@ -300,7 +300,8 @@ schema:listOfModelDefinitions
 # listOfUnitDefinitions:ListOfUnitDefinitions (0,1)
 # listOfCompartments:ListOfCompartments (0,1)
 # listOfSpecies:ListOfSpecies (0,1)
-# listOfParameters:ListOfParameters (0,1)
+# listOfParameters:ListOfParameters (0,n) 
+## NB it should be (0,1) but since I did not model local parameters it is (0,n), all parameters are global
 # listOfSubmodels:ListOfSubmodels (0,1)
 # listOfPorts:ListOfPorts (0,1)
 schema:Model 
@@ -363,7 +364,7 @@ schema:Model
         sh:path schema:listOfParameters ;
         sh:class schema:ListOfParameters ;
         sh:nodeKind sh:IRI ;
-        sh:maxCount 1 ;
+        #sh:maxCount 1 ;
     ] ;
     sh:property [
         sh:path schema:listOfSubmodels ;
