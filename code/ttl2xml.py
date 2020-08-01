@@ -1,4 +1,4 @@
-import rdflib.graph as g
+import rdflib.graph as G
 import argparse
 
 # Command line arguments
@@ -13,6 +13,6 @@ args = parser.parse_args()
 output = open(args.output_file, 'w')
 
 # Query 
-graph = g.Graph()
+graph = G.Graph()
 graph.parse(args.input_file, format='ttl')
 output.write(graph.serialize(format='pretty-xml').decode('utf-8'))
