@@ -19,11 +19,9 @@ g.parse(args.input_file, format='ttl')
 result = g.query("""
 PREFIX schema: <http://schema.org/>
 
-CONSTRUCT {
-        ?p schema:has ?o
-}
+SELECT *
 WHERE {
-    ex:model_0 ?p ?o
+    ?s ?p ?o
 }
 """)
 
