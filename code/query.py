@@ -5,7 +5,9 @@ import argparse
 parser = argparse.ArgumentParser()
    
 parser.add_argument('-f', '--file', required=True, dest='input_file', metavar='file', help='model file')
-#parser.add_argument('-o', '--output', required=True, dest='output_file', metavar='output', help='output file')
+
+# Uncomment to write query's result on a file
+# parser.add_argument('-o', '--output', required=True, dest='output_file', metavar='output', help='output file')
 
 args = parser.parse_args()
 
@@ -21,7 +23,7 @@ CONSTRUCT {
         ?p schema:has ?o
 }
 WHERE {
-    ex:model_1 ?p ?o
+    ex:model_0 ?p ?o
 }
 """)
 
