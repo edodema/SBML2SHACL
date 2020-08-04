@@ -13,9 +13,12 @@ Here is a brief description of what programs in the [code](code) directory do, n
 ### Shapes
 [shapes.ttl](code/shapes.ttl) defines a Turtle model of SBML constructs and types as ontologies, some prefixes are dummies (i.e. ex and type ones). 
 ### Parser
-There are two different parsers. The [first one](code/parser.py) does not support extended SBML since it iterates through the XML file like a list rather than a tree and keeping track of submodels is complex. The [second parser](code/extended_parser.py) can be more easily extended since it relies more on the input file's correctness assumption, it also supports extended SBML and the code is shorter and faster.  
+There are two different parsers. The [first one](code/parser.py) does not support extended SBML since it iterates through the XML file like a list rather than a tree and keeping track of submodels is complex. The [second parser](code/extended_parser.py) can be more easily extended since it relies more on the input file's correctness assumption, it also supports extended SBML and the code is shorter and faster. 
 
-AGGIUNGERE TEMPO DI ESECUZIONE
+| File | CPU usage | System time (s) | User time (s) | Total |
+| - | - | - | - | - |
+| parser.py | 97 % | 52.90 | 2445.38 | 42:54.54 |
+| extended_parser.py | 97 % | 42.48 | 833.54 | 15:02.19 |
 
 ### Shacl verifier
 To check the correctness of the parser's output file use [shacl_verifier.py](code/shacl_verifier.py).
@@ -38,7 +41,7 @@ Using [ttl2xml.py](code/ttl2xml.py) is possible to convert a whole Turtle file i
 In the [eponymous](test/test.sh) directory can be found:
 * 19 [SBML models](test/input/biomodel) downloaded from [Biomodels](https://www.ebi.ac.uk/biomodels/) for classic SBML
 * 4 [SBML models](test/input/custom) for extended SBML. 
-* [test.sh](test/test.sh) that uses the aforementioned tests to check the parsers correctness.
+* [test.sh](test/test.sh) that uses the aforementioned tests to check the parsers correctness. 
 
 ## Resources 
 * [The Systems Biology Markup Language (SBML): Language Specification for Level 3 Version 2 Core](http://co.mbine.org/specifications/sbml.level-3.version-2.core.release-2.pdf)
