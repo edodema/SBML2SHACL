@@ -1,5 +1,5 @@
 # SBML2SHACL
-SBML2SHACL is a repository that allows you to convert a SBML file in a SHACL graph, it does not support all SBML's constructs but only a subset composed by Extended SBML and the following constructs typucal of classic SBML
+SBML2SHACL is a repository that allows you to convert a SBML file in a SHACL graph, it does not support all SBML's constructs but only a subset composed by Extended SBML and the following constructs typical of classic SBML:
 * Parameter
 * Compartment  
 * Unit 
