@@ -522,58 +522,37 @@ for model in input_files:
                 elif re.match('^substanceUnits$', key) is not None:
                     model_text += subject + ' schema:substanceUnits usidref:' + value + ' .'
                     # is a UnitSIdRef: usidref:value schema:value value
-                    if not value in usidref_list:
-                        usidref_text += '\nusidref:' + value + ' a schema:UnitSIdRef .'
-                        usidref_text += '\nusidref:' + value + ' schema:value "' + value + '"^^xsd:string .'
-                        usidref_list.append(value)
+                    if not value in usidref_list: usidref_text += add_identifier('usidref', value, usidref_list)
                 # <Model> <timeUnits> <value>
                 elif re.match('^timeUnits$', key) is not None:
                     model_text += subject + ' schema:timeUnits usidref:' + value + ' .'
                     # is a UnitSIdRef: usidref:value schema:value value
-                    if not value in usidref_list:
-                        usidref_text += '\nusidref:' + value + ' a schema:UnitSIdRef .'
-                        usidref_text += '\nusidref:' + value + ' schema:value "' + value + '"^^xsd:string .'
-                        usidref_list.append(value)
+                    if not value in usidref_list: usidref_text += add_identifier('usidref', value, usidref_list)
                 # <Model> <volumeUnits> <value>
                 elif re.match('^volumeUnits$', key) is not None:
                     model_text += subject + ' schema:volumeUnits usidref:' + value + ' .'
                     # is a UnitSIdRef: usidref:value schema:value value
-                    if not value in usidref_list:
-                        usidref_text += '\nusidref:' + value + ' a schema:UnitSIdRef .'
-                        usidref_text += '\nusidref:' + value + ' schema:value "' + value + '"^^xsd:string .'
-                        usidref_list.append(value)
+                    if not value in usidref_list: usidref_text += add_identifier('usidref', value, usidref_list)
                 # <Model> <areaUnits> <value>
                 elif re.match('^areaUnits$', key) is not None:
                     model_text += subject + ' schema:areaUnits usidref:' + value + ' .'
                     # is a UnitSIdRef: usidref:value schema:value value
-                    if not value in usidref_list:
-                        usidref_text += '\nusidref:' + value + ' a schema:UnitSIdRef .'
-                        usidref_text += '\nusidref:' + value + ' schema:value "' + value + '"^^xsd:string .'
-                        usidref_list.append(value)
+                    if not value in usidref_list: usidref_text += add_identifier('usidref', value, usidref_list)
                 # <Model> <lengthUnits> <value>
                 elif re.match('^lengthUnits$', key) is not None:
                     model_text += subject + ' schema:lengthUnits usidref:' + value + ' .'
                     # is a UnitSIdRef: usidref:value schema:value value
-                    if not value in usidref_list:
-                        usidref_text += '\nusidref:' + value + ' a schema:UnitSIdRef .'
-                        usidref_text += '\nusidref:' + value + ' schema:value "' + value + '"^^xsd:string .'
-                        usidref_list.append(value)
+                    if not value in usidref_list: usidref_text += add_identifier('usidref', value, usidref_list)
                 # <Model> <extentUnits> <value>
                 elif re.match('^extentUnits$', key) is not None:
                     model_text += subject + ' schema:extentUnits usidref:' + value + ' .'
                     # is a UnitSIdRef: usidref:value schema:value value
-                    if not value in usidref_list:
-                        usidref_text += '\nusidref:' + value + ' a schema:UnitSIdRef .'
-                        usidref_text += '\nusidref:' + value + ' schema:value "' + value + '"^^xsd:string .'
-                        usidref_list.append(value)
+                    if not value in usidref_list: usidref_text += add_identifier('usidref', value, usidref_list)
                 # <Model> <conversionFactor> <value>
                 elif re.match('^conversionFactor$', key) is not None:
                     model_text += subject + ' schema:conversionFactor usidref:' + value + ' .'
                     # is a SIdRef: sidref:value schema:value value
-                    if not value in sidref_list:
-                        sidref_text += '\nsidref:' + value + ' a schema:SIdRef .'
-                        sidref_text += '\nsidref:' + value + ' schema:value "' + value + '"^^xsd:string .'
-                        sidref_list.append(value)
+                    if not value in sidref_list: sidref_text += add_identifier('sidref', value, sidref_list)
             # Increment Model identifier
             model_count += 1
 
@@ -1137,7 +1116,7 @@ for model in input_files:
             subject = 'ex:port_' + str(port_count) 
             listOfPorts_text += '\nex:listOfPorts_' + str(listOfPorts_count-1) + ' schema:port ' + subject + ' .'
             subject = '\n' + subject         
-            port_text += subject + ' a schema:Ports .'
+            port_text += subject + ' a schema:Port .'
             # Attributes
             for child_key, value in child.attrib.items():
                 # Some tags could have a namespace before, remove it 
@@ -1149,7 +1128,7 @@ for model in input_files:
                 if re.match('^id$', key) is not None: 
                     port_text += subject + ' schema:id portsid:' + value + ' .'
                     # id is a PortSId: portsid:value schema:value value
-                    if not value in portsid_list: portsid_list += add_identifier('portsid', value, portsid_list)
+                    if not value in portsid_list: portsid_text += add_identifier('portsid', value, portsid_list)
                 # <Port> <name> <value>
                 elif re.match('^name$', key) is not None: 
                     port_text += subject + ' schema:name "' + value + '"^^xsd:string .'  
@@ -1409,10 +1388,13 @@ for model in input_files:
 # Writing on file
 
 output_file.write(id_text)
+output_file.write(idref_text)
 output_file.write(sid_text)
 output_file.write(sidref_text)
 output_file.write(usid_text)
 output_file.write(usidref_text)
+output_file.write(portsid_text)
+output_file.write(portsidref_text)
 output_file.write(sboterm_text)
 
 output_file.write(sBaseRef_text)

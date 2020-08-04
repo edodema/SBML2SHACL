@@ -240,7 +240,7 @@ def add_identifier(idt, value, idt_list):
     if not idt in identifiers: 
         print("ERROR! This identifier is not modeled.")
         exit(-1)
-
+    
     text = '\n' + idt + ':' + value + ' a schema:' + identifiers[idt]  + ' .'
     text += '\n' + idt + ':' + value + ' schema:value "' + value + '"^^xsd:string .'
     idt_list.append(value)
@@ -366,10 +366,13 @@ for model in args.files:
     xml_search(root, '', 0)
 
 output_file.write(id_text)
+output_file.write(idref_text)
 output_file.write(sid_text)
 output_file.write(sidref_text)
 output_file.write(usid_text)
 output_file.write(usidref_text)
+output_file.write(portsid_text)
+output_file.write(portsidref_text)
 output_file.write(sboterm_text)
 
 output_file.write(text)
