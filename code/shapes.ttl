@@ -303,6 +303,8 @@ schema:listOfModelDefinitions
 ## NB it should be (0,1) but since I did not model local parameters it is (0,n), all parameters are global
 # listOfSubmodels:ListOfSubmodels (0,1)
 # listOfPorts:ListOfPorts (0,1)
+# listOfDeletions:ListOfDeletions (0,1)
+# listOfReplacedElements:ListOfReplacedElements (0,1)
 schema:Model 
     a sh:NodeShape, owl:Class ;
     rdfs:subClassOf schema:SBase ;
@@ -374,6 +376,18 @@ schema:Model
     sh:property [
         sh:path schema:listOfPorts;
         sh:class schema:ListOfPorts ;
+        sh:nodeKind sh:IRI ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path schema:listOfDeletions;
+        sh:class schema:ListOfDeletions ;
+        sh:nodeKind sh:IRI ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path schema:listOfReplacedElements;
+        sh:class schema:ListOfReplacedElements ;
         sh:nodeKind sh:IRI ;
         sh:maxCount 1 ;
     ] ;

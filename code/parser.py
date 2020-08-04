@@ -625,7 +625,7 @@ for model in input_files:
                 if re.match('^id$', key) is not None: 
                     unitDefinition_text += subject + ' schema:id usid:' + value + ' .'
                     # id is a UnitSId: usid:value schema:value value
-                    if not value in sid_list: usid_text += add_identifier('usid', value, usid_list)
+                    if not value in usid_list: usid_text += add_identifier('usid', value, usid_list)
             # Increment UnitDefinition identifier
             unitDefinition_count += 1
             
@@ -985,7 +985,7 @@ for model in input_files:
                     parameter_text += subject + ' schema:constant "' + value + '"^^xsd:boolean .'  
             # Increment Unit identifier
             parameter_count += 1
-    
+        '''   
         elif re.match('listOfSubmodels$', tag) is not None:
             # a ListOfSubmodels is associated to a Model whose attribute is now added
             # hence listOfSubmodels is used as an object despite the subject variable
@@ -1188,7 +1188,7 @@ for model in input_files:
             subject = 'ex:deletion_' + str(deletion_count) 
             listOfDeletions_text += '\nex:listOfDeletions_' + str(listOfDeletions_count-1) + ' schema:deletion ' + subject + ' .'
             subject = '\n' + subject         
-            deletion_text += subject + ' a schema:Deletions .'
+            deletion_text += subject + ' a schema:Deletion .'
             # Attributes
             for child_key, value in child.attrib.items():
                 # Some tags could have a namespace before, remove it 
@@ -1221,7 +1221,7 @@ for model in input_files:
                     if not value in sidref_list: sidref_text += add_identifier('sidref', value, sidref_list)
                 # <Deletion> <portRef> <value> 
                 elif re.match('^portRef$', key) is not None: 
-                    deletion_text += subject + ' schema:portRef portref:' + value + ' .'
+                    deletion_text += subject + ' schema:portRef portsidref:' + value + ' .'
                     # portRef is a PortSIdRef: portsidref:value schema:value value
                     if not value in portsidref_list: portsidref_text += add_identifier('portsidref', value, portsidref_list)
                 # <Deletion> <unitRef> <value> 
@@ -1236,7 +1236,7 @@ for model in input_files:
                     if not value in idref_list: idref_text += add_identifier('idref', value, idref_list)
             # Increment Unit identifier
             deletion_count += 1
-        
+    
         elif re.match('listOfReplacedElements$', tag) is not None:
             # a ListOfReplacedElements is associated to a Model whose attribute is now added
             # hence listOfReplacedElements is used as an object despite the subject variable
@@ -1272,15 +1272,15 @@ for model in input_files:
                     if not value in sboterm_list: sboterm_text += add_identifier('sboterm', value, sboterm_list)
             # increment counter
             listOfReplacedElements_count += 1
-    
+
         elif re.match('replacedElement$', tag) is not None:
             # a ReplacedElements is associated to a ListOfReplacedElementss whose attribute is now added
             # hence replacedElement is used as an object despite the subject variable
             # <ListOfReplacedElementss> <replacedElement> <ReplacedElements>
             subject = 'ex:replacedElement_' + str(replacedElement_count) 
-            listOfReplacedElements_text += '\nex:listOfReplacedElement_' + str(listOfReplacedElements_count-1) + ' schema:replacedElement ' + subject + ' .'
+            listOfReplacedElements_text += '\nex:listOfReplacedElements_' + str(listOfReplacedElements_count-1) + ' schema:replacedElement ' + subject + ' .'
             subject = '\n' + subject         
-            replacedElement_text += subject + ' a schema:ReplacedElementss .'
+            replacedElement_text += subject + ' a schema:ReplacedElement .'
             # Attributes
             for child_key, value in child.attrib.items():
                 # Some tags could have a namespace before, remove it 
@@ -1384,7 +1384,7 @@ for model in input_files:
                     if not value in sidref_list: sidref_text += add_identifier('sidref', value, sidref_list)
             # increment counter
             replacedBy_count += 1
-
+        '''
 # Writing on file
 
 output_file.write(id_text)
