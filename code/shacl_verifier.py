@@ -1,3 +1,11 @@
+'''
+   File name = shacl_verify.py
+   Author = Edoardo De Matteis
+   Date created = 26 July 2020
+   Date last modified = 5 August 2020
+   Python version = 3.8
+'''
+
 import argparse
 from pyshacl import validate
 

@@ -1,3 +1,11 @@
+'''
+   File name = parser.py
+   Author = Edoardo De Matteis
+   Date created =  31 July 2020
+   Date last modified = 5 August 2020
+   Python version = 3.8
+'''
+
 import xml.etree.ElementTree as ET 
 import argparse
 import re
@@ -13,7 +21,7 @@ args = parser.parse_args()
 # File IO
 output_file = open(args.output_file, 'w')
 
-# XML exploration
+# Writing preamble necessary for validation
 preamble = """
 @prefix ex: <http://example.org/ns#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -199,9 +207,10 @@ usidref:weber schema:value "weber" .
 """
 output_file.write(preamble)
 
-# Variables
+# Subject identifier
 subject_id = 0
 
+# Strings for type nodes
 id_text = '\n'
 idref_text = '\n'
 sid_text = '\n'
@@ -212,8 +221,8 @@ portsid_text = '\n'
 portsidref_text = '\n'
 sboterm_text = '\n'
 
-text = '\n'
-
+# Lists mantaining type nodes to avoid
+# multiple instantiation 
 id_list = []
 idref_list = []
 sid_list = []
@@ -227,8 +236,33 @@ portsid_list = []
 portsidref_list = []
 sboterm_list = []
 
+# String for nodes instances
+text = '\n'
+
 # Check for compound types attributes 
 def add_identifier(idt, value, idt_list):
+    """
+    Instantiate a node of a type defined in the SHACL model 
+    and it to a check list.
+
+    Parameters
+    ----------
+    idt : string  
+        Type's prefix.
+    value : string
+        Node's only attribute's value.
+    idt_list: list
+        The check list where the node will be added.
+
+    Returns
+    -------
+    text : string
+        SHACL statements for the creation of the node. 
+
+    >>> add_identifier('id', 'secret', sid_list)
+    id:secret a schema:ID .
+    id:secret schema:value "secret"^^xsd:string .
+    """
     identifiers = {
         'id': 'ID', 'idref': 'IDREF',
         'sid': 'SId', 'sidref': 'SIdRef',
@@ -236,6 +270,9 @@ def add_identifier(idt, value, idt_list):
         'portsid': 'PortSId', 'portsidref': 'PortSIdRef',
         'sboterm': 'SBOTerm'
     }
+    '''
+    Dictionary associating each prefix to its type.
+    '''
 
     if not idt in identifiers: 
         print("ERROR! This identifier is not modeled.")
@@ -246,9 +283,29 @@ def add_identifier(idt, value, idt_list):
     idt_list.append(value)
     return text
 
+# XML exploration
 # Search function  
 def xml_search(root, father, subject_id):
+    """
+    Converts a given SBML model in SHACL exploring the 
+    XML file as a tree
+
+    Parameters
+    ----------
+    root: Element
+    The radix of the subtree to explore
+
+    father: string
+    Root parent's tag 
+
+    subject_id: integer 
+    Counter of the given construct, added to the root's 
+    tag defines the identifier
+
+    Returns void
+    """
     
+    # Necessary to be global since Python does not  have call by reference
     global id_text
     global idref_text
     global sid_text
@@ -265,25 +322,30 @@ def xml_search(root, father, subject_id):
     tag = re.search('.*\}(.*)', root.tag)
     tag = tag.group(1) if tag is not None else root.tag
 
-    # Remove it to model all tags
+    # This match guarantees that we will check only defined constructs,
+    # remove the whole conditional to blindly convert all constructs, even
+    # though it is no problem for the parser shapes.ttl should be updated
     if not re.match('^sbml$|^listOfExternalModelDefinitions$|^externalModelDefinition$|^listOfModelDefinitions$|^model$|^listOfUnitDefinitions$|^unitDefinition$|^listOfUnits$|^unti$|^listOfCompartments$|^compartment$|^listOfSpecies$|^species$|^listOfParameter$|^parameter$|^listOfSubmodels$|^submodel$|^listOfPorts$|^port$|^listOfDeletions$|^deletions$|^listOfReplacedElements$|^replacedElement$|^replacedBy$', tag): return
 
-     #if tag in ['sbml', 'listOfExternalModelDefinitions', 'externalModelDefinition', 'listOfModelDefinitions', 'model', 'listOfUnitDefinitions', 'unitDefinition', 'listOfUnits', 'unti', 'listOfCompartments', 'compartment', 'listOfSpecies', 'species', 'listOfParameter', 'parameter', 'listOfSubmodels', 'submodel', 'listOfPorts', 'port', 'listOfDeletions', 'deletions', 'listOfReplacedElements', 'replacedElement', 'replacedBy']: print(tag)
-    
-    # Add a id to each node  
     subject = tag + '_' + str(subject_id)
+    '''
+    Defines the subject identifier 
+    '''
 
     # Resolve relation attributes fot parent node
     if father: text += 'ex:%s ex:%s ex:%s .\n' % (father, tag, subject)
+    
     # Type definition
     text += 'ex:%s a ex:%s .\n' % (subject, tag.capitalize())
+    
     # Attributes
     for ext_key, value in root.attrib.items():
+        
         # Isolate attribute name
         key = re.search('.*\}(.*)', ext_key)
         key = key.group(1) if key is not None else ext_key 
 
-        # Attributes typing
+        # Attributes' typing
         if re.match('^id$', key):
             # id has different types depending on the tag used 
             if tag == 'unitDefinition':
@@ -346,21 +408,15 @@ def xml_search(root, father, subject_id):
             # metaIdRef is a IDREF: idref:value schema:value value
             if not value in idref_list: idref_text += add_identifier('idref', value, idref_list)
  
-        elif re.match('^$', key): pass
-        elif re.match('^$', key): pass
-        elif re.match('^$', key): pass
-        elif re.match('^$', key): pass
-        elif re.match('^$', key): pass
-        elif re.match('^$', key): pass
-        elif re.match('^$', key): pass
-
     text += '\n'
     for child in root: 
         xml_search(child, subject, subject_id)
         subject_id += 1
 
-# Search
 for model in args.files:
+    '''
+    This loop allows to have multiple files in input.
+    '''
     tree = ET.ElementTree(file=model)
     root = tree.getroot()
     xml_search(root, '', 0)
