@@ -333,7 +333,7 @@ def xml_search(root, father, subject_id):
     '''
 
     # Resolve relation attributes fot parent node
-    if father: text += 'ex:%s ex:%s ex:%s .\n' % (father, tag, subject)
+    if father: text += 'ex:%s schema:%s ex:%s .\n' % (father, tag, subject)
     
     # Type definition
     text += 'ex:%s a ex:%s .\n' % (subject, tag.capitalize())
@@ -349,62 +349,62 @@ def xml_search(root, father, subject_id):
         if re.match('^id$', key):
             # id has different types depending on the tag used 
             if tag == 'unitDefinition':
-                text += 'ex:%s ex:%s usid:%s .\n' % (subject, key, value)
+                text += 'ex:%s schema:%s usid:%s .\n' % (subject, key, value)
                 # id is a UnitSId: ussid:value schema:value value
                 if not value in usid_list: usid_text += add_identifier('usid', value, usid_list) 
             elif tag == 'port':
-                text += 'ex:%s ex:%s portsid:%s .\n' % (subject, key, value)
+                text += 'ex:%s schema:%s portsid:%s .\n' % (subject, key, value)
                 # id is a PortSId: sid:value schema:value value
                 if not value in portsid_list: portsid_text += add_identifier('portsid', value, portsid_list)
             else:
-                text += 'ex:%s ex:%s sid:%s .\n' % (subject, key, value)
+                text += 'ex:%s schema:%s sid:%s .\n' % (subject, key, value)
                 # id is a SId: sid:value schema:value value
                 if not value in sid_list: sid_text += add_identifier('sid', value, sid_list)
 
         elif re.match('^name$', key):
-            text += 'ex:%s ex:%s "%s"^^xsd:string .\n' % (subject, key, value)
+            text += 'ex:%s schema:%s "%s"^^xsd:string .\n' % (subject, key, value)
 
         elif re.match('^metaid$', key):
-            text += 'ex:%s ex:%s id:%s .\n' % (subject, key, value)
+            text += 'ex:%s schema:%s id:%s .\n' % (subject, key, value)
             # id is a ID: id:value schema:value value
             if not value in id_list: id_text += add_identifier('id', value, id_list)
 
         elif re.match('^sboTerm$', key):
-            text += 'ex:%s ex:%s sboterm:%s .\n' % (subject, key, value)
+            text += 'ex:%s schema:%s sboterm:%s .\n' % (subject, key, value)
             # id is a SBOTerm: sboterm:value schema:value value
             if not value in sboterm_list: sboterm_text += add_identifier('sboterm', value, sboterm_list)
 
         elif re.match('^substanceUnits$|^timeUnits$|^volumeUnits$|^areaUnits$|^lengthUnits$|^extentUnits$|^units$|^unitRef$', key):
-            text += 'ex:%s ex:%s usidref:%s .\n' % (subject, key, value)
+            text += 'ex:%s schema:%s usidref:%s .\n' % (subject, key, value)
             # id is a UnitSIdRef: usidref:value schema:value value
             if not value in usidref_list: usidref_text += add_identifier('usidref', value, usidref_list)
 
         elif re.match('^conversionFactor$|^compartment$|^timeConversionFactor$|^extentConversionFactor$|^idRef$|^submodelRef$|^deletion$', key):
-            text += 'ex:%s ex:%s sidref:%s .\n' % (subject, key, value)
+            text += 'ex:%s schema:%s sidref:%s .\n' % (subject, key, value)
             # id is a SIdRef: usidref:value schema:value value
             if not value in sidref_list: sidref_text += add_identifier('sidref', value, sidref_list)
 
         elif re.match('^kind$', key):
-            text += 'ex:%s ex:%s usid:%s .\n' % (subject, key, value)
+            text += 'ex:%s schema:%s usid:%s .\n' % (subject, key, value)
             # id is a UnitSId: usid:value schema:value value
             if not value in usid_list: usid_text += add_identifier('usid', value, usid_list)
 
         elif re.match('^multiplier$|^spatialDimensions$|^size$|^initialAmount$|^initialConcentration$|^value$', key):
-            text += 'ex:%s ex:%s "%s"^^xsd:decimal .\n' % (subject, key, value)
+            text += 'ex:%s schema:%s "%s"^^xsd:decimal .\n' % (subject, key, value)
 
         elif re.match('^scale$|^exponent$', key):
-            text += 'ex:%s ex:%s "%s"^^xsd:integer .\n' % (subject, key, value)
+            text += 'ex:%s schema:%s "%s"^^xsd:integer .\n' % (subject, key, value)
 
         elif re.match('^constant$|^hasOnlySubstanceUnits$|^boundaryCondition$', key):
-            text += 'ex:%s ex:%s "%s"^^xsd:boolean .\n' % (subject, key, value)
+            text += 'ex:%s schema:%s "%s"^^xsd:boolean .\n' % (subject, key, value)
         
         elif re.match('^portRef$', key):
-            text += 'ex:%s ex:%s portsidref:%s .\n' % (subject, key, value)
+            text += 'ex:%s schema:%s portsidref:%s .\n' % (subject, key, value)
             # portRef is a PortSIdRef: portsidref:value schema:value value
             if not value in portsidref_list: portsidref_text += add_identifier('portsidref', value, portsidref_list)
 
         elif re.match('^metaIdRef$', key):
-            text += 'ex:%s ex:%s idref:%s .\n' % (subject, key, value)
+            text += 'ex:%s schema:%s idref:%s .\n' % (subject, key, value)
             # metaIdRef is a IDREF: idref:value schema:value value
             if not value in idref_list: idref_text += add_identifier('idref', value, idref_list)
  
