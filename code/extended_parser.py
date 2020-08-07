@@ -285,7 +285,7 @@ def add_identifier(idt, value, idt_list):
 
 # XML exploration
 # Search function  
-def xml_search(root, father, subject_id):
+def xml_search(root, father):
     """
     Converts a given SBML model in SHACL exploring the 
     XML file as a tree
@@ -315,28 +315,36 @@ def xml_search(root, father, subject_id):
     global portsid_text
     global portsidref_text
     global sboterm_text
-
+    global subject_id
     global text
+
+    # Increment id counter
+    subject_id += 1
 
     # Isolate tag name
     tag = re.search('.*\}(.*)', root.tag)
     tag = tag.group(1) if tag is not None else root.tag
 
+
     # This match guarantees that we will check only defined constructs,
     # remove the whole conditional to blindly convert all constructs, even
     # though it is no problem for the parser shapes.ttl should be updated
-    if not re.match('^sbml$|^listOfExternalModelDefinitions$|^externalModelDefinition$|^listOfModelDefinitions$|^modelDefinition$|^model$|^listOfUnitDefinitions$|^unitDefinition$|^listOfUnits$|^unti$|^listOfCompartments$|^compartment$|^listOfSpecies$|^species$|^listOfParameter$|^parameter$|^listOfSubmodels$|^submodel$|^listOfPorts$|^port$|^listOfDeletions$|^deletions$|^listOfReplacedElements$|^replacedElement$|^replacedBy$', tag): return
+    if not re.match('^sbml$|^listOfExternalModelDefinitions$|^externalModelDefinition$|^listOfModelDefinitions$|^modelDefinition$|^model$|^listOfUnitDefinitions$|^unitDefinition$|^listOfUnits$|^unti$|^listOfCompartments$|^compartment$|^listOfSpecies$|^species$|^listOfParameter$|^parameter$|^listOfSubmodels$|^submodel$|^listOfPorts$|^port$|^listOfDeletions$|^deletion$|^listOfReplacedElements$|^replacedElement$|^replacedBy$', tag): return
 
     subject = tag + '_' + str(subject_id)
     '''
     Defines the subject identifier 
     '''
 
+    # xmlns in sbml is not treated as an attribute since is a namespace
+    if(tag == 'sbml'): 
+        text += 'ex:%s schema:xmlns "%s"^^xsd:anyURI .\n' % (subject, re.search('{(.*)}.*', root.tag).group(1))
+
     # Resolve relation attributes fot parent node
     if father: text += 'ex:%s schema:%s ex:%s .\n' % (father, tag, subject)
     
     # Type definition
-    text += 'ex:%s a ex:%s .\n' % (subject, tag[0].upper() + tag[1:])
+    text += 'ex:%s a schema:%s .\n' % (subject, tag[0].upper() + tag[1:])
     
     # Attributes
     for ext_key, value in root.attrib.items():
@@ -397,6 +405,9 @@ def xml_search(root, father, subject_id):
 
         elif re.match('^constant$|^hasOnlySubstanceUnits$|^boundaryCondition$', key):
             text += 'ex:%s schema:%s "%s"^^xsd:boolean .\n' % (subject, key, value)
+
+        elif re.match('^source', key):
+            text += 'ex:%s schema:%s "%s"^^xsd:anyURI .\n' % (subject, key, value)
         
         elif re.match('^portRef$', key):
             text += 'ex:%s schema:%s portsidref:%s .\n' % (subject, key, value)
@@ -410,8 +421,7 @@ def xml_search(root, father, subject_id):
  
     text += '\n'
     for child in root: 
-        xml_search(child, subject, subject_id)
-        subject_id += 1
+        xml_search(child, subject)
 
 for model in args.files:
     '''
@@ -419,7 +429,7 @@ for model in args.files:
     '''
     tree = ET.ElementTree(file=model)
     root = tree.getroot()
-    xml_search(root, '', 0)
+    xml_search(root, '')
 
 output_file.write(id_text)
 output_file.write(idref_text)

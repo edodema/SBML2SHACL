@@ -185,7 +185,7 @@ class Tree:
         print()
 
         for node in self.nodes: 
-            Tree(node).print_recursive(indent + 8)
+            Tree(node).print_recursive(indent + 4)
 
 
 
@@ -221,7 +221,7 @@ I consider xml as the root node since
 1. Exists
 2. sbml can be find through find_node()
 '''
-root.add_child(Node('sbml_0'))
+root.add_child(Node('sbml_1'))
 tree = Tree(root)
 
 with open(args.input_file) as fp :
@@ -237,31 +237,39 @@ with open(args.input_file) as fp :
                 pred = re.search('.*:(.*)', words[1])
                 pred = pred.group(1) if pred is not None else 'a'
                 
-                # The object is a primitive type "A"^^xsd:B or a URI ex:C
-                obj = re.search('(.*)\^\^.*', words[2])
-                obj = obj.group(1) if obj is not None else re.search('.*:(.*)', words[2]).group(1)
+                # The object is a primitive type "A"^^xsd:B or a URI C:D
+                #obj = re.search('(.*)\^\^.*', words[2])
+                #obj = obj.group(1) if obj is not None else re.search('.*:(.*)', words[2]).group(1)
 
                 # Search the node in the tree
                 if ( node := tree.find_node(subj)):
                     # Typing
-                    if re.match('a', pred):  node.set_tag(obj)
+                    if re.match('a', pred): 
+                        tag = re.search('^schema:(.*)', words[2]).group(1)
+                        node.set_tag(tag[0].lower() + tag[1:])
+                    # Add child
+                    elif re.match('^ex:.*' , words[2]):
+                        obj = re.search('.*:(.*)', words[2]).group(1)
+                        node.add_child(Node(obj))
+                    # Add attribute
+                    else: 
+                        obj = re.search('(.*)\^\^.*', words[2])
+                        obj = obj.group(1) if obj is not None else re.search('.*:(.*)', words[2]).group(1)
+                        node.add_attribute(pred, obj)
+
+                    '''
                     # Add child
                     elif re.match('^sbml$|^listOfExternalModelDefinitions$|^externalModelDefinition$|^listOfModelDefinitions$|^modelDefinition$|^model$|^listOfUnitDefinitions$|^unitDefinition$|^listOfUnits$|^unti$|^listOfCompartments$|^compartment$|^listOfSpecies$|^species$|^listOfParameter$|^parameter$|^listOfSubmodels$|^submodel$|^listOfPorts$|^port$|^listOfDeletions$|^deletions$|^listOfReplacedElements$|^replacedElement$|^replacedBy$', pred): 
                         node.add_child(Node(obj))
                     # Add attribute
                     else: node.add_attribute(pred, obj)
+                    '''
                 
                 # This should never occur since I add nodes one after another
                 else:
-                    #pass
-                    print(subj, pred, obj)
+                    pass
+                    #print(subj, pred, obj)
 
-
-                output_file.write(subj + ' ' + pred + ' ' + obj + '\n')                
-
-print()
 tree.print()
-
-#print(tree.find_node('submodel_1'))
 
 output_file.close()

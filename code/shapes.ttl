@@ -137,12 +137,14 @@ schema:SBase
     sh:property [
         sh:path schema:listOfReplacedElements ;
         sh:maxCount 1 ;
-        sh:datatype xsd:ListOfReplacedElements ; 
+        sh:class schema:ListOfReplacedElements ;
+        sh:nodeKind sh:IRI ;
     ] ;
     sh:property [
         sh:path schema:replacedBy ;
         sh:maxCount 1 ;
-        sh:datatype xsd:ReplacedBy ; 
+        sh:class schema:ReplacedBy ;
+        sh:nodeKind sh:IRI ;
     ] ;
     .
 
@@ -527,8 +529,8 @@ schema:ListOfSpecies
 # Species -> SBase
 # id:SId (1,1) 
 # compartment:SIdRef (0,n)
-# initialAmount:double (0,1)
-# initialConcentration:double (0,1)
+# initialAmount:decimal (0,1)
+# initialConcentration:decimal (0,1)
 # substanceUnits:UnitSIdRef (0,n)
 # hasOnlySubstanceUnits:boolean (0,1)
 # boundaryCondition:boolean (0,1)
@@ -550,12 +552,12 @@ schema:Species
     ] ;
     sh:property [
         sh:path schema:initialAmount ;
-        sh:datatype xsd:double ;
+        sh:datatype xsd:decimal ;
         sh:maxCount 1 ;
     ] ;
     sh:property [
         sh:path schema:initialConcentration;
-        sh:datatype xsd:double ;
+        sh:datatype xsd:decimal ;
         sh:maxCount 1 ;
     ] ;
     sh:property [
