@@ -325,7 +325,7 @@ def xml_search(root, father, subject_id):
     # This match guarantees that we will check only defined constructs,
     # remove the whole conditional to blindly convert all constructs, even
     # though it is no problem for the parser shapes.ttl should be updated
-    if not re.match('^sbml$|^listOfExternalModelDefinitions$|^externalModelDefinition$|^listOfModelDefinitions$|^model$|^listOfUnitDefinitions$|^unitDefinition$|^listOfUnits$|^unti$|^listOfCompartments$|^compartment$|^listOfSpecies$|^species$|^listOfParameter$|^parameter$|^listOfSubmodels$|^submodel$|^listOfPorts$|^port$|^listOfDeletions$|^deletions$|^listOfReplacedElements$|^replacedElement$|^replacedBy$', tag): return
+    if not re.match('^sbml$|^listOfExternalModelDefinitions$|^externalModelDefinition$|^listOfModelDefinitions$|^modelDefinition$|^model$|^listOfUnitDefinitions$|^unitDefinition$|^listOfUnits$|^unti$|^listOfCompartments$|^compartment$|^listOfSpecies$|^species$|^listOfParameter$|^parameter$|^listOfSubmodels$|^submodel$|^listOfPorts$|^port$|^listOfDeletions$|^deletions$|^listOfReplacedElements$|^replacedElement$|^replacedBy$', tag): return
 
     subject = tag + '_' + str(subject_id)
     '''
@@ -336,7 +336,7 @@ def xml_search(root, father, subject_id):
     if father: text += 'ex:%s schema:%s ex:%s .\n' % (father, tag, subject)
     
     # Type definition
-    text += 'ex:%s a ex:%s .\n' % (subject, tag.capitalize())
+    text += 'ex:%s a ex:%s .\n' % (subject, tag[0].upper() + tag[1:])
     
     # Attributes
     for ext_key, value in root.attrib.items():
@@ -379,7 +379,7 @@ def xml_search(root, father, subject_id):
             # id is a UnitSIdRef: usidref:value schema:value value
             if not value in usidref_list: usidref_text += add_identifier('usidref', value, usidref_list)
 
-        elif re.match('^conversionFactor$|^compartment$|^timeConversionFactor$|^extentConversionFactor$|^idRef$|^submodelRef$|^deletion$', key):
+        elif re.match('^conversionFactor$|^compartment$|^timeConversionFactor$|^extentConversionFactor$|^idRef$|^modelRef$|^submodelRef$|^deletion$', key):
             text += 'ex:%s schema:%s sidref:%s .\n' % (subject, key, value)
             # id is a SIdRef: usidref:value schema:value value
             if not value in sidref_list: sidref_text += add_identifier('sidref', value, sidref_list)
@@ -392,7 +392,7 @@ def xml_search(root, father, subject_id):
         elif re.match('^multiplier$|^spatialDimensions$|^size$|^initialAmount$|^initialConcentration$|^value$', key):
             text += 'ex:%s schema:%s "%s"^^xsd:decimal .\n' % (subject, key, value)
 
-        elif re.match('^scale$|^exponent$', key):
+        elif re.match('^scale$|^exponent$|^level$|^version$', key):
             text += 'ex:%s schema:%s "%s"^^xsd:integer .\n' % (subject, key, value)
 
         elif re.match('^constant$|^hasOnlySubstanceUnits$|^boundaryCondition$', key):
