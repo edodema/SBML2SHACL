@@ -9,6 +9,18 @@
 import re
 import argparse
 
+# Command line arguments
+parser = argparse.ArgumentParser()
+   
+parser.add_argument('-f', '--file', required=True, dest='input_file', metavar='file', help='ttl input file')
+parser.add_argument('-o', '--output', required=True, dest='output_file', metavar='output', help='sbml output file')
+
+args = parser.parse_args()
+
+# File IO 
+output_file = open(args.output_file, 'w')
+
+# XML tree
 
 class Node:
     '''
@@ -187,31 +199,7 @@ class Tree:
         for node in self.nodes: 
             Tree(node).print_recursive(indent + 4)
 
-
-
-# Command line arguments
-parser = argparse.ArgumentParser()
-   
-parser.add_argument('-f', '--file', required=True, dest='input_file', metavar='file', help='ttl input file')
-parser.add_argument('-o', '--output', required=True, dest='output_file', metavar='output', help='sbml output file')
-
-args = parser.parse_args()
-
-# File IO 
-output_file = open(args.output_file, 'w') 
-
-# Writing is done using two strings 
-head_text = '\n'
-'''
-This one will open xml labels
-'''
-
-tail_text = '\n'
-'''
-This one will close xml labels
-'''
-
-# Nodes construction
+# Variables 
 root = Node('xml')
 root.set_tag('?xml')
 root.add_attribute('version', '"1.0"')
@@ -223,24 +211,21 @@ I consider xml as the root node since
 '''
 root.add_child(Node('sbml_1'))
 tree = Tree(root)
-
+ 
+# Create XML tree structure 
 with open(args.input_file) as fp :
     for i, line in enumerate(fp):
         if i > 181 and not line.isspace() :
             if re.match('^ex', line): 
                 # Separate lines by whitespaces obtaining a triple <s> <p> <o>
                 words = line.split()
-
+                
                 subj = re.search('.*:(.*)', words[0]).group(1)
 
                 # The predicate can be "a"
                 pred = re.search('.*:(.*)', words[1])
                 pred = pred.group(1) if pred is not None else 'a'
                 
-                # The object is a primitive type "A"^^xsd:B or a URI C:D
-                #obj = re.search('(.*)\^\^.*', words[2])
-                #obj = obj.group(1) if obj is not None else re.search('.*:(.*)', words[2]).group(1)
-
                 # Search the node in the tree
                 if ( node := tree.find_node(subj)):
                     # Typing
@@ -253,23 +238,64 @@ with open(args.input_file) as fp :
                         node.add_child(Node(obj))
                     # Add attribute
                     else: 
+                        # Attributes can be ""A"^^xsd:B or C:D
                         obj = re.search('(.*)\^\^.*', words[2])
                         obj = obj.group(1) if obj is not None else re.search('.*:(.*)', words[2]).group(1)
-                        node.add_attribute(pred, obj)
+                        node.add_attribute(pred, '"' + obj.strip('"') + '"')
 
-                    '''
-                    # Add child
-                    elif re.match('^sbml$|^listOfExternalModelDefinitions$|^externalModelDefinition$|^listOfModelDefinitions$|^modelDefinition$|^model$|^listOfUnitDefinitions$|^unitDefinition$|^listOfUnits$|^unti$|^listOfCompartments$|^compartment$|^listOfSpecies$|^species$|^listOfParameter$|^parameter$|^listOfSubmodels$|^submodel$|^listOfPorts$|^port$|^listOfDeletions$|^deletions$|^listOfReplacedElements$|^replacedElement$|^replacedBy$', pred): 
-                        node.add_child(Node(obj))
-                    # Add attribute
-                    else: node.add_attribute(pred, obj)
-                    '''
-                
-                # This should never occur since I add nodes one after another
-                else:
-                    pass
-                    #print(subj, pred, obj)
+# Convert XML tree to XML text
 
-tree.print()
+# Writing is done using two strings 
+text = ''
+'''
+This one will open xml labels
+'''
 
+oneliner_tags = '^submodel$|^compartment$|^species$|^parameter$|^unit$|^modelDefinition$' 
+'''
+Tags that have to be written on only one line
+'''
+
+def xml_parse(tree, indent):
+    '''
+    Parses a Tree in XML text
+
+    Arguments
+    ---------
+    tree: Tree 
+    A SHACL/XML tree
+
+    Returns void
+    '''
+
+    global text
+    global oneliner_tags
+
+    root = tree.root
+
+    # xml tag is behaves differently from others
+    if root.id == 'xml': 
+        text += '<' + root.tag  
+        for key, value in root.attrib.items():
+            text += ' ' + key + '=' + value
+        text += '?>'
+    # All other tags behave the same way
+    else: 
+        text += '\n' + ' ' * indent + '<' + root.tag 
+        for key, value in root.attrib.items():
+            text += ' ' + key + '=' + value
+        # Some tags have only one label and other have each for starting and ending
+        if re.match(oneliner_tags, root.tag): 
+            text += '/>'
+
+        else: text += '>'
+
+    # Explore tree
+    for child in root.children:
+        xml_parse(Tree(child), indent + 2)
+    if root.id != 'xml' and not re.match(oneliner_tags, root.tag): text += '\n' + ' ' * indent + '</' + root.tag + '>'
+        
+xml_parse(tree, 0)
+
+output_file.write(text)
 output_file.close()
