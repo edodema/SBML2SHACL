@@ -244,7 +244,11 @@ with open(args.input_file) as fp :
                         # Attributes can be ""A"^^xsd:B or C:D
                         obj = re.search('(.*)\^\^.*', words[2])
                         obj = obj.group(1) if obj is not None else re.search('.*:(.*)', words[2]).group(1)
-                        node.add_attribute(pred, '"' + obj.strip('"') + '"')
+                        
+                        obj = obj.strip('"')
+                        # SBOTERM need the SBO: prefix
+                        if pred == 'sboTerm': obj = 'SBO:' + obj
+                        node.add_attribute(pred, '"' + obj + '"')
 
 # Convert XML tree to XML text
 
