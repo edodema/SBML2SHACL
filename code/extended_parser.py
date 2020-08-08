@@ -396,10 +396,10 @@ def xml_search(root, father):
             # id is a UnitSId: usid:value schema:value value
             if not value in usid_list: usid_text += add_identifier('usid', value, usid_list)
 
-        elif re.match('^multiplier$|^spatialDimensions$|^size$|^initialAmount$|^initialConcentration$|^value$', key):
+        elif re.match('^exponent$|^multiplier$|^spatialDimensions$|^size$|^initialAmount$|^initialConcentration$|^value$', key):
             text += 'ex:%s schema:%s "%s"^^xsd:decimal .\n' % (subject, key, value)
 
-        elif re.match('^scale$|^exponent$|^level$|^version$', key):
+        elif re.match('^scale$|^level$|^version$', key):
             text += 'ex:%s schema:%s "%s"^^xsd:integer .\n' % (subject, key, value)
 
         elif re.match('^constant$|^hasOnlySubstanceUnits$|^boundaryCondition$', key):
