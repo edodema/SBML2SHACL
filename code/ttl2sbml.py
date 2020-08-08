@@ -219,7 +219,10 @@ with open(args.input_file) as fp :
             if re.match('^ex', line): 
                 # Separate lines by whitespaces obtaining a triple <s> <p> <o>
                 words = line.split()
-                
+                del words[-1]
+                words[2] = ' '.join(words[2::]) 
+                del words[3::]
+
                 subj = re.search('.*:(.*)', words[0]).group(1)
 
                 # The predicate can be "a"
