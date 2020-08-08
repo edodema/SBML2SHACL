@@ -232,7 +232,7 @@ with open(args.input_file) as fp :
                 # Search the node in the tree
                 if ( node := tree.find_node(subj)):
                     # Typing
-                    if re.match('a', pred): 
+                    if re.match('^a$', pred): 
                         tag = re.search('^schema:(.*)', words[2]).group(1)
                         node.set_tag(tag[0].lower() + tag[1:])
                     # Add child
@@ -242,12 +242,17 @@ with open(args.input_file) as fp :
                     # Add attribute
                     else: 
                         # Attributes can be ""A"^^xsd:B or C:D
+                        # objects can have : other than the prefix so non-greedy *? is used
                         obj = re.search('(.*)\^\^.*', words[2])
-                        obj = obj.group(1) if obj is not None else re.search('.*:(.*)', words[2]).group(1)
-                        
+                        obj = obj.group(1) if obj is not None else re.search('.*?:(.*)', words[2]).group(1)
+
                         obj = obj.strip('"')
-                        # SBOTERM need the SBO: prefix
-                        if pred == 'sboTerm': obj = 'SBO:' + obj
+
+                        # Unsupported characters
+                        obj = re.sub('&', '&amp;', obj)
+                        obj = re.sub("'", '&apos;', obj)
+                        obj = re.sub('"', '&quot;', obj)
+
                         node.add_attribute(pred, '"' + obj + '"')
 
 # Convert XML tree to XML text
@@ -258,7 +263,7 @@ text = ''
 This one will open xml labels
 '''
 
-oneliner_tags = '^submodel$|^compartment$|^species$|^parameter$|^unit$|^modelDefinition$' 
+oneliner_tags = '^submodel$|^compartment$|^species$|^parameter$|^unit$' 
 '''
 Tags that have to be written on only one line
 '''
