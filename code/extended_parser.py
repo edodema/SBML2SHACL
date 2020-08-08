@@ -325,11 +325,10 @@ def xml_search(root, father):
     tag = re.search('.*\}(.*)', root.tag)
     tag = tag.group(1) if tag is not None else root.tag
 
-
     # This match guarantees that we will check only defined constructs,
     # remove the whole conditional to blindly convert all constructs, even
     # though it is no problem for the parser shapes.ttl should be updated
-    if not re.match('^sbml$|^listOfExternalModelDefinitions$|^externalModelDefinition$|^listOfModelDefinitions$|^modelDefinition$|^model$|^listOfUnitDefinitions$|^unitDefinition$|^listOfUnits$|^unti$|^listOfCompartments$|^compartment$|^listOfSpecies$|^species$|^listOfParameter$|^parameter$|^listOfSubmodels$|^submodel$|^listOfPorts$|^port$|^listOfDeletions$|^deletion$|^listOfReplacedElements$|^replacedElement$|^replacedBy$', tag): return
+    if not re.match('^sbml$|^listOfExternalModelDefinitions$|^externalModelDefinition$|^listOfModelDefinitions$|^modelDefinition$|^model$|^listOfUnitDefinitions$|^unitDefinition$|^listOfUnits$|^unit$|^listOfCompartments$|^compartment$|^listOfSpecies$|^species$|^listOfParameter$|^parameter$|^listOfSubmodels$|^submodel$|^listOfPorts$|^port$|^listOfDeletions$|^deletion$|^listOfReplacedElements$|^replacedElement$|^replacedBy$', tag): return
 
     subject = tag + '_' + str(subject_id)
     '''
