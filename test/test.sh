@@ -26,12 +26,11 @@ files=(
     "input/biomodel/MODEL1012220004.xml"
     "input/biomodel/MODEL1112260002.xml"
     "input/biomodel/MODEL1812100001.xml"
-    "input/biomodel/MODEL1904090001.xml"
     "input/biomodel/MODEL3632127506.xml"
-    #"input/Custom/MANUAL_1.xml"
-    #"input/Custom/MANUAL_2.xml"
-    #"input/Custom/MANUAL_3.xml"
-    #"input/Custom/MANUAL_4.xml"
+    "input/Custom/MANUAL_1.xml"
+    "input/Custom/MANUAL_2.xml"
+    "input/Custom/MANUAL_3.xml"
+    "input/Custom/MANUAL_4.xml"
 )
 
 for i in "${files[@]}" 
@@ -40,8 +39,8 @@ do
     do
         echo $i
         echo $j
-        python ../code/parser.py -f ./$i -f $j -o ./output/output.ttl
-        #python ../code/extended_parser.py -f ./$i -f ./$j -o ./output/output.ttl
+        #python ../code/parser.py -f ./$i -f $j -o ./output/output.ttl
+        python ../code/extended_parser.py -f ./$i -f ./$j -o ./output/output.ttl
         python ../code/shacl_verifier.py -s ../code/shapes.ttl -d ./output/output.ttl
     done
 done
