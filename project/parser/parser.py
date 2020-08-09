@@ -2,7 +2,6 @@
    File name = parser.py
    Author = Edoardo De Matteis
    Date created =  31 July 2020
-   Date last modified = 5 August 2020
    Python version = 3.8
 '''
 
@@ -11,11 +10,10 @@ import xml.etree.ElementTree as ET
 import re 
 from os import path
 
-# Function that istantiates an identifier in the output file
 def add_identifier(idt, value, idt_list):
     """
     Instantiate a node of a type defined in the SHACL model 
-    and it to a check list.
+    and add it to a check list.
 
     Parameters
     ----------
@@ -36,6 +34,7 @@ def add_identifier(idt, value, idt_list):
     id:secret schema:value "secret"^^xsd:string .
     """
 
+    # Dictionary associating each prefix to its type.
     identifiers = {
         'id': 'ID', 'idref': 'IDREF',
         'sid': 'SId', 'sidref': 'SIdRef',
@@ -43,9 +42,6 @@ def add_identifier(idt, value, idt_list):
         'portsid': 'PortSId', 'portsidref': 'PortSIdRef',
         'sboterm': 'SBOTerm'
     }
-    '''
-    Dictionary associating each prefix to its type.
-    '''
 
     if not idt in identifiers: 
         print("ERROR! This identifier is not modeled.")
@@ -68,7 +64,7 @@ args = parser.parse_args()
 output = args.output_file
 input_files = args.files
 
-# Writing preamble necessary for verification
+# Writing preamble. Necessary for verification
 preamble = """
 @prefix ex: <http://example.org/ns#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .

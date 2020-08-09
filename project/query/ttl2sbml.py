@@ -2,7 +2,6 @@
    File name = ttl2sbml.py
    Author = Edoardo De Matteis
    Date created = 8 August 2020
-   Date last modified = 
    Python version = 3.8
 '''
 
@@ -44,18 +43,28 @@ class Node:
     Methods
     -------
     __init__
-    set_tag: 
-    add_attribute
-    add_child
-    get_id
-    get_tag
-    get_attrib
-    get_children
+    set_tag: string -> void
+    add_attribute: (string, string) -> void
+    add_child: Node -> void
+    get_id: () -> string
+    get_tag: () -> string
+    get_attrib: () -> {string: string}
+    get_children: () -> [Node]
+    print: () -> ()
     '''
 
     def __init__(self, id):
         '''
         Instantiate a Node object with the aforementioned attributes. 
+
+        Parameters
+        ----------
+        id: string
+        The id associated to the node
+
+        Return
+        -------
+        self: Node
         '''
         self.id = id
         self.tag = ''
@@ -65,48 +74,95 @@ class Node:
     def set_tag(self, tag):
         '''
         Add a tag to the node
+
+        Parameters
+        ----------
+        tag: string
+
+        Returns void
         '''
         self.tag = tag
 
     def add_attribute(self, key, value):
         '''
-        Add a key and a value to the attributes' dictionary
+        Add a {key, value} attribute to the attributes' dictionary
+
+        Parameters
+        ----------
+        key: string
+        value: string
+
+        Returns void
         '''
         self.attrib[key] = value
 
     def add_child(self, child):
         '''
         Add a child to a node
+
+        Parameters
+        ----------
+        child: Node
+
+        Returns void
         '''
         self.children.append(child)
     
     def get_id(self):
         '''
-        Returns id
+        Get a node's id
+
+        Parameters void
+
+        Return
+        ------
+        id: string
         '''
         return self.id
        
     def get_tag(self):
         '''
-        Returns tag
+        Get a node's tag
+
+         Parameters void
+
+        Return
+        ------
+        tag: string
         '''
         return self.tag
 
     def get_attrib(self):
         '''
-        Returns attributes
+        Get a node's attribute dictionary
+
+        Parameters void
+
+        Return
+        ------
+        attrib: {string: string}
         '''
         return self.attrib
 
     def get_children(self):
         '''
-        Returns children
+        Get a node's children list
+        
+        Parameters void
+
+        Return
+        ------
+        children: [Node]
         '''
         return self.children
         
     def print(self):
         '''
-        Prints in a pretty way a Node's attributes
+        Prints Node in a human readable way
+        
+        Parameters void
+        
+        Returns void
         '''
         print('Object: ', self.id)
         print('Tag: ', self.tag)
@@ -116,64 +172,90 @@ class Node:
 
 class Tree:
     ''' 
-    Represents a collection of Nodes
+    Represents a Tree as a root and its Node children
 
     Attributes
     ----------
     root: Node
     Tree's root
 
-    nodes: list
+    nodes: [Node]
     A list of nodes 
 
     Methods
     -------
     __init__
-    set_root
-    add_node
-    get_root
-    find_node
-    print
+    add_node: Node -> ()
+    get_root: () -> Node
+    get_nodes: () -> [Node]
+    find_node: string -> Node
+    print: () -> () 
     '''
 
     def __init__(self, root):
         '''
-        Create Tree object, the children list is copied since Python assigns object by reference.
-        To be fair I do not think it should be a problem but since there is only one Tree 
-        memory usage is negligible. I think is desiderable that children and nodeas are shared. 
-        Let's see if I have to change it
-        '''
-        self.root = root
-        #self.nodes = root.children.copy()
-        self.nodes = root.children
+        Creates Tree, children are automatically took from the root.
 
-    def set_root(self, root):
-        '''
-        Sets root for a tree
+        Parameters
+        ---------
+        root: Node
+
+        Returns
+        -------
+        tree: Tree
         '''
         self.root = root
+        self.nodes = root.children
 
     def add_node(self, node):
         '''
-        Add node to nodes list
+        Add a node to nodes' list
+        
+        Parameters
+        ----------
+        node: Node
+        
+        Returns void
         '''
         self.nodes.append(node)
 
     def get_root(self):
         '''
-        Returns root
+        Get tree's root
+        
+        Parameters void
+
+        Return
+        ------
+        root: Node
         '''
         return self.root
    
     def get_nodes(self):
         '''
-        Returns nodes
+        Get tree's nodes
+
+        Parameters void
+        
+        Return
+        ------
+        nodes: [Node]
         '''
         return self.nodes
     
     def find_node(self, id):
         '''
-        If present returns a node for a given id
+        Given a node's id returns the first node with that id
+
+        N.B. The id is unique only based on the correct execution of SHACL2SBML/project/parser/extended_parser.py
+
+        Parameters
+        ----------
+        id: string
+
+        Return
+        ------
+        node: Node
         '''
         if self.root.id == id: return self.root 
         for node in self.nodes:
@@ -182,14 +264,25 @@ class Tree:
 
     def print(self):
         ''' 
-        Prints tree in a pretty way
+        Prints the tree in a pretty human readable way
+        
+        Parameters void 
+        
+        Returns void 
         '''
         self.print_recursive(0) 
 
 
     def print_recursive(self, indent):
         ''' 
-        Suberoutine to print tree in a pretty way
+        self.print() subroutine
+
+        Parameters
+        ----------
+        indent: number
+        An integer used for nodes' indentatio
+
+        Returns void
         '''
         print(' ' * indent, 'Object: ', self.root.id)
         print(' ' * indent, 'Tag: ', self.root.tag)
@@ -202,26 +295,26 @@ class Tree:
 
 # Variables 
 root = Node('xml')
+'''
+xml is the root node since
+1. Is in the XML file
+2. Node sbml can be found through find_node()
+'''
 root.set_tag('?xml')
 root.add_attribute('version', '"1.0"')
 root.add_attribute('encoding', '"UTF-8"')
-'''
-I consider xml as the root node since
-1. Exists
-2. sbml can be find through find_node()
-'''
+
 root.add_child(Node('sbml_1'))
 
+# Extended SBML needs an additional namespace
+# comp:required is added since it appears in all MANUAL_*.xml files but is not necessary to test success
 if args.extended:
-    '''
-    Extended SBML needs an additional namespace, the required attribute is added since
-    it appears in all MANUAL_*.xml files but is not necessary to test success
-    '''
     root.children[0].add_attribute('xmlns:comp', '"http://www.sbml.org/sbml/level3/version1/comp/version1"')
     root.children[0].add_attribute('comp:required', '"true"')
 
 tree = Tree(root) 
 
+# Match strings
 extended_tags = '^listOfSubmodels$|^submodel$|^listOfModelDefinitions$|^modelDefinition$|^listOfReplacedElements$|^replacedElement$|^listOfExternalModelDefinitions$|^externalModelDefinition$|^replacedBy$|^listOfDeletions$|^deletion$|^listOfPorts$|^port$'
 '''
 In extended SBML tags need a 'comp:' header
@@ -229,22 +322,25 @@ In extended SBML tags need a 'comp:' header
 
 extended_attributes = '^comp:submodel$|^comp:replacedElement$|^comp:externalModelDefinition$|^comp:replacedBy$|^comp:deletion$|^comp:port$'
 '''
-A subset of extended tags also need the 'comp:' header before its attributes
+Some tags in extended SBML also need the 'comp:' header before their attributes
 '''
 
-# Create XML tree structure 
+# Create XML tree, will be later used for parsing
 with open(args.input_file) as fp :
     for i, line in enumerate(fp):
         if i > 181 and not line.isspace() :
             if re.match('^ex', line): 
-                # Separate lines by whitespaces obtaining a triple <s> <p> <o>
+                # Split lines obtaining a triple <s> <p> <o>
+                # <o> could have whitespaces so substrings from the third onward are collapsed into one 
                 words = line.split()
                 del words[-1]
                 words[2] = ' '.join(words[2::]) 
                 del words[3::]
 
+                # <s>
                 subj = re.search('.*:(.*)', words[0]).group(1)
-
+                
+                # <p>
                 # The predicate can be "a"
                 pred = re.search('.*:(.*)', words[1])
                 pred = pred.group(1) if pred is not None else 'a'
@@ -255,77 +351,82 @@ with open(args.input_file) as fp :
                     if re.match('^a$', pred): 
                         tag = re.search('^schema:(.*)', words[2]).group(1)
                         tag = tag[0].lower() + tag[1:] 
-                        
-                        if re.match(extended_tags, tag): tag = 'comp:' + tag
 
+                        # Extended SBML needs a comp: prefix
+                        if re.match(extended_tags, tag): tag = 'comp:' + tag
                         node.set_tag(tag)
-                    # Add child
+
+                    # Add child when object's prefix is ex:
                     elif re.match('^ex:.*' , words[2]):
                         obj = re.search('.*:(.*)', words[2]).group(1)
                         node.add_child(Node(obj))
+
                     # Add attribute
                     else: 
-                        # Attributes can be ""A"^^xsd:B or C:D
-                        # objects can have : other than the prefix so non-greedy *? is used
+                        # Attributes can be of two forms
+                        # 1. "value"^^xsd:bse_type
+                        # 2.  class_type:id
+                        # objects can have : in their id so is used non-greedy *? rather than *
                         obj = re.search('(.*)\^\^.*', words[2])
                         obj = obj.group(1) if obj is not None else re.search('.*?:(.*)', words[2]).group(1)
 
+                        # Output value needs to have double quotes "", some attributes could already have them,
+                        # is easier to remove them a priori and add them later 
                         obj = obj.strip('"')
 
-                        # Unsupported characters
+                        # Unsupported characters' subsitution
                         obj = re.sub('&', '&amp;', obj)
                         obj = re.sub("'", '&apos;', obj)
                         obj = re.sub('"', '&quot;', obj)
 
+                        # In extended SBML some attributes need the comp: prefix
                         if re.match(extended_attributes, node.tag): pred = 'comp:' + pred
 
                         node.add_attribute(pred, '"' + obj + '"')
 
 # Convert XML tree to XML text
 
-# Writing is done using two strings 
+# Variables 
 text = ''
 '''
-This one will open xml labels
+output string
 '''
 
 oneliner_tags = '^comp:submodel$|^compartment$|^species$|^parameter$|^unit$|^comp:port$|^comp:deletion$|^comp:replacedElement$|^comp:replacedBy$' 
 '''
-Tags that have to be written on only one line
+Tag of labels that have to be written on one line
 '''
 
 def xml_parse(tree, indent):
     '''
-    Parses a Tree in XML text
+    Given a tree explores it and writes the XML file - with indentation for readability. 
 
-    Arguments
+    Parameters
     ---------
     tree: Tree 
-    A SHACL/XML tree
+    indent: number
 
     Returns void
     '''
-
     global text
     global oneliner_tags
 
     root = tree.root
 
-    # xml tag is behaves differently from others
+    # xml tag behaves differently from others
     if root.id == 'xml': 
         text += '<' + root.tag  
         for key, value in root.attrib.items():
             text += ' ' + key + '=' + value
         text += '?>'
-    # All other tags behave the same way
+    # Other tags behave the same way
     else: 
         text += '\n' + ' ' * indent + '<' + root.tag 
         for key, value in root.attrib.items():
             text += ' ' + key + '=' + value
-        # Some tags have only one label and other have each for starting and ending
+        # Oneliners check
         if re.match(oneliner_tags, root.tag): 
             text += '/>'
-
         else: text += '>'
 
     # Explore tree
@@ -333,7 +434,9 @@ def xml_parse(tree, indent):
         xml_parse(Tree(child), indent + 2)
     if root.id != 'xml' and not re.match(oneliner_tags, root.tag): text += '\n' + ' ' * indent + '</' + root.tag + '>'
         
+# Function call 
 xml_parse(tree, 0)
 
+# Output 
 output_file.write(text)
 output_file.close()

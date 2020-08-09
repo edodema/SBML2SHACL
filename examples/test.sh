@@ -3,7 +3,6 @@
 #   File name = test.sh
 #   Author = Edoardo De Matteis
 #   Date created = 31 July 2020
-#   Date last modified = 5 August 2020
 #########################################
 
 # Uncomment input/Custom/* to execute tests on hierarchical SBML

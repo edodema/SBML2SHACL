@@ -2,7 +2,6 @@
    File name = parser.py
    Author = Edoardo De Matteis
    Date created =  31 July 2020
-   Date last modified = 5 August 2020
    Python version = 3.8
 '''
 
@@ -21,7 +20,7 @@ args = parser.parse_args()
 # File IO
 output_file = open(args.output_file, 'w')
 
-# Writing preamble necessary for validation
+# Writing preamble. Necessary for validation
 preamble = """
 @prefix ex: <http://example.org/ns#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -236,14 +235,14 @@ portsid_list = []
 portsidref_list = []
 sboterm_list = []
 
-# String for nodes instances
+# Output text
 text = '\n'
 
 # Check for compound types attributes 
 def add_identifier(idt, value, idt_list):
     """
     Instantiate a node of a type defined in the SHACL model 
-    and it to a check list.
+    and add it to a check list.
 
     Parameters
     ----------
@@ -263,6 +262,8 @@ def add_identifier(idt, value, idt_list):
     id:secret a schema:ID .
     id:secret schema:value "secret"^^xsd:string .
     """
+    
+    # Dictionary associating each prefix to its type.
     identifiers = {
         'id': 'ID', 'idref': 'IDREF',
         'sid': 'SId', 'sidref': 'SIdRef',
@@ -270,9 +271,6 @@ def add_identifier(idt, value, idt_list):
         'portsid': 'PortSId', 'portsidref': 'PortSIdRef',
         'sboterm': 'SBOTerm'
     }
-    '''
-    Dictionary associating each prefix to its type.
-    '''
 
     if not idt in identifiers: 
         print("ERROR! This identifier is not modeled.")
@@ -284,8 +282,9 @@ def add_identifier(idt, value, idt_list):
     return text
 
 # XML exploration
+
 # Search function  
-def xml_search(root, father):
+def xml_explore(root, father):
     """
     Converts a given SBML model in SHACL exploring the 
     XML file as a tree
@@ -298,14 +297,10 @@ def xml_search(root, father):
     father: string
     Root parent's tag 
 
-    subject_id: integer 
-    Counter of the given construct, added to the root's 
-    tag defines the identifier
-
     Returns void
     """
     
-    # Necessary to be global since Python does not  have call by reference
+    # Necessary to be global since Python does not have call by reference
     global id_text
     global idref_text
     global sid_text
@@ -327,19 +322,17 @@ def xml_search(root, father):
 
     # This match guarantees that we will check only defined constructs,
     # remove the whole conditional to blindly convert all constructs, even
-    # though it is no problem for the parser shapes.ttl should be updated
+    # though it is no problem for the parser shapes.ttl does not support it
     if not re.match('^sbml$|^listOfExternalModelDefinitions$|^externalModelDefinition$|^listOfModelDefinitions$|^modelDefinition$|^model$|^listOfUnitDefinitions$|^unitDefinition$|^listOfUnits$|^unit$|^listOfCompartments$|^compartment$|^listOfSpecies$|^species$|^listOfParameter$|^parameter$|^listOfSubmodels$|^submodel$|^listOfPorts$|^port$|^listOfDeletions$|^deletion$|^listOfReplacedElements$|^replacedElement$|^replacedBy$', tag): return
 
+    #Defines the subject identifier 
     subject = tag + '_' + str(subject_id)
-    '''
-    Defines the subject identifier 
-    '''
 
-    # xmlns in sbml is not treated as an attribute since is a namespace
+    # xmlns in sbml is not treated as other attributes
     if(tag == 'sbml'): 
         text += 'ex:%s schema:xmlns "%s"^^xsd:anyURI .\n' % (subject, re.search('{(.*)}.*', root.tag).group(1))
 
-    # Resolve relation attributes fot parent node
+    # Resolve relation attributes for parent node
     if father: text += 'ex:%s schema:%s ex:%s .\n' % (father, tag, subject)
     
     # Type definition
@@ -353,7 +346,36 @@ def xml_search(root, father):
         key = key.group(1) if key is not None else ext_key 
 
         # Attributes' typing
-        if re.match('^id$', key):
+         
+        # Primitive types
+        if re.match('^level$|^scale$|^version$', key):
+            text += 'ex:%s schema:%s "%s"^^xsd:integer .\n' % (subject, key, value)
+        
+        elif re.match('^exponent$|^initialAmount$|^initialConcentration$|^multiplier$|^size$|^spatialDimensions$|^value$', key):
+            text += 'ex:%s schema:%s "%s"^^xsd:decimal .\n' % (subject, key, value)
+
+        elif re.match('^boundaryCondition$|^constant$|^hasOnlySubstanceUnits$', key):
+            text += 'ex:%s schema:%s "%s"^^xsd:boolean .\n' % (subject, key, value)
+        
+        elif re.match('^name$', key):
+            text += 'ex:%s schema:%s "%s"^^xsd:string .\n' % (subject, key, value)
+            
+        elif re.match('^source', key):
+            text += 'ex:%s schema:%s "%s"^^xsd:anyURI .\n' % (subject, key, value)
+        
+        # Compound types
+        
+        elif re.match('^metaid$', key):
+            text += 'ex:%s schema:%s id:%s .\n' % (subject, key, value)
+            # id is a ID: id:value schema:value value
+            if not value in id_list: id_text += add_identifier('id', value, id_list)
+
+        elif re.match('^metaIdRef$', key):
+            text += 'ex:%s schema:%s idref:%s .\n' % (subject, key, value)
+            # metaIdRef is a IDREF: idref:value schema:value value
+            if not value in idref_list: idref_text += add_identifier('idref', value, idref_list)
+
+        elif re.match('^id$', key):
             # id has different types depending on the tag used 
             if tag == 'unitDefinition':
                 text += 'ex:%s schema:%s usid:%s .\n' % (subject, key, value)
@@ -367,28 +389,10 @@ def xml_search(root, father):
                 text += 'ex:%s schema:%s sid:%s .\n' % (subject, key, value)
                 # id is a SId: sid:value schema:value value
                 if not value in sid_list: sid_text += add_identifier('sid', value, sid_list)
-
-        elif re.match('^name$', key):
-            text += 'ex:%s schema:%s "%s"^^xsd:string .\n' % (subject, key, value)
-
-        elif re.match('^metaid$', key):
-            text += 'ex:%s schema:%s id:%s .\n' % (subject, key, value)
-            # id is a ID: id:value schema:value value
-            if not value in id_list: id_text += add_identifier('id', value, id_list)
-
-        elif re.match('^sboTerm$', key):
-            text += 'ex:%s schema:%s sboterm:%s .\n' % (subject, key, value)
-            # id is a SBOTerm: sboterm:value schema:value value
-            if not value in sboterm_list: sboterm_text += add_identifier('sboterm', value, sboterm_list)
-
-        elif re.match('^substanceUnits$|^timeUnits$|^volumeUnits$|^areaUnits$|^lengthUnits$|^extentUnits$|^units$|^unitRef$', key):
-            text += 'ex:%s schema:%s usidref:%s .\n' % (subject, key, value)
-            # id is a UnitSIdRef: usidref:value schema:value value
-            if not value in usidref_list: usidref_text += add_identifier('usidref', value, usidref_list)
-
-        elif re.match('^conversionFactor$|^compartment$|^timeConversionFactor$|^extentConversionFactor$|^idRef$|^modelRef$|^submodelRef$|^deletion$', key):
+            
+        elif re.match('^compartment$|^conversionFactor$|^deletion$|^extentConversionFactor$|^idRef$|^modelRef$|^submodelRef$|^timeConversionFactor$', key):
             text += 'ex:%s schema:%s sidref:%s .\n' % (subject, key, value)
-            # id is a SIdRef: usidref:value schema:value value
+            # id is a SIdRef: sidref:value schema:value value
             if not value in sidref_list: sidref_text += add_identifier('sidref', value, sidref_list)
 
         elif re.match('^kind$', key):
@@ -396,31 +400,24 @@ def xml_search(root, father):
             # id is a UnitSId: usid:value schema:value value
             if not value in usid_list: usid_text += add_identifier('usid', value, usid_list)
 
-        elif re.match('^exponent$|^multiplier$|^spatialDimensions$|^size$|^initialAmount$|^initialConcentration$|^value$', key):
-            text += 'ex:%s schema:%s "%s"^^xsd:decimal .\n' % (subject, key, value)
+        elif re.match('^areaUnits$|^extentUnits$|^lengthUnits$|^substanceUnits$|^timeUnits$|^units$|^unitRef$|^volumeUnits$', key):
+            text += 'ex:%s schema:%s usidref:%s .\n' % (subject, key, value)
+            # id is a UnitSIdRef: usidref:value schema:value value
+            if not value in usidref_list: usidref_text += add_identifier('usidref', value, usidref_list)
 
-        elif re.match('^scale$|^level$|^version$', key):
-            text += 'ex:%s schema:%s "%s"^^xsd:integer .\n' % (subject, key, value)
-
-        elif re.match('^constant$|^hasOnlySubstanceUnits$|^boundaryCondition$', key):
-            text += 'ex:%s schema:%s "%s"^^xsd:boolean .\n' % (subject, key, value)
-
-        elif re.match('^source', key):
-            text += 'ex:%s schema:%s "%s"^^xsd:anyURI .\n' % (subject, key, value)
-        
         elif re.match('^portRef$', key):
             text += 'ex:%s schema:%s portsidref:%s .\n' % (subject, key, value)
             # portRef is a PortSIdRef: portsidref:value schema:value value
             if not value in portsidref_list: portsidref_text += add_identifier('portsidref', value, portsidref_list)
 
-        elif re.match('^metaIdRef$', key):
-            text += 'ex:%s schema:%s idref:%s .\n' % (subject, key, value)
-            # metaIdRef is a IDREF: idref:value schema:value value
-            if not value in idref_list: idref_text += add_identifier('idref', value, idref_list)
- 
+        elif re.match('^sboTerm$', key):
+            text += 'ex:%s schema:%s sboterm:%s .\n' % (subject, key, value)
+            # id is a SBOTerm: sboterm:value schema:value value
+            if not value in sboterm_list: sboterm_text += add_identifier('sboterm', value, sboterm_list)
+
+    # Recursion
     text += '\n'
-    for child in root: 
-        xml_search(child, subject)
+    for child in root: xml_explore(child, subject)
 
 for model in args.files:
     '''
@@ -428,8 +425,9 @@ for model in args.files:
     '''
     tree = ET.ElementTree(file=model)
     root = tree.getroot()
-    xml_search(root, '')
+    xml_explore(root, '')
 
+# Output writing
 output_file.write(id_text)
 output_file.write(idref_text)
 output_file.write(sid_text)
@@ -442,4 +440,5 @@ output_file.write(sboterm_text)
 
 output_file.write(text)
 
+# Close file
 output_file.close()
