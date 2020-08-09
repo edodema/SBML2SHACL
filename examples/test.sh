@@ -38,8 +38,8 @@ do
     do
         echo $i
         echo $j
-        #python ../code/parser.py -f ./$i -f $j -o ./output/output.ttl
-        python ../code/extended_parser.py -f ./$i -f ./$j -o ./output/output.ttl
-        python ../code/shacl_verifier.py -s ../code/shapes.ttl -d ./output/output.ttl
+        #python ../project/parser/parser.py -f ./$i -f $j -o ./output/output.ttl
+        python ../project/parser/extended_parser.py -f ./$i -f ./$j -o ./output/output.ttl
+        python ../project/model/shacl_verifier.py -s ../project/model/shapes.ttl -d ./output/output.ttl
     done
 done
