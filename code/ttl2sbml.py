@@ -1,7 +1,7 @@
 '''
    File name = ttl2sbml.py
    Author = Edoardo De Matteis
-   Date created = 6 August 2020
+   Date created = 8 August 2020
    Date last modified = 
    Python version = 3.8
 '''
@@ -14,6 +14,7 @@ parser = argparse.ArgumentParser()
    
 parser.add_argument('-f', '--file', required=True, dest='input_file', metavar='file', help='ttl input file')
 parser.add_argument('-o', '--output', required=True, dest='output_file', metavar='output', help='sbml output file')
+parser.add_argument('-e', '--extended', action='store_true', dest='extended', help='specifies if the model uses Extended SBML')
 
 args = parser.parse_args()
 
@@ -210,8 +211,27 @@ I consider xml as the root node since
 2. sbml can be find through find_node()
 '''
 root.add_child(Node('sbml_1'))
-tree = Tree(root)
- 
+
+if args.extended:
+    '''
+    Extended SBML needs an additional namespace, the required attribute is added since
+    it appears in all MANUAL_*.xml files but is not necessary to test success
+    '''
+    root.children[0].add_attribute('xmlns:comp', '"http://www.sbml.org/sbml/level3/version1/comp/version1"')
+    root.children[0].add_attribute('comp:required', '"true"')
+
+tree = Tree(root) 
+
+extended_tags = '^listOfSubmodels$|^submodel$|^listOfModelDefinitions$|^modelDefinition$|^listOfReplacedElements$|^replacedElement$|^listOfExternalModelDefinitions$|^externalModelDefinition$|^replacedBy$|^listOfDeletions$|^deletion$|^listOfPorts$|^port$'
+'''
+In extended SBML tags need a 'comp:' header
+'''
+
+extended_attributes = '^comp:submodel$|^comp:replacedElement$|^comp:externalModelDefinition$|^comp:replacedBy$|^comp:deletion$|^comp:port$'
+'''
+A subset of extended tags also need the 'comp:' header before its attributes
+'''
+
 # Create XML tree structure 
 with open(args.input_file) as fp :
     for i, line in enumerate(fp):
@@ -234,7 +254,11 @@ with open(args.input_file) as fp :
                     # Typing
                     if re.match('^a$', pred): 
                         tag = re.search('^schema:(.*)', words[2]).group(1)
-                        node.set_tag(tag[0].lower() + tag[1:])
+                        tag = tag[0].lower() + tag[1:] 
+                        
+                        if re.match(extended_tags, tag): tag = 'comp:' + tag
+
+                        node.set_tag(tag)
                     # Add child
                     elif re.match('^ex:.*' , words[2]):
                         obj = re.search('.*:(.*)', words[2]).group(1)
@@ -253,6 +277,8 @@ with open(args.input_file) as fp :
                         obj = re.sub("'", '&apos;', obj)
                         obj = re.sub('"', '&quot;', obj)
 
+                        if re.match(extended_attributes, node.tag): pred = 'comp:' + pred
+
                         node.add_attribute(pred, '"' + obj + '"')
 
 # Convert XML tree to XML text
@@ -263,7 +289,7 @@ text = ''
 This one will open xml labels
 '''
 
-oneliner_tags = '^submodel$|^compartment$|^species$|^parameter$|^unit$' 
+oneliner_tags = '^comp:submodel$|^compartment$|^species$|^parameter$|^unit$|^comp:port$|^comp:deletion$|^comp:replacedElement$|^comp:replacedBy$' 
 '''
 Tags that have to be written on only one line
 '''
