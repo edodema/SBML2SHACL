@@ -24,58 +24,60 @@
 \section{Introduzione}
 SBML è un formato basato su XML per definire conoscenza medica e biochimica, più che di linguaggio si parla di lingua franca dal momento che si pone come tale, risolvendo il problema causato dall'eterogeneità di standard tra software in ambito biomedico. 
 
-SHACL invece è uno standard del W3C per la verifica di grafi rispetto a dei vincoli definiti, questi grafi sono rappresentati in qualsiasi formato RDF, ad esempio Turtle; Il Resource Description Network (RDF) è necessario per la codifica e la manipolazione di metadati e consente la modellazione di informazioni come risorse web, dal momento che si fa uso di logiche descrittive tali informazioni sono codificate sotto forma di triple \texttt{<subject> <predicate> <object>} equivalente in logica del primo ordine ad una formula ove subject e object sono due termini ground e predicate un predicato binario. 
+SHACL invece è uno standard del World Wide Web Consortium (W3C) per la verifica di grafi rispetto a dei vincoli definiti, questi grafi sono rappresentati in qualsiasi formato RDF, ad esempio Turtle; Il Resource Description Network (RDF) è necessario per la codifica e la manipolazione di metadati e consente la modellazione di informazioni come risorse web, tali informazioni sono codificate sotto forma di triple \texttt{<subject> <predicate> <object>} equivalenti in logica del primo ordine a formule con subject e object termini ground e predicate predicato binario. 
 
-Dato un modello SHACL il linguaggio di query che permette di interrogarlo è SPARQL; RDF, SHACL e SPARQL sono standard del World Wide Web Consortium (W3C). 
+Dato un modello SHACL il linguaggio di query che permette di interrogarlo è SPARQL, tutti questi formati (SBML escluso) sono standard del W3C. 
 
 L'obiettivo di questo progetto, sotto la guida del Professor Tronci, è quello di convertire automaticamente codice SBML in SHACL. A tal fine il problema è stato diviso in tre fasi:
 
 \begin{enumerate}
-    \item Selezionare un sottoinsieme di costrutti in SBML e modellarlo in SHACL. 
+    \item Modellare in SHACL un un sottoinsieme dei costrutti che definiscono SBML . 
     \item Scrivere un parser che traduca una specifica SBML in SHACL.
     \item Scrivere un parser che traduca una specifica SHACL in SBML.
 \end{enumerate}
 
 \section{Modellazione}
 
-Nella prima fase si è scelto un sottoinsieme di SBML 3.2 e la totalità dei costrutti aggiuntivi di extended SBML, nella tabella ~\ref{tab:modellazione} vengono descritti i principali costrutti, sono state volontariamente omesse entità quali \texttt{listOf*} il cui significato è intuitivo e avrebbero solo reso la tabella meno leggibile, in ogni caso è possibile consultare ulteriormente il diagramma \texttt{diagram.png} e il file \texttt{shapes.ttl}, in qest'ultimo è scritta la definizione del modello con i vincoli che dovranno essere rispettati dai file di output del parser; è possibile verificare la consistenza del file di output rispetto al modello tramite lo script \texttt{shacl\_verifier.py}. Per entrambi i file si è scelto di utilizzare il formato Turtle 
+Nella prima fase si è scelto un sottoinsieme di SBML 3.2 e la totalità dei costrutti aggiuntivi di extended SBML, nella tabella ~\ref{tab:modellazione} vengono descritti i principali costrutti, sono state volontariamente omesse entità quali \texttt{listOf*} il cui significato è intuitivo e avrebbero solo reso la tabella meno leggibile, in ogni caso è possibile consultare ulteriormente il diagramma \texttt{diagram.png} e il file \texttt{shapes.ttl}, in qest'ultimo è scritta la definizione del modello con i vincoli che dovranno essere rispettati dai file di output del parser; è possibile verificare la consistenza del file di output rispetto al modello tramite lo script \texttt{shacl\_verifier.py}. Per entrambi i file si è scelto di utilizzare il formato Turtle.
 
-Extended SBML introduce la definizione di una gerarchia, è possibile definire ad esempio l'annidamento "cellula-nucleo-dna", aggiunge inoltre la possibilità di definire modelli e poterli importare ed esportare, favorendo il riuso di codice.
+Extended SBML introduce la possibilità di definire una gerarchia, ad esempio si può esprimere lo schema "cellula-nucleo-dna", aggiunge inoltre la possibilità di definire modelli e poterli importare ed esportare, favorendo il riuso di codice.
+
+\clearpage
 
 \begin{longtable}{p{.4\textwidth}p{.5\textwidth}}
     \textbf{Entità} & \textbf{Descrizione} \\
     \hline
     \multicolumn{2}{c}{SBML 3.2} \\
     \hline
-    SBase & Classe astratta che rappresenta un tipo - ogni classe definisce un tipo - e ogni nodo sarà sottoclasse di SBase, poiché non esistono attributi di tipo SBase a questa classe si riserva un trattamento differente rispetto alle classi che rappresentano tipi composti di attributi quali ID, SId, ecc.. le quali sono omesse dal diagramma ma sono chiaramente presenti nel file Turtle. \\ 
+    SBase & Classe astratta che, come ogni classe d'altronde, rappresenta un tipo e ogni nodo sarà sottoclasse di SBase, poiché non esistono attributi di tipo SBase a questa classe si riserva un trattamento differente rispetto a quelle che rappresentano tipi composti di attributi quali ID, SId, ecc \dots Queste sono state omesse nel diagramma ma sono presenti nel file \texttt{shapes.ttl}. \\ 
     \hline
-    Sbml & Ogni file SBML ha un'etichetta con tag \texttt{sbml}, grazie a questo nodo è possibile costruire grafi SHACL composti da multipli modelli SBML in input dato che saranno sempre radicati in questo nodo, è importante specificare che questo modello non sarà legale in SBML 3.2 né extended. Il costrutto Sbml in linea teorica dovrebbe poter ammettere anche attributi oltre quelli noti, siccome però in SHACL ho necessità di conoscerne il tipo ho tolto questa possibilità.\\
+    Sbml & Ogni file SBML ha un'etichetta con tag \texttt{sbml}, grazie a questo nodo è possibile costruire grafi SHACL composti da multipli modelli SBML in input dato che saranno sempre radicati in questo nodo, è importante specificare che questo modello non sarà legale in SBML 3.2 né extended e non si dà alcuna garanzia sulla riconversione in SBML. Il costrutto Sbml ammette anche attributi oltre quelli noti, siccome in SHACL ho necessità di conoscerne il tipo ho tolto questa possibilità.\\
     \hline
     Model & Rappresenta il modello, se ne può avere più di uno come detto sopra nonostante SBML non lo permetta. \\
     \hline
-    Unit & Definisce un'unità di misura definita dall'utente, in SBML sono definite delle unità base (i.e. le unità del SI e altre scelte dagli sviluppatori di SBML) e combinandole opportunamente tra loro è possibile definire nuove unità di misura (e.g l'accelerazione $\frac{m}{s^{2}}$ altro non è che $m^{1}s^{-2}$). Nel modello in \texttt{shapes.ttl} le unità base (kind) sono trattate come normalissime unità di misura, dal momento che in SBML non è concesso avere come attributo kind un'unità di misura che non sia tale questa rappresentazione non genera problemi. \\
+    Unit & Definisce un'unità di misura definita dall'utente, in SBML sono definite delle unità base (i.e. le unità del SI e altre scelte dagli sviluppatori di SBML) e combinandole opportunamente tra loro è possibile definire nuove unità di misura (e.g l'accelerazione $\frac{m}{s^{2}}$ altro non è che $m^{1}s^{-2}$). Nel modello in \texttt{shapes.ttl} le unità base (kind) sono trattate come normalissime unità di misura, dal momento che in SBML non è concesso avere come attributo kind un'unità di misura che non sia tra quelle base questa libertà non genera problemi. \\
     \hline 
-    Compartment & Rappresenta un insieme di entità biologiche. \\
+    Compartment & Rappresenta un insieme di entità biologica. \\
     \hline
-    Species & Rappresentano delle entità biologiche. \\
+    Species & Rappresenta un'entità biologiche. \\
     \hline
-    Parameter & In SBML si possono definire parametri sia locali che globali, il modello presentato in queso progetto non presenta località quindi i parametri sono a priori globali, quindi Model avrà come attributo \texttt{ListOfParameters} con moltiplicità $[0,n]$ piuttosto che $[0,1]$. \\  
+    Parameter & In SBML si possono definire parametri sia locali che globali, il modello presentato in queso progetto non presenta località quindi i parametri sono sempre globali e Model avrà come attributo \texttt{ListOfParameters} con moltiplicità $[0,n]$ piuttosto che $[0,1]$. \\  
     \hline 
     \multicolumn{2}{c}{Extended SBML} \\
     \hline
     ExternalModelDefinition &  Necessario per importare modelli esterni e introdurli nel proprio. \\
     \hline
-    ModelDefinition & Data la presenza di una gerarchia questo costrutto dà la definizione di un modello. \\ 
+    ModelDefinition & Data la presenza di una gerarchia questo costrutto fornisce la definizione di un modello. \\ 
     \hline
     Submodel & L'istanza di una ModelDefinition è rappresentata da un Submodel e si ha effettivamente un modello dentro ad un altro modello. Durante la fase di test per extended SBML non ho usato esempi scaricati da Biomodels perché la gerarchia non veniva rappresentata tramite Submodel ma facendo uso di un attributo \texttt{outer} in un compartment, con il Professor Tronci si è ritenuto fosse meglio attenersi allo standard W3C. \\ 
     \hline
     Port & Una port permette allo sviluppatore di definire come ci si deve interfacciare con un modello, di norma è preferibile seguire le indicazioni dello sviluppatore. \\ 
     \hline
-    Deletion & Non è detto che i modelli importati abbiano solo ed esclusivamente componenti desiderabili e con una deletion è possibile ignorare ridondanze. \\
+    Deletion & Non è detto che i modelli importati abbiano solo ed esclusivamente componenti desiderabili e con una deletion è possibile ignorare quelli indesiderati. \\
     \hline
     Replacement & Tramite questo costrutto è possibile sostituire una componente con un'altra, ogni riferimento alla prima ora punta alla seconda. A causa di Replacement sono presenti più parser: il primo \texttt{parser.py} esplora il file XML come una lista e associare un Replacement ad un componente risulta estremamente macchinoso se non impossibile, in \texttt{extended\_parser.py} questo problema non si presenta perché il file XML viene esplorato come un albero. \\
     \hline
-    SBaseRef & Port, Deletion, Replacement e Submodel utilizzano dei riferimenti, SBaseRef agisce similmente a SBase e offre degli attributi comuni a tutte queste classi. \\
+    SBaseRef & Port, Deletion, Replacement e Submodel utilizzano dei riferimenti, SBaseRef similmente a SBase offre degli attributi comuni alle proprie sottoclassi. \\
     \hline
 
     \caption{Modellazione SHACL}
@@ -84,9 +86,9 @@ Extended SBML introduce la definizione di una gerarchia, è possibile definire a
 
 \section{Parsing da SBML a SHACL}
 
-In questa fase sono stati scritti due parser, di questi \texttt{extended\_parser.py} è la versione finale e corretta. In \texttt{parser.py} si riescono a tradurre senza problemi SBML 3.2 ma siccome il file XML viene letto come una lista di etichette risulta macchinoso (ammesso e non concesso sia possibile) fare riferimento all'etichetta padre di una sostituzione o una cancellazione. Il problema non si presenta nel secondo parser dato che la struttura XML viene esplorata come un albero, questa seconda versione è inoltre più breve (444 righe anziché 932), più veloce come si può vedere in tabella ~\ref{tab:performance} ed è più facilmente estendibile. Questo parser infatti prende qualsiasi tag e vi associa i rispettivi attributi, che devono essere noti, al proprio valore; ho comunque imposto dei controlli per evitare questo comportamento dato che avrebbe solo rallentato la fase di verifica.
+In questa fase sono stati scritti due parser, di questi \texttt{extended\_parser.py} è la versione finale e corretta. In \texttt{parser.py} si riescono a tradurre senza problemi file in SBML 3.2 ma siccome il file XML viene letto come una lista di etichette risulta macchinoso (ammesso e non concesso sia possibile) fare riferimento all'etichetta padre di una sostituzione o una cancellazione. Il problema non si presenta nel secondo parser dato che la struttura XML viene esplorata come un albero, questa seconda versione è inoltre più breve (444 righe anziché 932), più veloce come si può vedere in tabella ~\ref{tab:performance} ed è più facilmente estendibile. Questo parser infatti prende qualsiasi tag e vi associa i rispettivi attributi - che devono essere noti - al proprio valore; ho comunque imposto dei controlli per evitare questo comportamento dato che avrebbe solo rallentato la fase di verifica.
 
-Il calcolo delle performance è basato sull'esecuzione di \texttt{test.sh} e si fa uso di file XML: alcuni sono scaricati dal sito Biomodels e supportano solo SBML 3.2 mentre altri (nella sottocartella \texttt{custom}) sono file d'esempio forniti direttamente dal W3C, quindi questi ultimi potranno essere usati solo per il file \texttt{extended\_parser.py}. 
+Il calcolo delle performance è basato sull'esecuzione di \texttt{test.sh} e si fa uso solo di file SBML 3.2 scaricati da Biomodels. Nella sottocartella \texttt{custom}) vi sono file d'esempio forniti direttamente dal W3C in extended SBML e potranno essere usati per il file \texttt{extended\_parser.py}. 
 
 \begin{table}[h!t] 
     \centering
@@ -94,7 +96,7 @@ Il calcolo delle performance è basato sull'esecuzione di \texttt{test.sh} e si 
         \textbf{File} & \textbf{System (s)} & \textbf{User (s)} & \textbf{Total} & \textbf{CPU} \\
         \hline
         parser.py & 52.90 & 2445.38 & 42:54.54 & 97 \% \\
-        extended\_parser.py & 42.48 & 833.54 & 15:02.19 & 97 \% \\
+        extended\_parser.py & 38.07 & 1003.51 & 17:35.19 & 98 \% \\
         \hline
     \end{longtable}
     \caption{Performance}
@@ -107,36 +109,34 @@ Si assume a priori che i file SBML in input siano corretti, la \href{http://sbml
 In questa terza e ultima fase si esegue la controprova della precedente ovvero si traduce il file di istanze SHACL ottenuto in un file SBML e ci si attende che venga modellata la stessa conoscenza. Nella cartella \texttt{query} sono presenti tre file:
 
 \begin{itemize}
-    \item \texttt{query.py}: Permette di interrogare il modello con query SPARQL.
+    \item \texttt{query.py}: Permette di interrogare il modello con query SPARQL, la query deve essere scritta direttamente nel codice perché l'argomento della funzione print varia in base alla query.
     \item \texttt{ttl2sbml.py}: Il parser da SHACL a SBML.
     \item \texttt{ttl2xml}: Converte un file di istanze Turtle in XML, una query e un file XML possono esprimere la stessa conoscenza traducendo una tripla \texttt{<subject> <predicate> <object>} in etichette \texttt{<subject> <predicate> <object/> </predicate> </subject>}.
 \end{itemize}
 
-Nella scrittura del parser è risultato necessario poter riottenere la struttura annidata dell'XML e che si era persa nella scrittura delle istanze SHACL, per farlo ho definito un albero con dei nodi e nella fase di lettura del file si costruiva gradualmente l'albero. Una volta ottenuto per scrivere il testo XML basta esplorare ricorsivamente l'albero ricordandosi di chiudere le etichette aperte una volta terminate le chiamate ai figli. 
+Nella scrittura del parser è risultato necessario poter riottenere la struttura annidata dell'XML che si era persa nella scrittura delle istanze SHACL, per farlo ho definito un albero e dei nodi, nella fase di lettura del file si costruisce gradualmente l'albero. Una volta ottenuto l'albero in questione per scrivere il testo XML basta esplorarlo ricorsivamente ricordandosi di chiudere le etichette aperte una volta terminate le chiamate ai figli. 
 
-L'algoritmo genera la stessa conoscenza dei file di partenza, per SBML 3.2 non ci sono problemi invece per i file nella cartella \texttt{custom} tutti tranne \texttt{MANUAL\_1.xml} non superano la verifica SBML perché trattandosi di file d'esempio i riferimenti non sono reali; chiaramente anche l'output di \texttt{ttl2sbml.py} dà risultato negativo, per \texttt{MANUAL\_1.txt} invece si ha lo stesso esito ovvero numerosi warning. Non ho usato esempi presi da Biomodels perché i file trovati con extended SBML implementavano la gerarchia con un attributo \texttt{outer} piuttosto che con i \texttt{submodel} come da documentazione ufficiale.
+L'algoritmo genera la stessa conoscenza dei file di partenza, per SBML 3.2 non ci sono problemi invece per i file nella cartella \texttt{custom} tutti tranne \texttt{MANUAL\_1.xml} \underline{non} superano la verifica SBML perché trattandosi di file d'esempio i riferimenti non sono reali; chiaramente anche l'output di \texttt{ttl2sbml.py} dà risultato negativo, per \texttt{MANUAL\_1.txt} invece si ha lo stesso esito ovvero numerosi warning.
+
+Come detto prima non ho usato esempi presi da Biomodels perché i file trovati con extended SBML implementavano la gerarchia con un attributo \texttt{outer} piuttosto che con i \texttt{submodel} come da documentazione ufficiale.
 
 \section{Commenti e critiche}
-Durante lo sviluppo del progetto sotto direttive del Professor Enrico Tronci si è tenuto conto dei seguenti commenti e critiche. 
+Durante lo sviluppo del progetto si è tenuto conto dei seguenti commenti e critiche da parte del Professor Tronci:
 
-\begin{table}[h!t]
-    \caption{Cronologia}
-    \centering
-    \begin{longtable}{p{2cm}p{9cm}}
-        \textbf{Data} & \textbf{Commento} \\
-        \hline
-        22/07/20 & Videochiamata con specifica del problema da parte del Professor Tronci. \\
-        \hline
-        27/07/20 & Prima stesura di una modellazione dei costrutti in SBML ma avendo io dimenticato di modellare SBML gerarchico mi è stato fatto notare e ho risolto, il materiale consultato è stato reso disponibile dal Professore stesso. \\
-        \hline
-        28/07/20 & Corretto il punto precedente non avevo implementato Deletions e Replacements, il professore ha inoltre consigliato una strategia di testing. \\
-        \hline
-        31/07/20 & Dopo aver corretto le mie mancanze e eseguito dei test con risultati positivi è seguita una videochiamata con il Professor Tronci in cui mi è stato indicato di modificare il parser in maniera tale da poter ricevere in input più modelli SBML creando quindi un grafo più complesso, e di capire se il risultato di una query SPARQL rappresenti lo stesso tipo di conoscenza di un file XML/SBML, così da poter sfruttare questa corrispondenza per eseguire dei controtest. Questa corrispondenza esiste ed è usata spesso. \\
-        \hline
-        06/08/2020 & Videochiamata con il Professor Tronci in cui si è deciso di comprendere se fosse possibile scrivere un parser da SHACL a SBML e, in caso di risposta affermativa, farlo. \\
-        \hline
-    \end{longtable}
-\end{table}
+\begin{longtable}{p{2cm}p{9cm}}
+    \textbf{Data} & \textbf{Descrizione} \\
+    \hline
+    22/07/20 & Videochiamata con specifica del problema da parte del Professor Tronci. \\
+    \hline
+    27/07/20 & Prima stesura di una modellazione dei costrutti in SBML, avendo dimenticato di modellare extended SBML mi è stato fatto notare dal Professore e ho risolto, mi è stato anche consegnato il materiale su extended SBML da consultare. \\
+    \hline
+    28/07/20 & Corretto il punto precedente non avevo implementato deletion e replacement, il Professore ha inoltre consigliato la strategia di testing. \\
+    \hline
+    31/07/20 & Dopo aver aggiunto replacement e deletion e dopo aver eseguito dei test con risultati positivi è seguita una videochiamata con il Professor Tronci in cui mi è stato indicato di modificare il parser in maniera tale da poter ricevere in input più modelli SBML e di capire se il risultato di una query SPARQL rappresenti lo stesso tipo di conoscenza di un file XML/SBML, così da poter sfruttare questa corrispondenza per eseguire dei controtest. Questa corrispondenza esiste ed è usata spesso sotto il nome di "SPARQL query results xml format". \\
+    \hline
+    06/08/2020 & Videochiamata con il Professor Tronci in cui si è deciso di comprendere se fosse possibile scrivere un parser da SHACL a SBML e, in caso di risposta affermativa, farlo. \\
+    \hline
+\end{longtable}
 
 \cleardoublepage
 \section{Fonti}
