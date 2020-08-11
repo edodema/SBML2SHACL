@@ -26,10 +26,10 @@ files=(
     "input/biomodel/MODEL1112260002.xml"
     "input/biomodel/MODEL1812100001.xml"
     "input/biomodel/MODEL3632127506.xml"
-    "input/Custom/MANUAL_1.xml"
-    "input/Custom/MANUAL_2.xml"
-    "input/Custom/MANUAL_3.xml"
-    "input/Custom/MANUAL_4.xml"
+    #"input/Custom/MANUAL_1.xml"
+    #"input/Custom/MANUAL_2.xml"
+    #"input/Custom/MANUAL_3.xml"
+    #"input/Custom/MANUAL_4.xml"
 )
 
 for i in "${files[@]}" 
