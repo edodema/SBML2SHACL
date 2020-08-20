@@ -4,7 +4,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[italian]{babel}
 
-\usepackage{hyperref, listings, float, graphicx, amsmath, longtable}
+\usepackage{hyperref, listings, float, graphicx, amsmath, longtable, rotating}
 \usepackage[square, sort, comma, numbers]{natbib}
 \usepackage[nottoc]{tocbibind}
 \usepackage{cleveref}
@@ -22,67 +22,111 @@
 \clearpage
 
 \section{Introduzione}
-SBML è un formato basato su XML per definire conoscenza medica e biochimica, più che di linguaggio si parla di lingua franca dal momento che si pone come tale, risolvendo il problema causato dall'eterogeneità di standard tra software in ambito biomedico. 
 
-SHACL invece è uno standard del World Wide Web Consortium (W3C) per la verifica di grafi rispetto a dei vincoli definiti, questi grafi sono rappresentati in qualsiasi formato RDF, ad esempio Turtle; Il Resource Description Network (RDF) è necessario per la codifica e la manipolazione di metadati e consente la modellazione di informazioni come risorse web, tali informazioni sono codificate sotto forma di triple \texttt{<subject> <predicate> <object>} equivalenti in logica del primo ordine a formule con subject e object termini ground e predicate predicato binario. 
+\subsection{SBML}
+\textbf{Systems Biology Markup Language (SBML)} è un formato di rappresentazione basato su XML per la modellazione di processi biologici e chimici. Non è un linguaggio bensì una \textit{lingua franca} tra tool che utilizzano formati di rappresentazione differenti e ad oggi è \textit{de facto} uno standard per i modelli computazionali in biologia. 
 
-Dato un modello SHACL il linguaggio di query che permette di interrogarlo è SPARQL, tutti questi formati (SBML escluso) sono standard del W3C. 
+Ai fini di questo progetto distinguiamo due differenti SBML:
+\begin{itemize}
+    \item \textbf{SBML Level 3}. La specifica del \textit{Core} che offre le funzionalità base di SBML, in questo documento lo si indica come "SBML 3".
+    \item \textbf{Hierarchical Model Composition}. Noto come "comp" (namespace del package e quindi parola chiave necessaria in un file XML) questo package offre la possibilità di include modelli e sottomodelli uno dentro l'altro permettendo allo sviluppatore e aventuali tool di:
+    \begin{enumerate}
+        \item Scomporre modelli troppo grandi in modelli più piccoli per ridurne la complessità.
+        \item Avere istanze multiple di un modello - precedentemente definito - all'interno di altri modelli, evitando ripetizione di codice. 
+        \item Creare librerie di codice riusabile e modelli considerati corretti. 
+    \end{enumerate}
+    In questo documento lo si indica come "Extended SBML". 
+\end{itemize}
 
-L'obiettivo di questo progetto, sotto la guida del Professor Tronci, è quello di convertire automaticamente codice SBML in SHACL. A tal fine il problema è stato diviso in tre fasi:
+
+\subsection{RDF}
+Il \textbf{Resource Description Framework (RDF)} è una famiglia di specifiche definite dal World Wide Web Consortium (W3C) utilizzate per la modellazione di informazioni implementate come risorse web. RDF è simile ad altri approcci classici come database relazionali o logiche desctrittive nei quali si hanno affermazioni sulle risorse sotto forma di triple soggetto-predicato-oggetto; il soggetto è la risorsa stessa e il predicato esprime una relazione tra soggetto e oggetto.
+
+Se ad esempio volessimo esprimere il concetto "il cielo è blu" avremo 
+\begin{itemize}
+    \item [] \textbf{soggetto}: "il cielo"
+    \item [] \textbf{predicato}: "è di colore"
+    \item [] \textbf{oggetto}: "blu"
+\end{itemize}
+
+Contrariamente ad approccio object oriented entità-attributo-valore in cui avremmo un oggetto "cielo" con attributo "colore" di valore "blu". Come si può vedere nell'\href{https://book.validatingrdf.com/bookHtml008.html}{immagine} \ref{fig:graph} un insieme di triple rappresenta intrinsecamente un grafo: una rappresentazione decisamente conveniente ma spesso nella pratica un modello RDF è mantenuto come database relazionale (chiamato Triplestores o Quad stores).
+
+\begin{figure}[h!t]
+    \caption{Un modello RDF è un grafo.}
+    \label{fig:graph}
+    \includegraphics[scale=0.3]{images/RDFGraph.png}
+    \centering
+\end{figure}
+
+Esistono vari formati per esprimere il modello astratto RDF, in questo progetto ho scelto di utilizzare solo file Turtle (\texttt{.ttl}).
+
+\subsection{SHACL}
+\textbf{Shapes Constraint Language (SHACL)} è una specifica del W3C per la verifica di informazioni sotto forma di grafi dato un insieme di vincoli. Il processo di verifica prende in input un grafo contenente le dichiarazioni delle shape ovvero le definizioni cui i nodi, le istanze, dovranno essere verificati; in input si può avere qulsiasi formato RDF, in questo progetto si userà Turtle. 
+
+SHACL include anche il linguaggio di query \textbf{SPARQL SPARQL Protocol and RDF Query Language (SPARQL)}.
+
+\subsection{Obiettivi}
+
+Lo scopo di questo progetto, sotto la guida del Professor Tronci, è quello di convertire automaticamente una specifica SBML in SHACL. A tal fine il problema è stato diviso in tre fasi:
 
 \begin{enumerate}
-    \item Modellare in SHACL un un sottoinsieme dei costrutti che definiscono SBML . 
+    \item Modellare in SHACL un sottoinsieme dei costrutti che definiscono SBML . 
     \item Scrivere un parser che traduca una specifica SBML in SHACL.
     \item Scrivere un parser che traduca una specifica SHACL in SBML.
 \end{enumerate}
 
+Si assume a priori che i file SBML in input siano corretti, la \href{http://sbml.org/Facilities/Validator}{verifica} è eseguibile online.
+
 \section{Modellazione}
 
-Nella prima fase si è scelto un sottoinsieme di SBML 3.2 e la totalità dei costrutti aggiuntivi di extended SBML, nella tabella ~\ref{tab:modellazione} vengono descritti i principali costrutti, sono state volontariamente omesse entità quali \texttt{listOf*} il cui significato è intuitivo e avrebbero solo reso la tabella meno leggibile, in ogni caso è possibile consultare ulteriormente il diagramma \texttt{diagram.png} e il file \texttt{shapes.ttl}, in qest'ultimo è scritta la definizione del modello con i vincoli che dovranno essere rispettati dai file di output del parser; è possibile verificare la consistenza del file di output rispetto al modello tramite lo script \texttt{shacl\_verifier.py}. Per entrambi i file si è scelto di utilizzare il formato Turtle.
-
-Extended SBML introduce la possibilità di definire una gerarchia, ad esempio si può esprimere lo schema "cellula-nucleo-dna", aggiunge inoltre la possibilità di definire modelli e poterli importare ed esportare, favorendo il riuso di codice.
-
-\clearpage
+In questa prima fase si è scelto un sottoinsieme di SBML 3.2 e i costrutti supplementari in Extended SBML e ne è stato formalizzato un modello. Nella tabella ~\ref{tab:modellazione} vengono descritti i principali costrutti, sono state volontariamente omesse entità quali \texttt{listOf*} il cui significato è intuitivo e avrebbero solo reso la tabella meno leggibile, in ogni caso è possibile consultare ulteriormente il diagramma \texttt{diagram.png}, mostrato anche in figura \ref{fig:diagram}, e il file delle shape \texttt{shapes.ttl}. È possibile verificare la consistenza di un file di nodi rispetto al modello tramite lo script \texttt{shacl\_verifier.py}.
 
 \begin{longtable}{p{.4\textwidth}p{.5\textwidth}}
     \textbf{Entità} & \textbf{Descrizione} \\
     \hline
     \multicolumn{2}{c}{SBML 3.2} \\
     \hline
-    SBase & Classe astratta che, come ogni classe d'altronde, rappresenta un tipo e ogni nodo sarà sottoclasse di SBase, poiché non esistono attributi di tipo SBase a questa classe si riserva un trattamento differente rispetto a quelle che rappresentano tipi composti di attributi quali ID, SId, ecc \dots Queste sono state omesse nel diagramma ma sono presenti nel file \texttt{shapes.ttl}. \\ 
+    SBase & Classe astratta superclasse di ogni altra classe. Per quanto in SBML sia considerata a tutti gli effetti un tipo, poiché non esistono attributi di tipo SBase a questa classe si riserva un trattamento differente rispetto ai tipi composti quali ID, SId, etc \dots che sono state omesse dal diagramma ma sono comunque presenti nel file \texttt{shapes.ttl}. \\ 
     \hline
-    Sbml & Ogni file SBML ha un'etichetta con tag \texttt{sbml}, grazie a questo nodo è possibile costruire grafi SHACL composti da multipli modelli SBML in input dato che saranno sempre radicati in questo nodo, è importante specificare che questo modello non sarà legale in SBML 3.2 né extended e non si dà alcuna garanzia sulla riconversione in SBML. Il costrutto Sbml ammette anche attributi oltre quelli noti, siccome in SHACL ho necessità di conoscerne il tipo ho tolto questa possibilità.\\
+    Sbml & Ogni file SBML ha un'etichetta con tag \texttt{sbml}, data la sua obbligatorietà ed unicità è possibile costruire grafi SHACL composti da multipli modelli SBML ed esplorarli radicando l'albero in Sbml, è importante specificare che questo nuovo modello composto non sarà legale in SBML e non si dà alcuna garanzia nella fase di riconversione in SBML. Il costrutto Sbml ammette altri attributi oltre quelli noti, siccome in SHACL ho necessità di conoscerne il tipo è stata persa questa possibilità.\\
     \hline
     Model & Rappresenta il modello, se ne può avere più di uno come detto sopra nonostante SBML non lo permetta. \\
     \hline
-    Unit & Definisce un'unità di misura definita dall'utente, in SBML sono definite delle unità base (i.e. le unità del SI e altre scelte dagli sviluppatori di SBML) e combinandole opportunamente tra loro è possibile definire nuove unità di misura (e.g l'accelerazione $\frac{m}{s^{2}}$ altro non è che $m^{1}s^{-2}$). Nel modello in \texttt{shapes.ttl} le unità base (kind) sono trattate come normalissime unità di misura, dal momento che in SBML non è concesso avere come attributo kind un'unità di misura che non sia tra quelle base questa libertà non genera problemi. \\
+    Unit & Definisce un'unità di misura definita dall'utente, in SBML sono definite delle unità base (i.e. le unità del SI e altre scelte dagli sviluppatori di SBML) e combinandole opportunamente tra loro è possibile definire nuove unità di misura (e.g l'accelerazione $\frac{m}{s^{2}}$ che altro non è se non $m^{1}s^{-2}$). Nel modello in \texttt{shapes.ttl} le unità base (kind) sono trattate come normalissime unità di misura, in SBML non è concesso avere come attributo kind un'unità di misura che non sia base e questa libertà non genera problemi. \\
     \hline 
-    Compartment & Rappresenta un insieme di entità biologica. \\
+    Compartment & Rappresenta un insieme di entità biologiche. \\
     \hline
-    Species & Rappresenta un'entità biologiche. \\
+    Species & Rappresenta un'entità biologica. \\
     \hline
-    Parameter & In SBML si possono definire parametri sia locali che globali, il modello presentato in queso progetto non presenta località quindi i parametri sono sempre globali e Model avrà come attributo \texttt{ListOfParameters} con moltiplicità $[0,n]$ piuttosto che $[0,1]$. \\  
+    Parameter & In SBML si possono definire parametri sia locali che globali, il modello presentato in queso progetto non implementa la località quindi i parametri sono sempre globali e in Model l'attributo \texttt{ListOfParameters} ha moltiplicità $[0,n]$ piuttosto che $[0,1]$. \\  
     \hline 
     \multicolumn{2}{c}{Extended SBML} \\
     \hline
-    ExternalModelDefinition &  Necessario per importare modelli esterni e introdurli nel proprio. \\
+    ExternalModelDefinition &  Necessario per importare modelli esterni. \\
     \hline
-    ModelDefinition & Data la presenza di una gerarchia questo costrutto fornisce la definizione di un modello. \\ 
+    ModelDefinition & Questo costrutto fornisce la definizione di un modello. \\ 
     \hline
-    Submodel & L'istanza di una ModelDefinition è rappresentata da un Submodel e si ha effettivamente un modello dentro ad un altro modello. Durante la fase di test per extended SBML non ho usato esempi scaricati da Biomodels perché la gerarchia non veniva rappresentata tramite Submodel ma facendo uso di un attributo \texttt{outer} in un compartment, con il Professor Tronci si è ritenuto fosse meglio attenersi allo standard W3C. \\ 
+    Submodel & L'istanza di una ModelDefinition è rappresentata da un Submodel, si ha un modello dentro ad un altro modello. Durante la fase di test per extended SBML non ho usato esempi scaricati da Biomodels perché la gerarchia non veniva rappresentata tramite il costrutto Submodel ma con un attributo \texttt{outer} in Compartment, con il Professor Tronci si è ritenuto fosse meglio attenersi allo standard W3C. \\ 
     \hline
-    Port & Una port permette allo sviluppatore di definire come ci si deve interfacciare con un modello, di norma è preferibile seguire le indicazioni dello sviluppatore. \\ 
+    Port & Una port permette allo sviluppatore di definire come ci si deve interfacciare con un modello, per quanto non siano vincolanti di norma è preferibile seguire le indicazioni dello sviluppatore. \\ 
     \hline
     Deletion & Non è detto che i modelli importati abbiano solo ed esclusivamente componenti desiderabili e con una deletion è possibile ignorare quelli indesiderati. \\
     \hline
     Replacement & Tramite questo costrutto è possibile sostituire una componente con un'altra, ogni riferimento alla prima ora punta alla seconda. A causa di Replacement sono presenti più parser: il primo \texttt{parser.py} esplora il file XML come una lista e associare un Replacement ad un componente risulta estremamente macchinoso se non impossibile, in \texttt{extended\_parser.py} questo problema non si presenta perché il file XML viene esplorato come un albero. \\
     \hline
-    SBaseRef & Port, Deletion, Replacement e Submodel utilizzano dei riferimenti, SBaseRef similmente a SBase offre degli attributi comuni alle proprie sottoclassi. \\
+    SBaseRef & Port, Deletion, Replacement e Submodel utilizzano dei riferimenti, SBaseRef similmente a SBase offre alle proprie sottoclassi degli attributi comuni a tutte. \\
     \hline
 
     \caption{Modellazione SHACL}
     \label{tab:modellazione}
 \end{longtable}
+
+\begin{sidewaysfigure}
+    \caption{Modellazione SBML}
+    \label{fig:diagram}
+    \includegraphics[scale=0.6]{images/diagram.png}
+\end{sidewaysfigure}
+\clearpage
 
 \section{Parsing da SBML a SHACL}
 
@@ -103,7 +147,7 @@ Il calcolo delle performance è basato sull'esecuzione di \texttt{test.sh} e si 
     \label{tab:performance}
 \end{table}
 
-Si assume a priori che i file SBML in input siano corretti, la \href{http://sbml.org/Facilities/Validator}{verifica} è eseguibile online. Per il corretto funzionamento del codice è necessario il download del package \textit{rdflib}.
+Per il corretto funzionamento del codice è necessario il download del package \textit{rdflib}.
 
 \section{Parsing da SHACL a SBML}
 In questa terza e ultima fase si esegue la controprova della precedente ovvero si traduce il file di istanze SHACL ottenuto in un file SBML e ci si attende che venga modellata la stessa conoscenza. Nella cartella \texttt{query} sono presenti tre file:
@@ -138,7 +182,7 @@ Durante lo sviluppo del progetto si è tenuto conto dei seguenti commenti e crit
     \hline
 \end{longtable}
 
-\cleardoublepage
+\clearpage
 \section{Fonti}
 \begin{itemize}
     \item \href{http://sbml.org/Main_Page}{The systems biology markup language.}
