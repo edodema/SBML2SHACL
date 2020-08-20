@@ -29,7 +29,7 @@
 Ai fini di questo progetto distinguiamo due differenti SBML:
 \begin{itemize}
     \item \textbf{SBML Level 3}. La specifica del \textit{Core} che offre le funzionalità base di SBML, in questo documento lo si indica come "SBML 3".
-    \item \textbf{Hierarchical Model Composition}. Noto come "comp" (namespace del package e quindi parola chiave necessaria in un file XML) questo package offre la possibilità di include modelli e sottomodelli uno dentro l'altro permettendo allo sviluppatore e aventuali tool di:
+    \item \textbf{Hierarchical Model Composition}. Noto come "comp" (namespace del package e quindi parola chiave necessaria in un file XML) questo package offre la possibilità di include modelli e sottomodelli uno dentro l'altro permettendo allo sviluppatore ed eventuali tool di:
     \begin{enumerate}
         \item Scomporre modelli troppo grandi in modelli più piccoli per ridurne la complessità.
         \item Avere istanze multiple di un modello - precedentemente definito - all'interno di altri modelli, evitando ripetizione di codice. 
@@ -42,14 +42,14 @@ Ai fini di questo progetto distinguiamo due differenti SBML:
 \subsection{RDF}
 Il \textbf{Resource Description Framework (RDF)} è una famiglia di specifiche definite dal World Wide Web Consortium (W3C) utilizzate per la modellazione di informazioni implementate come risorse web. RDF è simile ad altri approcci classici come database relazionali o logiche desctrittive nei quali si hanno affermazioni sulle risorse sotto forma di triple soggetto-predicato-oggetto; il soggetto è la risorsa stessa e il predicato esprime una relazione tra soggetto e oggetto.
 
-Se ad esempio volessimo esprimere il concetto "il cielo è blu" avremo 
+Se ad esempio volessimo esprimere il concetto "il cielo è blu" avremmo:
 \begin{itemize}
     \item [] \textbf{soggetto}: "il cielo"
     \item [] \textbf{predicato}: "è di colore"
     \item [] \textbf{oggetto}: "blu"
 \end{itemize}
 
-Contrariamente ad approccio object oriented entità-attributo-valore in cui avremmo un oggetto "cielo" con attributo "colore" di valore "blu". Come si può vedere nell'\href{https://book.validatingrdf.com/bookHtml008.html}{immagine} \ref{fig:graph} un insieme di triple rappresenta intrinsecamente un grafo: una rappresentazione decisamente conveniente ma spesso nella pratica un modello RDF è mantenuto come database relazionale (chiamato Triplestores o Quad stores).
+Contrariamente all'approccio object oriented entità-attributo-valore in cui avremmo un oggetto "cielo" con attributo "colore" di valore "blu". Come si può vedere nell'\href{https://book.validatingrdf.com/bookHtml008.html}{immagine} \ref{fig:graph} un insieme di triple rappresenta intrinsecamente un grafo: una rappresentazione decisamente conveniente ma spesso nella pratica un modello RDF è mantenuto come database relazionale (chiamato Triplestore o Quad store).
 
 \begin{figure}[h!t]
     \caption{Un modello RDF è un grafo.}
@@ -58,19 +58,19 @@ Contrariamente ad approccio object oriented entità-attributo-valore in cui avre
     \centering
 \end{figure}
 
-Esistono vari formati per esprimere il modello astratto RDF, in questo progetto ho scelto di utilizzare solo file Turtle (\texttt{.ttl}).
+Esistono vari formati per esprimere il modello astratto RDF, in questo progetto ho scelto di utilizzare Turtle (\texttt{.ttl}).
 
 \subsection{SHACL}
 \textbf{Shapes Constraint Language (SHACL)} è una specifica del W3C per la verifica di informazioni sotto forma di grafi dato un insieme di vincoli. Il processo di verifica prende in input un grafo contenente le dichiarazioni delle shape ovvero le definizioni cui i nodi, le istanze, dovranno essere verificati; in input si può avere qulsiasi formato RDF, in questo progetto si userà Turtle. 
 
-SHACL include anche il linguaggio di query \textbf{SPARQL SPARQL Protocol and RDF Query Language (SPARQL)}.
+SHACL include anche il linguaggio di query \textbf{SPARQL Protocol and RDF Query Language (SPARQL)}.
 
 \subsection{Obiettivi}
 
 Lo scopo di questo progetto, sotto la guida del Professor Tronci, è quello di convertire automaticamente una specifica SBML in SHACL. A tal fine il problema è stato diviso in tre fasi:
 
 \begin{enumerate}
-    \item Modellare in SHACL un sottoinsieme dei costrutti che definiscono SBML . 
+    \item Modellare in SHACL un sottoinsieme di costrutti che definiscono SBML . 
     \item Scrivere un parser che traduca una specifica SBML in SHACL.
     \item Scrivere un parser che traduca una specifica SHACL in SBML.
 \end{enumerate}
@@ -79,7 +79,7 @@ Si assume a priori che i file SBML in input siano corretti, la \href{http://sbml
 
 \section{Modellazione}
 
-In questa prima fase si è scelto un sottoinsieme di SBML 3.2 e i costrutti supplementari in Extended SBML e ne è stato formalizzato un modello. Nella tabella ~\ref{tab:modellazione} vengono descritti i principali costrutti, sono state volontariamente omesse entità quali \texttt{listOf*} il cui significato è intuitivo e avrebbero solo reso la tabella meno leggibile, in ogni caso è possibile consultare ulteriormente il diagramma \texttt{diagram.png}, mostrato anche in figura \ref{fig:diagram}, e il file delle shape \texttt{shapes.ttl}. È possibile verificare la consistenza di un file di nodi rispetto al modello tramite lo script \texttt{shacl\_verifier.py}.
+In questa prima fase si è scelto un sottoinsieme di SBML 3.2 più i costrutti in Extended SBML e ne è stato formalizzato un modello. Nella tabella ~\ref{tab:modellazione} vengono descritti i principali costrutti, sono state volontariamente omesse shape quali \texttt{listOf*} il cui significato è intuitivo e avrebbero solo reso la tabella meno leggibile, in ogni caso è possibile consultare ulteriormente il diagramma \texttt{diagram.png}, mostrato anche in figura \ref{fig:diagram}, e il file delle shape \texttt{shapes.ttl}. È possibile verificare la consistenza di un file di nodi rispetto al modello tramite lo script \texttt{shacl\_verifier.py}.
 
 \begin{longtable}{p{.4\textwidth}p{.5\textwidth}}
     \textbf{Entità} & \textbf{Descrizione} \\
@@ -106,13 +106,13 @@ In questa prima fase si è scelto un sottoinsieme di SBML 3.2 e i costrutti supp
     \hline
     ModelDefinition & Questo costrutto fornisce la definizione di un modello. \\ 
     \hline
-    Submodel & L'istanza di una ModelDefinition è rappresentata da un Submodel, si ha un modello dentro ad un altro modello. Durante la fase di test per extended SBML non ho usato esempi scaricati da Biomodels perché la gerarchia non veniva rappresentata tramite il costrutto Submodel ma con un attributo \texttt{outer} in Compartment, con il Professor Tronci si è ritenuto fosse meglio attenersi allo standard W3C. \\ 
+    Submodel & L'istanza di una ModelDefinition è rappresentata da un Submodel, si ha quindi un modello dentro ad un altro modello. Durante la fase di test per extended SBML non ho usato esempi scaricati da Biomodels perché la gerarchia non veniva rappresentata tramite il costrutto Submodel ma con un attributo \texttt{outer} in Compartment, con il Professor Tronci si è ritenuto fosse meglio attenersi allo standard W3C. \\ 
     \hline
     Port & Una port permette allo sviluppatore di definire come ci si deve interfacciare con un modello, per quanto non siano vincolanti di norma è preferibile seguire le indicazioni dello sviluppatore. \\ 
     \hline
     Deletion & Non è detto che i modelli importati abbiano solo ed esclusivamente componenti desiderabili e con una deletion è possibile ignorare quelli indesiderati. \\
     \hline
-    Replacement & Tramite questo costrutto è possibile sostituire una componente con un'altra, ogni riferimento alla prima ora punta alla seconda. A causa di Replacement sono presenti più parser: il primo \texttt{parser.py} esplora il file XML come una lista e associare un Replacement ad un componente risulta estremamente macchinoso se non impossibile, in \texttt{extended\_parser.py} questo problema non si presenta perché il file XML viene esplorato come un albero. \\
+    Replacement & Tramite questo costrutto è possibile sostituire una componente con un'altra, ogni riferimento alla prima ora punta alla seconda. A causa di Replacement sono presenti più parser: il primo \texttt{parser.py} esplora il file XML come una lista ed \texttt{extended\_parser.py} come un albero. \\
     \hline
     SBaseRef & Port, Deletion, Replacement e Submodel utilizzano dei riferimenti, SBaseRef similmente a SBase offre alle proprie sottoclassi degli attributi comuni a tutte. \\
     \hline
@@ -130,11 +130,11 @@ In questa prima fase si è scelto un sottoinsieme di SBML 3.2 e i costrutti supp
 
 \section{Parsing da SBML a SHACL}
 
-In questa seconda fase dato un file SBML in input lo si traduce in SHACL tramite un parser e si verifica la correttezza dell'output tramite il file \texttt{shacl\_verifier.py}. Come già detto si hanno due parser: \texttt{parser.py} è la prima versione e non supporta Extended SBML contrariamente a \texttt{extended\_parser.py} che è la versione finale. 
+In questa seconda fase dato uno o più file SBML in input li si traduce in SHACL tramite un parser e si verifica la correttezza dell'output tramite il file \texttt{shacl\_verifier.py}. Come già detto si hanno due parser: \texttt{parser.py} è la prima versione e non supporta Extended SBML contrariamente a \texttt{extended\_parser.py} che è la versione finale. 
 
 In \texttt{parser.py} si riescono a tradurre senza problemi file in SBML 3.2 ma poiché il file XML viene letto come una lista di etichette risulta macchinoso (ammesso e non concesso sia possibile) fare riferimento all'etichetta padre di una sostituzione o una cancellazione. Il problema non si presenta in \texttt{extended\_parser.py} dato che il file XML viene esplorato come un albero, questa seconda versione è inoltre più breve (444 righe anziché 932) ed è più facilmente estendibile. Questo parser infatti legge qualsiasi tag del file XML e vi associa i propri attributi - noti - al rispettivo valore, ho comunque imposto dei controlli per evitare questo comportamento dato che avrebbe solo rallentato la fase di verifica. Inoltre è più veloce come si può vedere in tabella ~\ref{tab:performance}: il calcolo delle performance è basato sull'esecuzione di \texttt{test.sh}, sono stati scaricati da \href{https://www.ebi.ac.uk/biomodels/}{Biomodels} i 18 modelli SBML presenti nella cartella \texttt{examples/input/biomodel} e di seguito elencati, in \texttt{test.sh} i parser prendono in input due file così da verificare la correttezza della costruzione di un grafo a partire da più modelli e allo stesso tempo si ha un numero più consistente di test ovvero 324. 
 
-\begin{itemize}
+\begin{enumerate}
     \item BIOMD0000000087.xml
     \item BIOMD0000000105.xml
     \item BIOMD0000000399.xml
@@ -153,7 +153,7 @@ In \texttt{parser.py} si riescono a tradurre senza problemi file in SBML 3.2 ma 
     \item MODEL1112260002.xml
     \item MODEL1812100001.xml
     \item MODEL3632127506.xml
-\end{itemize}
+\end{enumerate}
 
 \begin{table}[h!t] 
     \centering
@@ -166,7 +166,7 @@ In \texttt{parser.py} si riescono a tradurre senza problemi file in SBML 3.2 ma 
         extended\_parser.py & 17:35.19 \\
         \hline
     \end{longtable}
-    \caption{Risultati ottenuti eseguendo \texttt{time ./test.sh}.}
+    \caption{Risultati ottenuti eseguendo \texttt{time ./test.sh} su macOS Catalina 10.15.6 con processore Intel Core i5 1.6 GHz Dual-Core.}
     \label{tab:performance}
 \end{table}
 
