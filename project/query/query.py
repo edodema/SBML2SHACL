@@ -23,11 +23,11 @@ g.parse(args.input_file, format='ttl')
 result = g.query("""
 PREFIX schema: <http://schema.org/>
 
-SELECT *
+SELECT ?s
 WHERE {
-    ?s ?p ?o
+    ?s a schema:Compartment
 }
 """)
 
 for row in result:
-    print("%s %s %s" % row)
+    print("%s a schema:Compartment" % row)

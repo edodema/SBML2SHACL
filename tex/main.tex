@@ -75,7 +75,7 @@ Lo scopo di questo progetto, sotto la guida del Professor Tronci, è quello di c
     \item Scrivere un parser che traduca una specifica SHACL in SBML.
 \end{enumerate}
 
-Si assume a priori che i file SBML in input siano corretti, la \href{http://sbml.org/Facilities/Validator}{verifica} è eseguibile online.
+Si assume a priori che i file SBML in input siano corretti, la \href{http://sbml.org/Facilities/Validator}{verifica} è eseguibile online. Per il corretto funzionamento del codice inoltre è necessario il download del package Python \textit{rdflib}.
 
 \section{Modellazione}
 
@@ -130,39 +130,75 @@ In questa prima fase si è scelto un sottoinsieme di SBML 3.2 e i costrutti supp
 
 \section{Parsing da SBML a SHACL}
 
-In questa fase sono stati scritti due parser, di questi \texttt{extended\_parser.py} è la versione finale e corretta. In \texttt{parser.py} si riescono a tradurre senza problemi file in SBML 3.2 ma siccome il file XML viene letto come una lista di etichette risulta macchinoso (ammesso e non concesso sia possibile) fare riferimento all'etichetta padre di una sostituzione o una cancellazione. Il problema non si presenta nel secondo parser dato che la struttura XML viene esplorata come un albero, questa seconda versione è inoltre più breve (444 righe anziché 932), più veloce come si può vedere in tabella ~\ref{tab:performance} ed è più facilmente estendibile. Questo parser infatti prende qualsiasi tag e vi associa i rispettivi attributi - che devono essere noti - al proprio valore; ho comunque imposto dei controlli per evitare questo comportamento dato che avrebbe solo rallentato la fase di verifica.
+In questa seconda fase dato un file SBML in input lo si traduce in SHACL tramite un parser e si verifica la correttezza dell'output tramite il file \texttt{shacl\_verifier.py}. Come già detto si hanno due parser: \texttt{parser.py} è la prima versione e non supporta Extended SBML contrariamente a \texttt{extended\_parser.py} che è la versione finale. 
 
-Il calcolo delle performance è basato sull'esecuzione di \texttt{test.sh} e si fa uso solo di file SBML 3.2 scaricati da Biomodels. Nella sottocartella \texttt{custom}) vi sono file d'esempio forniti direttamente dal W3C in extended SBML e potranno essere usati per il file \texttt{extended\_parser.py}. 
+In \texttt{parser.py} si riescono a tradurre senza problemi file in SBML 3.2 ma poiché il file XML viene letto come una lista di etichette risulta macchinoso (ammesso e non concesso sia possibile) fare riferimento all'etichetta padre di una sostituzione o una cancellazione. Il problema non si presenta in \texttt{extended\_parser.py} dato che il file XML viene esplorato come un albero, questa seconda versione è inoltre più breve (444 righe anziché 932) ed è più facilmente estendibile. Questo parser infatti legge qualsiasi tag del file XML e vi associa i propri attributi - noti - al rispettivo valore, ho comunque imposto dei controlli per evitare questo comportamento dato che avrebbe solo rallentato la fase di verifica. Inoltre è più veloce come si può vedere in tabella ~\ref{tab:performance}: il calcolo delle performance è basato sull'esecuzione di \texttt{test.sh}, sono stati scaricati da \href{https://www.ebi.ac.uk/biomodels/}{Biomodels} i 18 modelli SBML presenti nella cartella \texttt{examples/input/biomodel} e di seguito elencati, in \texttt{test.sh} i parser prendono in input due file così da verificare la correttezza della costruzione di un grafo a partire da più modelli e allo stesso tempo si ha un numero più consistente di test ovvero 324. 
+
+\begin{itemize}
+    \item BIOMD0000000087.xml
+    \item BIOMD0000000105.xml
+    \item BIOMD0000000399.xml
+    \item BIOMD0000000474.xml
+    \item BIOMD0000000476.xml
+    \item BIOMD0000000559.xml
+    \item BIOMD0000000562.xml
+    \item BIOMD0000000619.xml
+    \item BIOMD0000000624.xml
+    \item BIOMD0000000705.xml
+    \item BIOMD0000000706.xml
+    \item MODEL1012110001.xml
+    \item MODEL1012220002.xml
+    \item MODEL1012220003.xml
+    \item MODEL1012220004.xml
+    \item MODEL1112260002.xml
+    \item MODEL1812100001.xml
+    \item MODEL3632127506.xml
+\end{itemize}
 
 \begin{table}[h!t] 
     \centering
-    \begin{longtable}{p{3.3cm}p{2cm}p{1.5cm}p{1.5cm}p{1.5cm}}
-        \textbf{File} & \textbf{System (s)} & \textbf{User (s)} & \textbf{Total} & \textbf{CPU} \\
+    \begin{longtable}{p{0.5\textwidth}p{0.3\textwidth}}
+        \textbf{File} & \textbf{Time (m)} \\
         \hline
-        parser.py & 52.90 & 2445.38 & 42:54.54 & 97 \% \\
-        extended\_parser.py & 38.07 & 1003.51 & 17:35.19 & 98 \% \\
+        %parser.py & 52.90 & 2445.38 & 42:54.54 & 97 \% \\
+        parser.py & 42:54.54 \\
+        %extended\_parser.py & 38.07 & 1003.51 & 17:35.19 & 98 \% \\
+        extended\_parser.py & 17:35.19 \\
         \hline
     \end{longtable}
-    \caption{Performance}
+    \caption{Risultati ottenuti eseguendo \texttt{time ./test.sh}.}
     \label{tab:performance}
 \end{table}
 
-Per il corretto funzionamento del codice è necessario il download del package \textit{rdflib}.
+Nella sottocartella \texttt{custom} invece vi sono file d'esempio forniti direttamente dal W3C per Extended SBML, potranno essere usati solo per verificare \texttt{extended\_parser.py}. In Biomodels per esprimere una gerarchia tra compartment si fa uso di un attributo \texttt{outer} e non di sottomodelli come nella specifica del W3C.
 
 \section{Parsing da SHACL a SBML}
-In questa terza e ultima fase si esegue la controprova della precedente ovvero si traduce il file di istanze SHACL ottenuto in un file SBML e ci si attende che venga modellata la stessa conoscenza. Nella cartella \texttt{query} sono presenti tre file:
+Nella terza e ultima fase si esegue la controprova della precedente ovvero si traduce il file di istanze SHACL ottenuto in un file SBML e ci si attende che venga modellata la stessa conoscenza, il file non sarà uguale perché privo di eventuali costrutti non modellati. Nella cartella \texttt{query} sono presenti tre file:
 
 \begin{itemize}
-    \item \texttt{query.py}: Permette di interrogare il modello con query SPARQL, la query deve essere scritta direttamente nel codice perché l'argomento della funzione print varia in base alla query.
+    \item \texttt{query.py}: Permette di interrogare il modello con query SPARQL, la query deve essere scritta direttamente nel codice perché gli argomenti della print variano in base alla query.
     \item \texttt{ttl2sbml.py}: Il parser da SHACL a SBML.
-    \item \texttt{ttl2xml}: Converte un file di istanze Turtle in XML, una query e un file XML possono esprimere la stessa conoscenza traducendo una tripla \texttt{<subject> <predicate> <object>} in etichette \texttt{<subject> <predicate> <object/> </predicate> </subject>}.
+    \item \texttt{ttl2xml}: Converte un file di istanze Turtle in XML, una query e un file XML possono esprimere la stessa conoscenza: una tripla \texttt{<subject> <predicate> <object>} si può tradurre in XML nelle etichette \texttt{<subject> <predicate> <object/> </predicate> </subject>}.
 \end{itemize}
 
-Nella scrittura del parser è risultato necessario poter riottenere la struttura annidata dell'XML che si era persa nella scrittura delle istanze SHACL, per farlo ho definito un albero e dei nodi, nella fase di lettura del file si costruisce gradualmente l'albero. Una volta ottenuto l'albero in questione per scrivere il testo XML basta esplorarlo ricorsivamente ricordandosi di chiudere le etichette aperte una volta terminate le chiamate ai figli. 
+Nella scrittura del parser è risultato necessario poter riottenere la struttura annidata dell'XML che era andata persa nella scrittura delle istanze SHACL, per farlo ho definito delle classi Tree e Node, nella fase di lettura del file l'albero viene costruito gradualmente e una volta ottenuto basta esplorarlo ricorsivamente per costruire il testo XML, ricordandosi chiaramente di chiudere le etichette una volta terminate le chiamate ai figli. 
 
 L'algoritmo genera la stessa conoscenza dei file di partenza, per SBML 3.2 non ci sono problemi invece per i file nella cartella \texttt{custom} tutti tranne \texttt{MANUAL\_1.xml} \underline{non} superano la verifica SBML perché trattandosi di file d'esempio i riferimenti non sono reali; chiaramente anche l'output di \texttt{ttl2sbml.py} dà risultato negativo, per \texttt{MANUAL\_1.txt} invece si ha lo stesso esito ovvero numerosi warning.
 
-Come detto prima non ho usato esempi presi da Biomodels perché i file trovati con extended SBML implementavano la gerarchia con un attributo \texttt{outer} piuttosto che con i \texttt{submodel} come da documentazione ufficiale.
+\section{Esempio}
+Un esempio di esecuzione è quello nella cartella \texttt{examples/output}, è stato ottenuto eseguendo i comandi in figura \ref{fig:example_commands} e in figura \ref{fig:example_validation} si può vedere come SBML verifichi la traduzione da SHACL a SBML.
+
+\begin{figure}[h!t]
+    \caption{Comandi}
+    \label{fig:example_commands}
+    \includegraphics[scale=0.366]{images/example_commands.png}
+\end{figure}
+
+\begin{figure}[H]
+    \caption{Verifica SBML}
+    \label{fig:example_validation}
+    \includegraphics[scale=0.43]{images/example_validation.png}
+\end{figure}
 
 \section{Commenti e critiche}
 Durante lo sviluppo del progetto si è tenuto conto dei seguenti commenti e critiche da parte del Professor Tronci:
@@ -179,6 +215,8 @@ Durante lo sviluppo del progetto si è tenuto conto dei seguenti commenti e crit
     31/07/20 & Dopo aver aggiunto replacement e deletion e dopo aver eseguito dei test con risultati positivi è seguita una videochiamata con il Professor Tronci in cui mi è stato indicato di modificare il parser in maniera tale da poter ricevere in input più modelli SBML e di capire se il risultato di una query SPARQL rappresenti lo stesso tipo di conoscenza di un file XML/SBML, così da poter sfruttare questa corrispondenza per eseguire dei controtest. Questa corrispondenza esiste ed è usata spesso sotto il nome di "SPARQL query results xml format". \\
     \hline
     06/08/2020 & Videochiamata con il Professor Tronci in cui si è deciso di comprendere se fosse possibile scrivere un parser da SHACL a SBML e, in caso di risposta affermativa, farlo. \\
+    \hline
+    19/08/2020 & Correzioni su questa relazione ampliandola affinché i concetti risultino più chiari durante l'esposizione. \\
     \hline
 \end{longtable}
 

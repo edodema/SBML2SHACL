@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <sbml xmlns="http://www.sbml.org/sbml/level2" level="2" metaid="metaid_0000001" version="1">
+    <model id="YeastWTmodel2" metaid="_044070" name="Proctor2006_telomere">
+      <listOfUnitDefinitions>
+        <unitDefinition id="substance" metaid="metaid_0000112">
+          <listOfUnits>
+            <unit kind="item" metaid="_582757"/>
+          </listOfUnits>
+        </unitDefinition>
+      </listOfUnitDefinitions>
+      <listOfCompartments>
+        <compartment id="cellMembrane" metaid="_044088" size="1"/>
+        <compartment id="nucleus" metaid="_044071" size="1"/>
+      </listOfCompartments>
+      <listOfSpecies>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Ctelo" initialAmount="64" metaid="_044108"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Utelo" initialAmount="0" metaid="_044128"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Cdc13" initialAmount="300" metaid="_044148"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Rad17Utelo" initialAmount="0" metaid="_044168"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Rad17" initialAmount="70" metaid="_044188"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Rad24" initialAmount="70" metaid="_044208"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="RPA" initialAmount="4000" metaid="_044228"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Mec1" initialAmount="4000" metaid="_044248"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="ssDNA" initialAmount="0" metaid="_044268"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="RPAssDNA" initialAmount="0" metaid="_044288"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="RPAssDNA1" initialAmount="0" metaid="_044308"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="RPAssDNA2" initialAmount="0" metaid="_044328"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Mec1RPAssDNA" initialAmount="0" metaid="_044348"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="ExoXI" initialAmount="70" metaid="_044368"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="ExoXA" initialAmount="0" metaid="_044388"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Exo1I" initialAmount="670" metaid="_044408"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Exo1A" initialAmount="0" metaid="_044428"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Rad9I" initialAmount="20" metaid="_044448"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Rad9A" initialAmount="0" metaid="_044468"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Rad53I" initialAmount="6900" metaid="_044488"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Rad53A" initialAmount="0" metaid="_044508"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Chk1I" initialAmount="60" metaid="_044528"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Chk1A" initialAmount="0" metaid="_044548"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Dun1I" initialAmount="3000" metaid="_044568"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Dun1A" initialAmount="0" metaid="_044588"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="ATP" initialAmount="10000" metaid="_044608"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="ADP" initialAmount="1000" metaid="_044628"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Rad9Kin" initialAmount="0" metaid="_044648"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="recovery" initialAmount="0" metaid="_044650"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="G1" initialAmount="1" metaid="_044668"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="S" initialAmount="0" metaid="_044688"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="G2" initialAmount="0" metaid="_044708"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="M" initialAmount="0" metaid="_044728"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="G1cyclin" initialAmount="0" metaid="_044748"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Scyclin" initialAmount="0" metaid="_044768"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="G2cyclin" initialAmount="0" metaid="_044788"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="Mcyclin" initialAmount="0" metaid="_044808"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="G1CdkI" initialAmount="1" metaid="_044828"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="G1CdkA" initialAmount="0" metaid="_044848"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="SCdkI" initialAmount="1" metaid="_044868"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="SCdkA" initialAmount="0" metaid="_044888"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="G2CdkI" initialAmount="1" metaid="_044908"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="G2CdkA" initialAmount="0" metaid="_044928"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="MCdkI" initialAmount="1" metaid="_044948"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="MCdkA" initialAmount="0" metaid="_044968"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="G1Soff" initialAmount="1" metaid="_044988"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="G1Son" initialAmount="0" metaid="_045008"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="SG2off" initialAmount="1" metaid="_045028"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="SG2on" initialAmount="0" metaid="_045048"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="G2Moff" initialAmount="1" metaid="_045068"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="G2Mon" initialAmount="0" metaid="_045088"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="MG1off" initialAmount="1" metaid="_045108"/>
+        <species compartment="nucleus" hasOnlySubstanceUnits="true" id="MG1on" initialAmount="0" metaid="_045128"/>
+        <species boundaryCondition="true" compartment="nucleus" hasOnlySubstanceUnits="true" id="sink" initialAmount="0" metaid="_045148"/>
+        <species compartment="cellMembrane" hasOnlySubstanceUnits="true" id="budscar" initialAmount="0" metaid="_045168"/>
+      </listOfSpecies>
+    </model>
+  </sbml>
