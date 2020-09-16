@@ -347,6 +347,12 @@ In questa prima fase si è scelto un sottoinsieme di SBML 3.2 più i costrutti i
     \label{tab:modellazione}
 \end{longtable}
 
+Prendiamo d'esempio il file SBML dato in input al parser \texttt{example.xml}, l'output in Turtle generato \texttt{output.ttl} e il diagramma \texttt{diagram.png} e vediamo come viene popolata l'ABox in concordanza al modello, prendiamo come riferimento la shape Model. Nel listato \ref{lst:input_model} è stata isolata la parte che riguarda il modello, gli attributi presenti nell'etichetta sono \texttt{id}, \texttt{metaid} e \texttt{name} e quindi attributo e valore sono tradotti in Turtle in predicato e oggetto rispettivamente come si può vedere nel listato \ref{lst:output_model}; lo stesso viene fatto anche per le relazioni con altre entità sia che Model sia soggetto o oggetto. 
+
+\lstinputlisting[language=xml,linerange={3-18},firstnumber=3,caption={Sezione del modello isolata dal file di input \texttt{example.org}},label={lst:input_model}]{../examples/input/example.xml}
+
+\lstinputlisting[language=Turtle, caption={Sezione del modello isolata nel file di output \texttt{output.ttl}}, label={lst:output_model}, numbers=none, linerange={225-231,247-247,262-262} ]{../examples/output/output.ttl}
+
 \begin{sidewaysfigure}
     \caption{Modellazione SBML}
     \label{fig:diagram}
@@ -454,7 +460,7 @@ Durante lo sviluppo del progetto si è tenuto conto dei seguenti commenti e crit
 
 \lstinputlisting[language=xml, caption={File SBML in input \texttt{example.xml}}, label={lst:input.xml}]{../examples/input/example.xml}
 
-\lstinputlisting[language=Turtle,linerange={219-271}, caption={Frammento del tile \texttt{output.ttl}, è stato omesso il preambolo per limitarne l'estensione}, label={lst:output.ttl}]{../examples/output/output.ttl}
+\lstinputlisting[language=Turtle,linerange={219-271}, firstnumber=219 caption={Frammento del tile \texttt{output.ttl}, è stato omesso il preambolo per limitarne l'estensione}, label={lst:output.ttl}]{../examples/output/output.ttl}
 
 \lstinputlisting[language=xml, caption={File SBML \texttt{output.xml} generato da \texttt{shacl2sbml.py}}, label={lst:output.xml}]{../examples/output/output.xml}
 
