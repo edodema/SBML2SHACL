@@ -5,7 +5,7 @@
 \usepackage[italian]{babel}
 
 \usepackage{hyperref, listings, float, graphicx, amsmath, amssymb}
-\usepackage{longtable, rotating, listings, booktabs}
+\usepackage{longtable, rotating, listings, booktabs, multicol}
 \usepackage[square, sort, comma, numbers]{natbib}
 \usepackage[nottoc]{tocbibind}
 \usepackage{cleveref, multirow}
@@ -75,10 +75,11 @@
 \section{Logiche Descrittive} \label{sec:dl}
 La logica del primo ordine (FOL) aggiunge espressività alla logica proposizionale introducendo predicati, funzioni e quantificatori e permettendo di modellare eventi dinamici nel tempo al prezzo di un'inferenza semidecidibile, data infatti una knowledge base KB e una formula $\alpha$ è sempre possibile scrivere un algoritmo che risponda affermativamente se $KB \models \alpha$ ma se $KB \nvDash \alpha$ l'esecuzione potrebbe non terminare. 
 
-Le \textbf{description logics} (DL) ~\cite{dl:handbook} sono una famiglia di linguaggi formali per rappresentazione della conoscenza spesso più espressivi della logica proposizionale, priva di quantificatori e che fa uso di proposizioni dichiarative, ma meno della logica del primo ordine, nella quale si fa uso di quantificatori, predicati, funzioni e variabili; per alcuni di questi linguaggi esistono algoritmi d'inferenza corretti e completi, più il linguaggio diventa espressivo più è difficile che l'inferenza sia decidibile. 
+Le \textbf{description logics} (DL) ~\cite{dl:handbook} sono una famiglia di linguaggi formali per rappresentazione della conoscenza spesso più espressivi della logica proposizionale, che è priva di quantificatori e fa uso di proposizioni dichiarative, ma meno della logica del primo ordine, nella quale si fa uso di quantificatori, predicati, funzioni e variabili; per alcuni di questi linguaggi esistono algoritmi d'inferenza corretti e completi, più il linguaggio diventa espressivo più è difficile che l'inferenza sia decidibile. 
 
-La sintassi delle DL è fatta in modo tale da rendere facile la modellazione di definizioni e proprietà di categorie (collezioni di "oggetti" utilizzate per la rappresentazione di conoscenza su larga scala) tramite operazioni insiemistiche piuttosto che con una caratterizzazione logica, tra FOL e DL cambia dunque la sintassi: ciò che in FOL è \textbf{costante}, \textbf{predicato unario} e \textbf{predicato binario} nelle DL diventa rispettivamente \textbf{individuo}, \textbf{concetto} e \textbf{ruolo}. 
-Se in FOL si parla di statement nelle DL si parla di descrizioni, descrizioni elementari sono descrizioni composte da concetti e ruoli atomici e combinandole tra loro si ottenegono descrizioni complesse; le descrizioni di concetti nella logica descrittiva $ \mathcal{AL} $ si ottengono secondo la seguente sintassi:
+La sintassi delle DL è fatta in modo tale da rendere facile la modellazione di definizioni e proprietà di categorie (collezioni di "oggetti" utilizzate per la rappresentazione di conoscenza su larga scala) tramite operazioni insiemistiche piuttosto che con una caratterizzazione logica 
+
+Se in FOL abbiamo \textbf{costante}, \textbf{predicato unario} e \textbf{predicato binario} nelle DL si ha rispettivamente \textbf{individuo}, \textbf{concetto} e \textbf{ruolo}; se in FOL si parla di statement nelle DL si parla di descrizioni. Le descrizioni elementari sono descrizioni composte da concetti e ruoli atomici e combinandole tra loro si ottenegono descrizioni complesse, le descrizioni di concetti nella logica descrittiva $ \mathcal{AL} $ si ottengono secondo la seguente sintassi, si adotta la convenzione per cui $ A $ rappresenta concetti atomici e $ C, D $ descrizioni di concetti.
 
 \begin{table}[h!] 
     \centering
@@ -93,30 +94,23 @@ Se in FOL si parla di statement nelle DL si parla di descrizioni, descrizioni el
     \end{tabular}
 \end{table}
 
-Come in FOL un'interpretazione $I$ consiste di un insieme non vuoto $\Delta^{I}$, il dominio d'interpretazione, e di una funzione di interpretazione che assegna ad ogni concetto atomico $A$ un insieme $A^{I} \subseteq \Delta^{I}$ e ad ogni ruolo atomico $R$ una relazione binaria $R^{I} \subseteq \Delta^{I} \times \Delta^{I}$. 
+Come in FOL un'interpretazione $I$ consiste di un insieme non vuoto $\Delta^{I}$, il dominio d'interpretazione, e di una funzione di interpretazione che assegna ad ogni concetto atomico $A$ un insieme $A^{I} \subseteq \Delta^{I}$ e ad ogni ruolo atomico $R$ una relazione binaria $R^{I} \subseteq \Delta^{I} \times \Delta^{I}$. Tramite le definizioni induttive seguenti è possibile estende la funzione di interpretazione per le descrizioni di concetti.
 
-\begin{table}[h!] 
-    \centering
-    \begin{tabular}{c c c}
-        %\hline
-        $ \top^{I} $ &  $ = $ &  $ \Delta^{I} $ \\
-        $ \bot^{I} $ &  $ = $ & $ \emptyset $ \\
-        $ \neg A^{I} $ & $ = $ & $ \Delta^{I} \setminus A^{I} $ \\
-        $ (C \sqcap D)^{I} $ & $ = $ & $ C^{I} \cap D^{I} $ \\
-        $ (\forall R.C)^{I} $ & $ = $ & 
-            $\{ a \in \Delta^{I} | \forall b.(a,b) \in R^{I} \rightarrow b \in C^{I} \}$ \\
-        $ (\exists R.\top)^{I}$ & $ = $ &
-            $\{ a \in \Delta^{I} | \exists b.(a,b) \in R^{I} \}$ \\
-        %\hline
-    \end{tabular}
-\end{table}
+\begin{gather*}
+    \top^{I} = \Delta^{I} \\
+    \bot^{I} = \emptyset \\
+    \neg A^{I} = \Delta^{I} \setminus A^{I} \\
+    (C \sqcap D)^{I} = C^{I} \cap D^{I} \\
+    (\forall R.C)^{I} = \{ a \in \Delta^{I} | \forall b.(a,b) \in R^{I} \rightarrow b \in C^{I} \} \\
+    (\exists R.\top)^{I} = \{ a \in \Delta^{I} | \exists b.(a,b) \in R^{I} \} \\
+\end{gather*}
 
-Dal momento che le DL sono una famiglia possiamo definire una logica descrittiva ~\cite[Appendix 1]{dl:handbook} componendo vari frammenti che ne indicano l'espressività, ad esempio possiamo estendere $ \mathcal{AL} $ con i costrutti in tabella \ref{tab:extend_DL}, nella colonna \textbf{Simbolo} è rappresentato il nome del frammento cui è proprio un costrutto. Se ne vedono altri esempi nella tabella \ref{tab:fragments_DL}.
+Dal momento che le DL sono una famiglia possiamo definire una logica descrittiva ~\cite[Appendix 1]{dl:handbook} componendo vari frammenti che ne indicano l'espressività, ad esempio possiamo estendere $ \mathcal{AL} $ con i costrutti in tabella \ref{tab:extend_DL}, nella tabella \ref{tab:fragments_DL} è possibile consultare il nome di alcuni frammenti cui sono propri determinati costrutti.
 
 \begin{table}[h!t] 
     \centering
-    \label{tab:extend_DL}
     \caption{Paronamica di frammenti di DL che ci permettono di avere la stessa espressività della FOL.}
+    \label{tab:extend_DL}
     \begin{tabular}{c c c}
         \textbf{Costrutto} & \textbf{Sintassi} & \textbf{Semantica} \\
         \hline
@@ -158,11 +152,11 @@ Per comprendere meglio le DL è utile vedere una corrispondenza tra alcuni costr
     \end{tabular}
 \end{table}
 
-Siano $ \textbf{Uomo} $, $ \textbf{Mortale} $ concetti atomici, $ \underline{\textrm{allievoDi}} $ un ruolo atomico e $ Socrate $, $ Platone $, $ Aristotele $ individui con significati ovvi. 
+Siano $ \textbf{Uomo} $, $ \textbf{Mortale} $ concetti atomici, $ \underline{\textrm{allievoDi}} $ un ruolo atomico e $ Socrate $, $ Platone $ individui. 
 \begin{itemize}
     \item Socrate è un uomo. 
     \begin{equation*}
-         \textbf{Uomo}(Socrate)
+         Socrate:\textbf{Uomo}
     \end{equation*}
     \item Ogni uomo è mortale.
     \begin{equation*}
@@ -171,27 +165,27 @@ Siano $ \textbf{Uomo} $, $ \textbf{Mortale} $ concetti atomici, $ \underline{\te
     \item Se ogni uomo è mortale e Socrate è un uomo allora ogni uomo è mortale.
     \begin{equation}
         \label{eq:subsumption}
-        [(\textbf{Uomo} \sqsubseteq \textbf{Mortale}) \sqcap \textbf{Uomo}(Socrate)] \sqsubseteq \textbf{Mortale}(Socrate)
+        [(\textbf{Uomo} \sqsubseteq \textbf{Mortale}) \sqcap Socrate:\textbf{Uomo}] \sqsubseteq Socrate:\textbf{Mortale}
     \end{equation}
     \item Platone è allievo di Socrate.
     \begin{equation*}
-        \underline{\textrm{allievoDi}}(Platone, Socrate)
+        (Platone, Socrate):\underline{\textrm{allievoDi}}
     \end{equation*}
 \end{itemize}
 
 \begin{table}[h!t] 
     \centering
-    \label{tab:fragments_DL}
     \caption{Alcuni simboli di DL con associati i costrutti caratteristici.}
+    \label{tab:fragments_DL}
     \begin{longtable}{p{0.1\textwidth}p{0.3\textwidth}p{0.5\textwidth}}
         \textbf{Simbolo} & \textbf{Costrutti} & \textbf{Esempio}  \\
         \hline
         $\mathcal{AL}$ & 
-        Negazione atomica, intersezione di concetti, restrizione universale, quantificazione esistenziale limtiata & 
+        Negazione atomica, intersezione di concetti, restrizione universale, quantificazione esistenziale limitata & 
         $ \textbf{Gatto} \equiv \textbf{Domestico} \sqcap \textbf{Felino} $ \\
         \hline
         $\mathcal{C}$ & 
-        Classe di espressioni complesse ottenute combinato operatori come quali la relazione di sottoclasse, equivalenza, congiunzione, disgiunzione, negazione, restrizioni, tautologie e contraddizioni & 
+        Classe di espressioni complesse ottenute combinando operatori quali la relazione di sottoclasse, equivalenza, congiunzione, disgiunzione, negazione, restrizioni, tautologie e contraddizioni & 
         $ \textbf{Gatto} \equiv \textbf{Felino} \sqcap \neg (\textbf{Leone} \sqcup \textbf{Tigre}) $ \\
         \hline
         $\mathcal{S}$ & $ \mathcal{ALC} $ con ruoli transitivi &
@@ -215,13 +209,13 @@ Siano $ \textbf{Uomo} $, $ \textbf{Mortale} $ concetti atomici, $ \underline{\te
     \end{longtable}
 \end{table}
 
-Dal momento che nelle DL si eseguono operazioni insiemistiche non si parla propriamente di inferenza ma di sussunzione (subsumption): $C \sqsubseteq D$ equivale in FOL a $C \rightarrow D$, similmente a quanto avviene nel model checking in logica proposizionale $\alpha \models \beta \longleftrightarrow M(\alpha) \subseteq M(\beta)$ - la funzione $M(\phi)$ data una formula $\phi$ ne restituisce l'insieme dei modelli. Per il teorema di deduzione $\alpha \models \beta  \longleftrightarrow \alpha \rightarrow \beta$. L'equazione \ref{eq:subsumption} è un esempio di sussunzione.
+Dal momento che nelle DL si eseguono operazioni insiemistiche non si parla propriamente di inferenza ma di sussunzione (subsumption): $C \sqsubseteq D$ equivale in FOL a $C \rightarrow D$, similmente a quanto avviene nel model checking in logica proposizionale $\alpha \models \beta \longleftrightarrow M(\alpha) \subseteq M(\beta)$ - la funzione $M(\phi)$ data una formula $\phi$ ne restituisce l'insieme dei modelli - e per il teorema di deduzione $\alpha \models \beta  \longleftrightarrow \alpha \rightarrow \beta$. L'equazione \ref{eq:subsumption} è un esempio di sussunzione.
 
-Le DL si basano su un'interfaccia "tell and ask" e si fanno sussunzioni analizzando TBox e ABox della KB: nella TBox si danno le definizioni dei concetti e si forma una conoscenza intensionale, ad esempio è qui che deve sarà presente $ \textbf{Gatto} \equiv \textbf{Domestico} \sqcap \textbf{Felino} $; quando si costruisce una TBox l'operazione base è la \textit{classification}, consiste nel posizionare il concetto appena definito nella giusta posizione gerarchira rispetto ai concetti già presenti nella TBox. Questo viene fatto verificando la sussunzione tra il concetto preso in esame e ogni altro concetto nella TBox. In questo progetto la TBox corrisponde al file \texttt{shapes.ttl}, la definizione di un concetto corrisponde infatti alla definizione di una shape.
+Le DL si basano su un'interfaccia "tell and ask" e si fanno sussunzioni analizzando TBox e ABox della KB: nella TBox si danno le definizioni dei concetti e si forma una conoscenza intensionale, ad esempio è qui che sarà presente $ \textbf{Gatto} \equiv \textbf{Domestico} \sqcap \textbf{Felino} $; quando si costruisce una TBox l'operazione base di ragionamento è la \textit{classification} e consiste nel posizionare il concetto appena definito in una giusta gerarchia rispetto ai concetti già presenti nella TBox, ciò è ottenuto verificando la sussunzione tra il concetto preso in esame e ogni altro concetto nella TBox. In questo progetto la TBox corrisponde al file \texttt{shapes.ttl}, la definizione di un concetto corrisponde infatti alla definizione di una shape.
 
-Nell'ABox invece sono presenti le affermazioni su individui (membership assertions), si definsice quindi una conoscenza estensionale del dominio di interesse: è qui che va ad esempio la descrizione $ \textbf{Gatto}(Silvestro) $. La principale operazione di ragionamento in un'ABox è l'\textit{instance checking} nel quale si verifica che un individuo sia un'istanza di un dato concetto; altre operazioni svolte sono le seguenti che comunque non sono altro che casi particolari di \textit{instance checking}. 
+Nell'ABox invece sono presenti le affermazioni su individui (membership assertions), si definsice quindi una conoscenza estensionale del dominio di interesse: è qui che va ad esempio la descrizione $ Silvestro:\textbf{Gatto} $. La principale operazione di ragionamento in un'ABox è l'\textit{instance checking} nel quale si verifica che un individuo sia un'istanza di un dato concetto; altre operazioni svolte sono le seguenti che comunque non sono altro che casi particolari di \textit{instance checking}. 
 \begin{itemize}
-    \item \textit{knowledge base consinstency} con la quale si verifica che per ogni concetto esista almeno un individuo. 
+    \item \textit{knowledge base consinstency} con la quale si verifica che per ogni concetto esista almeno un individuo istanziato. 
     \item \textit{realization} con la quale si trova il concetto più specifico del quale un individuo è istanza. 
     \item \textit{retrieval} col il quale dato un concetto si trovano tutti gli individui che ne sono istanza.
 \end{itemize}
@@ -270,7 +264,7 @@ L'ABox è definita in RDF (nello specifico Turtle in quanto è il linguaggio RDF
 \textbf{Shapes Constraint Language (SHACL)} ~\cite{shacl} è una specifica del W3C per la verifica di informazioni sotto forma di grafi rispetto ad un insieme di vincoli, include anche il linguaggio di query \textbf{SPARQL Protocol and RDF Query Language (SPARQL)} ~\cite{sparql}.
 Il processo di verifica prende in input un grafo contenente le dichiarazioni delle shape ovvero le definizioni cui i nodi, le istanze, dovranno essere verificati; in input si può avere qualsiasi formato RDF e in questo progetto si userà Turtle; SHACL è diretto discendente di OWL ~\cite{shacl:owl} il quale è stato progettato basandosi su RDF e sulle description logics, è composto infatti da \textit{RDF-Based semantics} e \textit{direct semantics} rispettivamente e la seconda è più espressiva della prima ~\cite[7]{rdf:semantics} ~\cite[Logic for the semantic web, 3.2]{logic:computational}. La TBox come l'ABox è definita in Turtle quindi RDF, il ruolo di SHACL è quello di verificare tramite inferenza la consistenza di TBox e ABox: è qui che avviene la vera fase di ragionamento, in questo progetto è svolta dall'agente razionale \texttt{shacl\_verifier.py}.
 
-SHACL corrisponde ad una logica descrittiva molto estesa - $\mathcal{ALCOIQ(\circ)}$ - che è corretta, non completa, senza garanzie di terminazione e NEXPTIME-hard; le premesse non sembrano ottimistiche ma è possibile rendere meno espressivo il linguaggio per ottenerere inferenze decidibili. Escludendo la composizione di ruoli $\circ$ si ha $\mathcal{SROIQ}$ per la quale esiste un algoritmo d'inferenza corretto, non completo, decidibile e NEXPTIME-hard; escludendo anche la possibilità di esprimere ruoli inversi si ottiene la DL $\mathcal{ALCOQ}$ che è sound, completa, decidibile e PSPACE-complete e dal momento che NP $\subseteq$ PSPACE $\subseteq$ EXPTIME si ha un netto miglioramento. 
+SHACL corrisponde ad una logica descrittiva molto estesa - $\mathcal{ALCOIQ(\circ)}$ - che è corretta, non completa, senza garanzie di terminazione e NEXPTIME-hard; le premesse non sembrano ottimistiche ma è possibile rendere meno espressivo il linguaggio per ottenerere inferenze decidibili. Escludendo la composizione di ruoli $\circ$ si ha $\mathcal{SROIQ}$ per la quale esiste un algoritmo d'inferenza corretto, non completo, decidibile e NEXPTIME-hard; escludendo anche la possibilità di esprimere ruoli inversi si ottiene la DL $\mathcal{ALCOQ}$ che è sound, completa, decidibile e PSPACE-complete e dal momento che NP $\subseteq$ PSPACE $\subseteq$ EXPTIME si ha un netto miglioramento. Questi risultati sono stati ottenuti grazie ad un navigator online per logiche descrittive ~\cite{dl:complexity}.
 
 \clearpage
 \section{Caso di studio}
@@ -292,7 +286,7 @@ Ai fini di questo progetto distinguiamo due differenti SBML:
 
 \subsection{Obiettivi}
 
-Lo scopo di questo progetto, sotto la guida del Professor Tronci, è quello di convertire automaticamente una specifica SBML in SHACL. A tal fine il problema è stato diviso in tre fasi:
+Lo scopo di questo progetto, sotto la guida dei Professor Mancini e del Professor Tronci, è quello di convertire automaticamente una specifica SBML in SHACL. A tal fine il problema è stato diviso in tre fasi:
 
 \begin{enumerate}
     \item Modellare in SHACL un sottoinsieme di costrutti che definiscono SBML . 
@@ -305,7 +299,7 @@ Si assume a priori che i file SBML in input siano corretti, la \href{http://sbml
 \clearpage
 \section{Modellazione}
 
-In questa prima fase si è scelto un sottoinsieme di SBML 3.2 più i costrutti in Extended SBML e ne è stato formalizzato un modello. Nella tabella ~\ref{tab:modellazione} vengono descritti i principali costrutti, sono state volontariamente omesse shape quali \texttt{listOf*} il cui significato è intuitivo e avrebbero solo reso la tabella meno leggibile, in ogni caso è possibile consultare ulteriormente il diagramma \texttt{diagram.png}, mostrato anche in figura \ref{fig:diagram}, e il file delle shape \texttt{shapes.ttl}. È possibile verificare la consistenza di un file di nodi rispetto al modello tramite lo script \texttt{shacl\_verifier.py}.
+In questa prima fase si è scelto un sottoinsieme di SBML 3.2 più i costrutti in Extended SBML e ne è stato formalizzato un modello. Nella tabella ~\ref{tab:modellazione} vengono descritti i principali costrutti, sono state volontariamente omesse shape quali \texttt{listOf*} il cui significato è intuitivo e avrebbero solo reso la tabella meno leggibile, in ogni caso è possibile consultare ulteriormente il diagramma \texttt{diagram.png}, mostrato anche in figura \ref{fig:diagram}, e il file delle shape \texttt{shapes.ttl}.
 
 \begin{longtable}{p{.4\textwidth}p{.5\textwidth}}
     \textbf{Entità} & \textbf{Descrizione} \\
@@ -347,11 +341,13 @@ In questa prima fase si è scelto un sottoinsieme di SBML 3.2 più i costrutti i
     \label{tab:modellazione}
 \end{longtable}
 
-Prendiamo d'esempio il file SBML dato in input al parser \texttt{example.xml}, l'output in Turtle generato \texttt{output.ttl} e il diagramma \texttt{diagram.png} e vediamo come viene popolata l'ABox in concordanza al modello, prendiamo come riferimento la shape Model. Nel listato \ref{lst:input_model} è stata isolata la parte che riguarda il modello, gli attributi presenti nell'etichetta sono \texttt{id}, \texttt{metaid} e \texttt{name} e quindi attributo e valore sono tradotti in Turtle in predicato e oggetto rispettivamente come si può vedere nel listato \ref{lst:output_model}; lo stesso viene fatto anche per le relazioni con altre entità sia che Model sia soggetto o oggetto. 
+Prendiamo d'esempio il file SBML dato in input al parser \texttt{example.xml}, l'output \texttt{output.ttl}, il file \texttt{shapes.ttl}, il diagramma \texttt{diagram.png} e vediamo come viene popolata l'ABox rispetto al costrutto \texttt{model}. Nel listato \ref{lst:input_model} è stata isolata la parte che riguarda il modello dal file in input, gli attributi presenti nell'etichetta sono \texttt{id}, \texttt{metaid} e \texttt{name}: può essere verificato sia nel diagramma che nel file delle shape, nel listato \ref{lst:shapes_model} è stata isolata la parte relativa al solo costrutto model. Attributo e valore sono quindi tradotti in Turtle rispettivamente in predicato e oggetto, lo si può vedere nel listato \ref{lst:output_model}; lo stesso viene fatto anche per le relazioni con altre entità ove \texttt{model} potrà essere soggetto o oggetto. 
 
-\lstinputlisting[language=xml,linerange={3-18},firstnumber=3,caption={Sezione del modello isolata dal file di input \texttt{example.org}},label={lst:input_model}]{../examples/input/example.xml}
+\lstinputlisting[language=xml,linerange={3-18},firstnumber=3,caption={Sezione del modello isolata dal file di input \texttt{example.xml}},label={lst:input_model}]{../examples/input/example.xml}
 
 \lstinputlisting[language=Turtle, caption={Sezione del modello isolata nel file di output \texttt{output.ttl}}, label={lst:output_model}, numbers=none, linerange={225-231,247-247,262-262} ]{../examples/output/output.ttl}
+
+\lstinputlisting[language=Turtle,linerange={294-395},firstnumber=294,caption={Shape model in \texttt{shapes.ttl}},label={lst:shapes_model}]{../project/model/shapes.ttl}
 
 \begin{sidewaysfigure}
     \caption{Modellazione SBML}
@@ -364,28 +360,30 @@ Prendiamo d'esempio il file SBML dato in input al parser \texttt{example.xml}, l
 
 In questa seconda fase dato uno o più file SBML in input li si traduce in SHACL tramite un parser e si verifica la correttezza dell'output tramite il file \texttt{shacl\_verifier.py}. Come già detto si hanno due parser: \texttt{parser.py} è la prima versione e non supporta Extended SBML contrariamente a \texttt{extended\_parser.py} che è la versione finale. 
 
-In \texttt{parser.py} si riescono a tradurre senza problemi file in SBML 3.2 ma poiché il file XML viene letto come una lista di etichette risulta macchinoso (ammesso e non concesso sia possibile) fare riferimento all'etichetta padre di una sostituzione o una cancellazione. Il problema non si presenta in \texttt{extended\_parser.py} dato che il file XML viene esplorato come un albero, questa seconda versione è inoltre più breve (444 righe anziché 932) ed è più facilmente estendibile. Questo parser infatti legge qualsiasi tag del file XML e vi associa i propri attributi - noti - al rispettivo valore, ho comunque imposto dei controlli per evitare questo comportamento dato che avrebbe solo rallentato la fase di verifica. Inoltre è più veloce come si può vedere in tabella ~\ref{tab:performance}: il calcolo delle performance è basato sull'esecuzione di \texttt{test.sh}, sono stati scaricati da \href{https://www.ebi.ac.uk/biomodels/}{Biomodels} i 18 modelli SBML presenti nella cartella \texttt{examples/input/biomodel} e di seguito elencati, in \texttt{test.sh} i parser prendono in input due file così da verificare la correttezza della costruzione di un grafo a partire da più modelli e allo stesso tempo si ha un numero più consistente di test ovvero 324. 
+In \texttt{parser.py} si riescono a tradurre senza problemi file in SBML 3.2 ma poiché il file XML viene letto come una lista di etichette risulta macchinoso (ammesso e non concesso sia possibile) fare riferimento all'etichetta padre di una sostituzione o una cancellazione. Il problema non si presenta in \texttt{extended\_parser.py} dato che il file XML viene esplorato come un albero, questa seconda versione è inoltre più breve (444 righe anziché 932) ed è più facilmente estendibile. Questo parser infatti legge qualsiasi tag del file XML e associa ogni attributo al rispettivo valore, ho comunque imposto dei controlli per evitare questo comportamento dato che avrebbe solo rallentato la fase di verifica. Inoltre è più veloce come si può vedere in tabella ~\ref{tab:performance}: il calcolo delle performance è basato sull'esecuzione di \texttt{test.sh}, sono stati scaricati da \href{https://www.ebi.ac.uk/biomodels/}{Biomodels} i 18 modelli SBML presenti nella cartella \texttt{examples/input/biomodel} e di seguito elencati, in \texttt{test.sh} i parser prendono in input due file così da verificare la correttezza della costruzione di un grafo a partire da più modelli e allo stesso tempo si ha un numero più consistente di test ovvero 324. 
 
-\begin{enumerate}
-    \item BIOMD0000000087.xml
-    \item BIOMD0000000105.xml
-    \item BIOMD0000000399.xml
-    \item BIOMD0000000474.xml
-    \item BIOMD0000000476.xml
-    \item BIOMD0000000559.xml
-    \item BIOMD0000000562.xml
-    \item BIOMD0000000619.xml
-    \item BIOMD0000000624.xml
-    \item BIOMD0000000705.xml
-    \item BIOMD0000000706.xml
-    \item MODEL1012110001.xml
-    \item MODEL1012220002.xml
-    \item MODEL1012220003.xml
-    \item MODEL1012220004.xml
-    \item MODEL1112260002.xml
-    \item MODEL1812100001.xml
-    \item MODEL3632127506.xml
-\end{enumerate}
+\begin{multicols}{2}
+    \begin{enumerate}
+        \item BIOMD0000000087.xml
+        \item BIOMD0000000105.xml
+        \item BIOMD0000000399.xml
+        \item BIOMD0000000474.xml
+        \item BIOMD0000000476.xml
+        \item BIOMD0000000559.xml
+        \item BIOMD0000000562.xml
+        \item BIOMD0000000619.xml
+        \item BIOMD0000000624.xml
+        \item BIOMD0000000705.xml
+        \item BIOMD0000000706.xml
+        \item MODEL1012110001.xml
+        \item MODEL1012220002.xml
+        \item MODEL1012220003.xml
+        \item MODEL1012220004.xml
+        \item MODEL1112260002.xml
+        \item MODEL1812100001.xml
+        \item MODEL3632127506.xml
+    \end{enumerate}
+\end{multicols}
 
 \begin{table}[h!t] 
     \centering
@@ -404,9 +402,11 @@ In \texttt{parser.py} si riescono a tradurre senza problemi file in SBML 3.2 ma 
 
 Nella sottocartella \texttt{custom} invece vi sono file d'esempio forniti direttamente dal W3C per Extended SBML, potranno essere usati solo per verificare \texttt{extended\_parser.py}. In Biomodels per esprimere una gerarchia tra compartment si fa uso di un attributo \texttt{outer} e non di sottomodelli come nella specifica del W3C.
 
-\clearpage
+%\clearpage
 \section{Parsing da SHACL a SBML}
-Nella terza e ultima fase si esegue la controprova della precedente ovvero si traduce il file di istanze SHACL ottenuto in un file SBML e ci si attende che venga modellata la stessa conoscenza, il file non sarà uguale perché privo di eventuali costrutti non modellati. Nella cartella \texttt{query} sono presenti tre file:
+Nella terza e ultima fase si esegue la controprova della precedente ovvero si traduce il file di istanze SHACL ottenuto in un file SBML e ci si attende che venga modellata la stessa conoscenza, il file in output non sarà necessariamente uguale a quello di input poiché privo di eventuali costrutti non modellati, è importante notare che è possibile tradurre solo ed esclusivamente delle specifiche Turtle, SHACL è più espressivo di SBML quindi non è sempre possibile ottenere un modello in XML a partire da una specifica SHACL. 
+
+Nella cartella \texttt{query} sono presenti tre file:
 
 \begin{itemize}
     \item \texttt{query.py}: Permette di interrogare il modello con query SPARQL, la query deve essere scritta direttamente nel codice perché gli argomenti della print variano in base alla query.
@@ -420,7 +420,7 @@ L'algoritmo genera la stessa conoscenza dei file di partenza, per SBML 3.2 non c
 
 \clearpage
 \section{Esempio}
-Un esempio di esecuzione è quello nella cartella \texttt{examples/output}, è stato ottenuto eseguendo i comandi nel listato \ref{lst:example_commands} e in figura \ref{fig:example_validation} si può vedere come SBML verifichi la traduzione da SHACL a SBML, mettendo a confronto i listati \ref{lst:input.xml} e \ref{lst:output.xml} si può vedere come i file SBML di input e output corrispondano.
+Un esempio di esecuzione è quello nella cartella \texttt{examples/output}, è stato ottenuto eseguendo i comandi nel listato \ref{lst:example_commands} e in figura \ref{fig:example_validation} si può vedere come SBML verifichi la traduzione da SHACL a SBML, mettendo a confronto i listati \ref{lst:input.xml} e \ref{lst:output.xml} si può vedere come i file SBML di input e output corrispondano. Il listato \ref{lst:output.ttl} invece è l'output ottenuto dalla fase intermedia di parsing in Turtle.
 
 \lstinputlisting[caption={Esecuzione dei comandi}, label={lst:example_commands}]{images/execution.sh}
 
@@ -429,6 +429,12 @@ Un esempio di esecuzione è quello nella cartella \texttt{examples/output}, è s
     \label{fig:example_validation}
     \includegraphics[scale=0.43]{images/example_validation.png}
 \end{figure}
+
+\lstinputlisting[language=xml, caption={File SBML in input \texttt{example.xml}}, label={lst:input.xml}]{../examples/input/example.xml}
+
+\lstinputlisting[language=Turtle,linerange={219-271}, firstnumber=219, caption={Frammento del tile \texttt{output.ttl}, è stato omesso il preambolo per limitarne l'estensione}, label={lst:output.ttl}]{../examples/output/output.ttl}
+
+\lstinputlisting[language=xml, caption={File SBML \texttt{output.xml} generato da \texttt{shacl2sbml.py}}, label={lst:output.xml}]{../examples/output/output.xml}
 
 \clearpage
 \section{Commenti e critiche}
@@ -454,15 +460,6 @@ Durante lo sviluppo del progetto si è tenuto conto dei seguenti commenti e crit
     15/09/2020 & Ulteriore videochiamata con il Professor Mancini perché l'estensione della relazione era ancora poco chiara. \\
     \hline
 \end{longtable}
-
-\clearpage
-\section{Appendice}
-
-\lstinputlisting[language=xml, caption={File SBML in input \texttt{example.xml}}, label={lst:input.xml}]{../examples/input/example.xml}
-
-\lstinputlisting[language=Turtle,linerange={219-271}, firstnumber=219 caption={Frammento del tile \texttt{output.ttl}, è stato omesso il preambolo per limitarne l'estensione}, label={lst:output.ttl}]{../examples/output/output.ttl}
-
-\lstinputlisting[language=xml, caption={File SBML \texttt{output.xml} generato da \texttt{shacl2sbml.py}}, label={lst:output.xml}]{../examples/output/output.xml}
 
 % bibliography
 \clearpage
