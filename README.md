@@ -1,12 +1,7 @@
 # SBML2SHACL
-SBML2SHACL is a repository that allows you to convert a SBML file in a SHACL graph, it does not support all SBML's constructs but only a subset composed by Extended SBML and the following constructs typical of classic SBML:
-* Parameter
-* Compartment  
-* Unit 
-* Species 
+ **SBML2SHACL** allows you to convert a SBML file in a Turtle graph and verify it. 
 
-For further considerations see the [diagram](diagram/diagram.png) or the [documentation](#resources).
-
+To deepen see the documentation avalaible in [english](tex/en) and [italian](tex/it).
 
 ## Code 
 Here is a brief description of what programs in the [code](code) directory do, notice that python programs depend on the [rdflib](https://github.com/RDFLib/rdflib) library. The input SBML file is a priori assumed to be correct so please [verify](http://sbml.org/Facilities/Validator) it beforehand.
