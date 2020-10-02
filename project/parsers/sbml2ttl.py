@@ -1,5 +1,5 @@
 '''
-   File name = parser.py
+   File name = sbml2ttl.py
    Author = Edoardo De Matteis
    Date created =  31 July 2020
    Python version = 3.8
